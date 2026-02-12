@@ -851,7 +851,8 @@
                     if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
                          d = new Date((c.date - 25569) * 86400 * 1000);
                     } else {
-                         d = new Date(String(c.date).replace(/-/g, '\/'));
+                         const str = String(c.date);
+                         d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
                     }
                     
                     if (isNaN(d.getTime())) return false;
@@ -957,8 +958,9 @@
                     // Excel base date: Dec 30, 1899
                     date = new Date((dateStr - 25569) * 86400 * 1000);
                 } else {
-                    // Prevent timezone shifting for standard YYYY-MM-DD
-                    date = new Date(String(dateStr).replace(/-/g, '\/'));
+                    // Prevent timezone shifting for standard YYYY-MM-DD but allow ISO strings
+                    const str = String(dateStr);
+                    date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
                 }
 
                 if (isNaN(date.getTime())) return dateStr; // Return original if invalid date
@@ -979,7 +981,8 @@
                     if (!isNaN(dStr) && dStr > 25569 && dStr < 2958465) {
                         d = new Date((dStr - 25569) * 86400 * 1000);
                     } else {
-                        d = new Date(dStr);
+                        const str = String(dStr);
+                        d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
                     }
                     return isNaN(d.getTime()) ? 0 : d.getTime();
                 };
@@ -1023,7 +1026,8 @@
                     if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
                          d = new Date((c.date - 25569) * 86400 * 1000);
                     } else {
-                         d = new Date(String(c.date).replace(/-/g, '\/'));
+                         const str = String(c.date);
+                         d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
                     }
                     if (isNaN(d.getTime())) return false;
                     const y = d.getFullYear();
@@ -1039,8 +1043,9 @@
                 if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
                     date = new Date((dateStr - 25569) * 86400 * 1000);
                 } else {
-                    // Prevent timezone shifting
-                    date = new Date(String(dateStr).replace(/-/g, '\/'));
+                    // Prevent timezone shifting but allow ISO strings
+                    const str = String(dateStr);
+                    date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
                 }
                 if (isNaN(date.getTime())) return dateStr;
                 const day = String(date.getDate()).padStart(2, '0');
@@ -1058,7 +1063,8 @@
                     if (!isNaN(dStr) && dStr > 25569 && dStr < 2958465) {
                         d = new Date((dStr - 25569) * 86400 * 1000);
                     } else {
-                        d = new Date(dStr);
+                        const str = String(dStr);
+                        d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
                     }
                     return isNaN(d.getTime()) ? 0 : d.getTime();
                 };
@@ -1593,7 +1599,8 @@
                                 if (!isNaN(rawDate) && rawDate > 25569 && rawDate < 2958465) {
                                     d = new Date(Math.round((rawDate - 25569) * 86400 * 1000));
                                 } else {
-                                    d = new Date(String(rawDate).replace(/-/g, '\/'));
+                                    const str = String(rawDate);
+                                    d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
                                 }
                                 if (!isNaN(d.getTime())) {
                                     const yyyy = d.getFullYear();
