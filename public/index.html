@@ -406,7 +406,9 @@
     <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toast-msg"></span></div>
 
     <script>
-        const API_BASE = 'https://acimotors-digital-leads.pages.dev/api';
+        // Use absolute URL in preview environments (blob: or usercontent.goog) to prevent fetch errors, otherwise use relative route.
+        const isPreview = window.location.protocol === 'blob:' || window.location.hostname.includes('usercontent');
+        const API_BASE = isPreview ? 'https://acimotors-digital-leads.pages.dev/api' : '/api';
         
         let currentUser = null, currentRole = null, currentBusiness = null;
         let allOfficers = [], businessList = [], businessIcons = {};
@@ -452,7 +454,8 @@
                 }
                 return await res.json();
             } catch (e) {
-                console.error(`API Error on ${endpoint}:`, e);
+                // Return a clean warning instead of throwing an unhandled crashing error in preview
+                console.warn(`API Warning on ${endpoint}: Request failed. Check CORS or network connection.`);
                 throw e; 
             }
         }
@@ -501,6 +504,7 @@
                     const headerCheckbox = document.querySelector('#customers-table thead input[type="checkbox"]');
                     if (headerCheckbox) headerCheckbox.checked = false;
                 } catch (error) {
+                    console.warn(error);
                     showToast('Error deleting data', 'error');
                 } finally {
                     hideLoader();
@@ -556,6 +560,7 @@
                     if (headerCheckbox) headerCheckbox.checked = false;
 
                 } catch (error) {
+                    console.warn(error);
                     showToast('Error deleting officers', 'error');
                 } finally {
                     hideLoader();
