@@ -435,13 +435,22 @@
         let loadingRequestCount = 0; // State for loader
         let isSuperAdminVerification = false;
 
-        // Loader Functions (No-op now, using CSS animation instead where needed)
+        // Loader Functions - Creatively solved popup block by removing .hidden and enforcing a visual perception delay
+        let loaderTimeout;
         function showLoader() {
-             document.getElementById('loading-overlay').classList.add('active');
+             const overlay = document.getElementById('loading-overlay');
+             clearTimeout(loaderTimeout);
+             overlay.classList.remove('hidden'); // .hidden has display:none !important which was blocking it
+             overlay.classList.add('active');
         }
 
         function hideLoader() {
-             document.getElementById('loading-overlay').classList.remove('active');
+             // Minimum 500ms delay so the processing screen is visible even for instant local MOCK operations
+             loaderTimeout = setTimeout(() => {
+                 const overlay = document.getElementById('loading-overlay');
+                 overlay.classList.remove('active');
+                 overlay.classList.add('hidden');
+             }, 500);
         }
 
         async function apiCall(endpoint, method = 'GET', body = null) {
