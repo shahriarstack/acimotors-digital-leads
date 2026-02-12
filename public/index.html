@@ -406,7 +406,7 @@
     <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toast-msg"></span></div>
 
     <script>
-        const API_BASE = '/api';
+        const API_BASE = 'https://acimotors-digital-leads.pages.dev/api';
         
         let currentUser = null, currentRole = null, currentBusiness = null;
         let allOfficers = [], businessList = [], businessIcons = {};
@@ -438,16 +438,21 @@
                 const opts = { method, headers: { 'Content-Type': 'application/json' } };
                 if (body) opts.body = JSON.stringify(body);
                 
-                const url = `${API_BASE}${endpoint}`;
+                let url = `${API_BASE}${endpoint}`;
+                // Prevent aggressive Cloudflare edge caching on GET requests
+                if (method === 'GET') {
+                    url += (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+                }
+                
                 const res = await fetch(url, opts);
                 
                 if (!res.ok) {
                     const err = await res.json().catch(() => ({}));
-                    throw new Error(err.error || 'API Error');
+                    throw new Error(err.error || `Server Error ${res.status}`);
                 }
                 return await res.json();
             } catch (e) {
-                console.error('API Error:', e);
+                console.error(`API Error on ${endpoint}:`, e);
                 throw e; 
             }
         }
@@ -606,7 +611,8 @@
                     allOfficers = initData.officers || [];
                 }
             } catch (e) {
-                console.warn("Initialization Failed: Falling back to empty state. Backend unreachable.");
+                console.warn("Initialization Failed", e);
+                showToast('Failed to connect to Database', 'error');
             } finally {
                 hideLoader();
             }
@@ -632,6 +638,7 @@
                 allOfficers = data || [];
                 return { data: allOfficers };
             } catch (e) {
+                showToast('Error connecting to Server: ' + e.message, 'error');
                 return { data: [] };
             }
         }
@@ -642,14 +649,20 @@
                 currentCustomersList = data || [];
                 return { data: currentCustomersList };
             } catch (e) {
+                showToast('Error fetching customers: ' + e.message, 'error');
                 return { data: [] };
             }
         }
 
         function renderLandingPage() {
-            document.getElementById('business-grid').innerHTML = businessList.map(b => `<div class="landing-card" onclick="selectBusiness('${b}')"><i class="fas ${businessIcons[b] || 'fa-briefcase'}"></i><h3>${b}</h3></div>`).join('');
+            if (businessList.length === 0) {
+                 document.getElementById('business-grid').innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); padding: 40px;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i><p>Could not load portfolios. Check database connection.</p></div>`;
+            } else {
+                 document.getElementById('business-grid').innerHTML = businessList.map(b => `<div class="landing-card" onclick="selectBusiness('${b}')"><i class="fas ${businessIcons[b] || 'fa-briefcase'}"></i><h3>${b}</h3></div>`).join('');
+            }
             document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').style.display = 'none'; document.getElementById('landing-screen').style.display = 'flex';
         }
+        
         function selectBusiness(name) { currentBusiness = name; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
         function backToLanding() { document.getElementById('login-screen').style.display = 'none'; renderLandingPage(); }
         
