@@ -1,13 +1,22 @@
 import { Hono } from 'hono';
 import { handle } from 'hono/cloudflare-pages';
+import { cors } from 'hono/cors'; // Import CORS
 import { neon } from '@neondatabase/serverless';
 
 const app = new Hono().basePath('/api');
 
-// 1. Init Data
+// --- 1. ENABLE CORS (CRITICAL FOR MOBILE/REMOTE ACCESS) ---
+app.use('/*', cors({
+  origin: '*', // Allow all origins for simplicity (or set to your specific domain)
+  allowMethods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type'],
+}));
+
+// --- 2. Init Data ---
 app.get('/init', async (c) => {
     try {
-        // Use neon() HTTP fetch instead of Pool WebSockets for Cloudflare Edge stability!
+        if (!c.env.DATABASE_URL) return c.json({ error: 'Missing DATABASE_URL' }, 500);
+        
         const sql = neon(c.env.DATABASE_URL);
         const businessesRes = await sql`SELECT * FROM businesses`;
         const officersRes = await sql`SELECT * FROM officers`;
@@ -28,7 +37,7 @@ app.get('/init', async (c) => {
     }
 });
 
-// 2. Customers CRUD
+// --- 3. Customers CRUD ---
 app.get('/customers', async (c) => {
     try {
         const sql = neon(c.env.DATABASE_URL);
@@ -40,7 +49,6 @@ app.get('/customers', async (c) => {
         } else {
             result = await sql`SELECT * FROM customers`;
         }
-        
         return c.json(result);
     } catch (err) {
         return c.json({ error: err.message }, 500);
@@ -95,7 +103,7 @@ app.delete('/customers/:id', async (c) => {
     }
 });
 
-// 3. Officers CRUD
+// --- 4. Officers CRUD ---
 app.get('/officers', async (c) => {
     try {
         const sql = neon(c.env.DATABASE_URL);
@@ -138,7 +146,7 @@ app.delete('/officers/:id', async (c) => {
     }
 });
 
-// 4. Businesses CRUD
+// --- 5. Businesses CRUD ---
 app.post('/businesses', async (c) => {
     try {
         const sql = neon(c.env.DATABASE_URL);
