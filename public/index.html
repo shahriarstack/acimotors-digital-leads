@@ -237,13 +237,7 @@
             <div id="officer-login-form" class="login-form">
                 <div class="form-group">
                     <label>Select Your Name</label>
-                    <div style="display: flex; position: relative;">
-                        <input list="officer_datalist_global" id="officer-select-input" class="form-control" placeholder="Type to search..." onchange="updateOfficerSelect(this.value)" style="border-radius: 8px 0 0 8px; border-right: none; padding-right: 10px;">
-                        <div style="background: #fff; border: 1px solid #E5E7EB; border-left: none; border-radius: 0 8px 8px 0; width: 50px; display: flex; align-items: center; justify-content: center; position: relative;">
-                            <i class="fas fa-chevron-down" style="color: var(--text-muted); font-size: 0.9rem;"></i>
-                            <select id="officer-select" class="form-select" onchange="const t=this.options[this.selectedIndex].text;document.getElementById('officer-select-input').value=t;updateOfficerSelect(t);" style="position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer;"></select>
-                        </div>
-                    </div>
+                    <select id="officer-select" class="form-select" style="cursor: pointer;"></select>
                 </div>
                 <div class="form-group"><label>Password</label><input type="password" id="officer-password" class="form-control"></div>
                 <button id="officer-login-btn" class="btn btn-primary" style="width: 100%;">Enter App</button>
