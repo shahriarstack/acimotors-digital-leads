@@ -787,23 +787,23 @@
                         if (String(c.date).startsWith(monthVal)) return true;
                         
                         // Fallback: Parse date
-                        let d;
-                        if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
-                            d = new Date((c.date - 25569) * 86400 * 1000);
-                        } else {
-                            const str = String(c.date);
-                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                        }
-                        
-                        if (isNaN(d.getTime())) return false;
-                        const y = d.getFullYear();
-                        const m = String(d.getMonth() + 1).padStart(2, '0');
-                        return `${y}-${m}` === monthVal;
-                    });
-                }
-
-                const stats = { total: filtered.length, visited: filtered.filter(c => c.visit_completed === 'Yes').length, pending: filtered.filter(c => c.visit_completed !== 'Yes' && c.officer_id).length, hot: filtered.filter(c => c.customer_type === 'Hot').length };
-                document.getElementById('dashboard-stats').innerHTML = `<div class="stat-card"><div class="stat-icon" style="background:#E5F6FD;color:var(--primary)"><i class="fas fa-users"></i></div><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div><div class="stat-card"><div class="stat-icon" style="background:#E8F8EE;color:var(--secondary)"><i class="fas fa-check-circle"></i></div><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div><div class="stat-card"><div class="stat-icon" style="background:#FFF4E5;color:var(--warning)"><i class="fas fa-hourglass-half"></i></div><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div><div class="stat-card"><div class="stat-icon" style="background:#FFEBEA;color:var(--danger)"><i class="fas fa-fire"></i></div><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div>`;
+                const stats = { 
+                    total: filtered.length, 
+                    visited: filtered.filter(c => c.visit_completed === 'Yes').length, 
+                    pending: filtered.filter(c => c.visit_completed !== 'Yes' && c.officer_id).length, 
+                    hot: filtered.filter(c => c.customer_type === 'Hot').length,
+                    booked: filtered.filter(c => c.booking_info).length,
+                    delivered: filtered.filter(c => c.delivery_info).length
+                };
+                
+                document.getElementById('dashboard-stats').innerHTML = `
+                    <div class="stat-card"><div class="stat-icon" style="background:#E5F6FD;color:var(--primary)"><i class="fas fa-users"></i></div><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:#E8F8EE;color:var(--secondary)"><i class="fas fa-check-circle"></i></div><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:#FFF4E5;color:var(--warning)"><i class="fas fa-hourglass-half"></i></div><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:#FFEBEA;color:var(--danger)"><i class="fas fa-fire"></i></div><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:#EFF6FF;color:var(--info)"><i class="fas fa-bookmark"></i></div><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background:#F5F3FF;color:var(--accent)"><i class="fas fa-truck"></i></div><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div>
+                `;
                 
                 const { data: officers } = await fetchOfficers(); 
                 const validOfficers = officers.filter(o => o.role === 'officer' && (!o.business || o.business === currentBusiness));
