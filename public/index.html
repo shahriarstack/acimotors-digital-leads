@@ -358,6 +358,12 @@
             </div>
             <div id="data-entry" class="page-content hidden">
                 <div class="page-header"><h1>Data Entry</h1><p>Managing leads for <strong style="color:var(--primary);" id="entry-business-title"></strong></p></div>
+                
+                <!-- NEW: Sub-Admin Dashboard Summary Section -->
+                <div id="sub-admin-summary-section" class="hidden" style="margin-bottom: 24px; animation: slideUp 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);">
+                    <!-- Content will be injected by JS -->
+                </div>
+
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Customer Database</h3>
@@ -1206,6 +1212,62 @@
             showLoader();
             try {
                 let { data } = await fetchCustomers();
+                
+                // --- NEW: Sub-Admin Dashboard Summary Logic ---
+                const subAdminSummary = document.getElementById('sub-admin-summary-section');
+                if (currentUser && currentUser.role && (currentUser.role === 'admin_new' || currentUser.role === 'admin_resale')) {
+                    const myType = currentUser.role === 'admin_new' ? 'New' : 'Resale';
+                    const myStatsData = data.filter(c => c.sale_type === myType); // Filter raw data for stats
+                    
+                    const stats = {
+                        total: myStatsData.length,
+                        visited: myStatsData.filter(c => c.visit_completed === 'Yes').length,
+                        pending: myStatsData.filter(c => c.visit_completed !== 'Yes').length,
+                        hot: myStatsData.filter(c => c.customer_type === 'Hot').length,
+                        booked: myStatsData.filter(c => c.booking_info).length,
+                        delivered: myStatsData.filter(c => c.delivery_info).length
+                    };
+
+                    subAdminSummary.classList.remove('hidden');
+                    subAdminSummary.innerHTML = `
+                        <div style="background: white; border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.02); position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: linear-gradient(180deg, var(--primary), var(--secondary));"></div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); display: flex; align-items: center; gap: 10px;">
+                                    <span style="background: #ECFDF5; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary);"><i class="fas fa-chart-pie"></i></span>
+                                    ${myType} Sales Overview
+                                </h3>
+                                <span class="badge badge-info">${stats.total} Total Records</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 16px;">
+                                <div style="text-align: center; padding: 12px; background: #F9FAFB; border-radius: 12px;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--secondary); margin-bottom: 4px;">${stats.visited}</div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Visited</div>
+                                </div>
+                                <div style="text-align: center; padding: 12px; background: #FFFBEB; border-radius: 12px;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--warning); margin-bottom: 4px;">${stats.pending}</div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Pending</div>
+                                </div>
+                                <div style="text-align: center; padding: 12px; background: #FEF2F2; border-radius: 12px;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--danger); margin-bottom: 4px;">${stats.hot}</div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Hot Leads</div>
+                                </div>
+                                <div style="text-align: center; padding: 12px; background: #EFF6FF; border-radius: 12px;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--info); margin-bottom: 4px;">${stats.booked}</div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Booked</div>
+                                </div>
+                                <div style="text-align: center; padding: 12px; background: #F5F3FF; border-radius: 12px;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent); margin-bottom: 4px;">${stats.delivered}</div>
+                                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Delivered</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (subAdminSummary) {
+                    subAdminSummary.classList.add('hidden');
+                }
+                // -----------------------------------------------------
+
                 const st = document.getElementById('filter-sale-type').value; const off = document.getElementById('filter-officer').value;
                 if(st && st !== "All Types") data = data.filter(c => c.sale_type === st); 
                 
