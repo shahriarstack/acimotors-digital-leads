@@ -1268,12 +1268,24 @@
                 }
                 // -----------------------------------------------------
 
-                const st = document.getElementById('filter-sale-type').value; const off = document.getElementById('filter-officer').value;
+                const st = document.getElementById('filter-sale-type').value; 
+                const off = document.getElementById('filter-officer').value;
+                const visit = document.getElementById('filter-visit').value;
+                const lead = document.getElementById('filter-lead-type').value;
+
                 if(st && st !== "All Types") data = data.filter(c => c.sale_type === st); 
                 
                 if(off) {
                     if(off === 'Unassigned') data = data.filter(c => !c.officer_id);
                     else data = data.filter(c => c.officer_id === off);
+                }
+
+                if(visit && visit !== "All Status") {
+                     data = data.filter(c => visit === 'Yes' ? c.visit_completed === 'Yes' : c.visit_completed !== 'Yes');
+                }
+
+                if(lead && lead !== "All Leads") {
+                    data = data.filter(c => c.customer_type === lead);
                 }
                 
                 const formatDateDisplay = (dateStr) => {
