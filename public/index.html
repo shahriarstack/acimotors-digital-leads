@@ -868,6 +868,11 @@
         }
 
         async function login(type) {
+            // FIX FOR iPHONE: Request permission IMMEDIATELY on click, before any await/delay
+            if ("Notification" in window && Notification.permission === "default") {
+                Notification.requestPermission().catch(err => console.log("Permission request error:", err));
+            }
+
             const btnId = type === 'admin' ? 'admin-login-btn' : 'officer-login-btn';
             const btn = document.getElementById(btnId);
             const originalText = btn.innerHTML;
@@ -906,11 +911,6 @@
                 currentUser = user; currentRole = user.role; 
                 localStorage.setItem('currentSession', JSON.stringify({ user, business: currentBusiness })); 
                 showApp(); showToast('Welcome!', 'success'); 
-                
-                // TRIGGER PERMISSION REQUEST ON LOGIN
-                if ("Notification" in window && Notification.permission !== "granted") {
-                    Notification.requestPermission();
-                }
             } 
             else { showToast('Invalid Credentials', 'error'); }
             
@@ -924,15 +924,21 @@
             document.getElementById('login-screen').style.display = 'none'; 
             document.getElementById('app-container').classList.remove('hidden');
             
-            // TRIGGER PERMISSION REQUEST ON RELOAD (If logged in)
-            if ("Notification" in window && Notification.permission !== "granted") {
-                Notification.requestPermission();
-            }
-
             document.getElementById('current-user-name').textContent = currentUser.full_name; document.getElementById('current-user-territory').textContent = currentUser.territory;
             document.getElementById('sidebar-business-label').textContent = currentBusiness; document.getElementById('dash-business-title').textContent = currentBusiness; document.getElementById('entry-business-title').textContent = currentBusiness; document.getElementById('officer-business-title').textContent = currentBusiness; document.getElementById('mgmt-business-title').textContent = currentBusiness;
             document.getElementById('officer-portal-name').textContent = currentUser.full_name; document.getElementById('officer-portal-territory').textContent = currentUser.territory;
             
+            // Add notification trigger button in header if permission is not granted
+            if (Notification.permission !== "granted") {
+                const notifyBtn = document.createElement('button');
+                notifyBtn.innerHTML = '<i class="fas fa-bell-slash"></i>';
+                notifyBtn.className = 'close-sidebar-btn';
+                notifyBtn.style.right = '45px'; // Position next to close button
+                notifyBtn.style.color = 'var(--warning)';
+                notifyBtn.onclick = () => Notification.requestPermission().then(p => { if(p==='granted') showToast('Notifications Enabled!', 'success'); });
+                document.querySelector('.sidebar-header').appendChild(notifyBtn);
+            }
+
             const nav = document.getElementById('nav-menu'); nav.innerHTML = '';
             const items = currentRole === 'admin' ? [{id:'admin-dashboard',i:'fa-chart-line',t:'Dashboard'}, {id:'data-entry',i:'fa-database',t:'Data Entry'}, {id:'user-management',i:'fa-users-cog',t:'User Management'}] : currentRole.includes('admin') ? [{id:'data-entry',i:'fa-database',t:'Data Entry'}] : [{id:'user-panel',i:'fa-tasks',t:'My Customers'}];
             items.forEach(x => { const li = document.createElement('li'); li.className = 'nav-item'; li.innerHTML = `<a href="#" class="nav-link" onclick="navigateTo('${x.id}')"><i class="fas ${x.i}"></i> ${x.t}</a>`; nav.appendChild(li); });
