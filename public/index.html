@@ -384,7 +384,7 @@
                 </div>
             </div>
             <div id="user-panel" class="page-content hidden">
-                <div class="officer-header-container"><div><h1>My Customers</h1><p class="officer-header-sub">Portfolio: <strong id="officer-business-title"></strong></p></div><div class="officer-profile-minimal"><div id="officer-portal-name" class="officer-name-display"></div><div class="officer-territory-display"><i class="fas fa-map-marker-alt"></i> <span id="officer-portal-territory"></span></div></div></div>
+                <div class="officer-header-container"><div><h1 style="font-size: 1.6rem;">My Customers</h1><p class="officer-header-sub">Portfolio: <strong id="officer-business-title"></strong></p></div><div class="officer-profile-minimal"><div id="officer-portal-name" class="officer-name-display"></div><div class="officer-territory-display"><i class="fas fa-map-marker-alt"></i> <span id="officer-portal-territory"></span></div></div></div>
                 <div style="margin-bottom: 24px;"><div style="display: inline-flex; background: white; padding: 4px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);"><button class="officer-sale-type-btn active" data-type="Resale"><i class="fas fa-redo"></i> Resale</button><button class="officer-sale-type-btn" data-type="New"><i class="fas fa-plus-circle"></i> New Sale</button></div></div>
                 <div id="my-stats-strip" class="officer-stats-strip"></div>
                 <div class="officer-toolbar"><div class="filter-pill"><i class="far fa-calendar-alt"></i><input type="month" id="my-filter-month"></div><div class="filter-pill"><i class="fas fa-check-double"></i><select id="my-filter-visit"><option value="">All Status</option><option value="Yes">Completed</option><option value="No">Pending</option></select></div><div class="filter-pill"><i class="fas fa-filter"></i><select id="my-filter-lead"><option value="">All Leads</option><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div></div>
@@ -1481,7 +1481,12 @@
                     await apiCall('/customers', 'POST', { ...c, officer_id: offId, officer_name: offName });
                     
                     showToast('Officer Assigned', 'success');
-                    if(officer) input.classList.remove('unassigned'); else input.classList.add('unassigned');
+                    if(officer) {
+                        input.classList.remove('unassigned');
+                        triggerNotification(officer.full_name, c); 
+                    } else {
+                        input.classList.add('unassigned');
+                    }
                     
                     // Refresh data
                     loadCustomersData();
@@ -1645,6 +1650,7 @@
                     await apiCall('/customers', 'POST', { ...c, officer_id: newOfficerId, officer_name: newOfficerName });
                     showToast('Forwarded', 'success'); 
                     closeForwardModal(); 
+                    triggerNotification(newOfficerName, c);
                     loadMyCustomers();
                 } catch(e) {
                     showToast('DB Error: ' + e.message, 'error');
@@ -2112,6 +2118,46 @@
                 }
                 e.target.value = val;
             });
+        }
+        
+        function triggerNotification(officerName, customer) {
+            const msg = `🔔 *New Lead Assigned*\n\n👤 Customer: ${customer.name}\n📞 Phone: ${customer.customer_no}\n📍 Location: ${customer.address || 'N/A'}\n🚜 Model: ${customer.model}\n\nPlease follow up immediately.`;
+            
+            // Create a temporary modal for choice
+            const modalId = 'notify-modal-' + Date.now();
+            const modalHtml = `
+                <div id="${modalId}" class="modal-overlay" style="display:flex; z-index:3500;">
+                    <div class="modal-box" style="max-width:350px; text-align:center; padding-top:30px;">
+                        <div style="width:60px; height:60px; background:#DCFCE7; color:#10B981; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; font-size:1.5rem;">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h3 style="margin-bottom:8px; font-size:1.1rem;">Notify ${officerName}?</h3>
+                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Send details to officer's mobile.</p>
+                        
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" class="btn" style="background:#25D366; color:white; border:none; justify-content:center;" onclick="document.getElementById('${modalId}').remove()">
+                                <i class="fab fa-whatsapp"></i> Send via WhatsApp
+                            </a>
+                            ${navigator.share ? `<button class="btn btn-secondary" onclick="shareNative('${encodeURIComponent(JSON.stringify(customer))}', '${officerName}', '${modalId}')"><i class="fas fa-share-alt"></i> Native Share</button>` : ''}
+                            <button class="btn btn-secondary" onclick="document.getElementById('${modalId}').remove()">Skip</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        // Native share helper wrapper to handle the async/onclick scope issue
+        window.shareNative = async (custString, offName, mId) => {
+            const c = JSON.parse(decodeURIComponent(custString));
+            const msg = `New Lead Assigned:\nCustomer: ${c.name}\nPhone: ${c.customer_no}\nAddress: ${c.address}\nModel: ${c.model}`;
+            try {
+                await navigator.share({
+                    title: 'New Lead Assignment',
+                    text: msg
+                });
+            } catch(err) { console.log(err); }
+            document.getElementById(mId).remove();
         }
     </script>
 </body>
