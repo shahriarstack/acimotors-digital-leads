@@ -906,6 +906,11 @@
                 currentUser = user; currentRole = user.role; 
                 localStorage.setItem('currentSession', JSON.stringify({ user, business: currentBusiness })); 
                 showApp(); showToast('Welcome!', 'success'); 
+                
+                // TRIGGER PERMISSION REQUEST ON LOGIN
+                if ("Notification" in window && Notification.permission !== "granted") {
+                    Notification.requestPermission();
+                }
             } 
             else { showToast('Invalid Credentials', 'error'); }
             
@@ -919,6 +924,11 @@
             document.getElementById('login-screen').style.display = 'none'; 
             document.getElementById('app-container').classList.remove('hidden');
             
+            // TRIGGER PERMISSION REQUEST ON RELOAD (If logged in)
+            if ("Notification" in window && Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+
             document.getElementById('current-user-name').textContent = currentUser.full_name; document.getElementById('current-user-territory').textContent = currentUser.territory;
             document.getElementById('sidebar-business-label').textContent = currentBusiness; document.getElementById('dash-business-title').textContent = currentBusiness; document.getElementById('entry-business-title').textContent = currentBusiness; document.getElementById('officer-business-title').textContent = currentBusiness; document.getElementById('mgmt-business-title').textContent = currentBusiness;
             document.getElementById('officer-portal-name').textContent = currentUser.full_name; document.getElementById('officer-portal-territory').textContent = currentUser.territory;
@@ -2121,47 +2131,69 @@
         }
         
         function triggerNotification(officerName, customer) {
-            // Check if the browser supports notifications
+            // --- 1. Audio Alert (Robust Fallback) ---
+            try {
+                const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+                audio.volume = 1.0;
+                audio.play().catch(e => console.warn("Audio autoplay blocked by browser policy"));
+            } catch (e) { console.error(e); }
+
+            // --- 2. Tab Title Flashing (Visual Fallback) ---
+            let oldTitle = document.title;
+            let blinkCount = 0;
+            const blinkInterval = setInterval(() => {
+                document.title = document.title === "🔔 New Lead Assigned!" ? oldTitle : "🔔 New Lead Assigned!";
+                blinkCount++;
+                if (blinkCount > 20) { 
+                    clearInterval(blinkInterval);
+                    document.title = oldTitle;
+                }
+            }, 1000);
+
+            // --- 3. Native Browser Notification (Works when Minimized) ---
             if (!("Notification" in window)) {
-                showToast("This browser does not support desktop notifications", "error");
+                showToast("Desktop notifications not supported on this device", "error");
                 return;
             }
 
-            const title = `New Lead: ${customer.name}`;
+            const title = `New Assignment: ${customer.name}`;
             const options = {
-                body: `Assigned to ${officerName}\nPhone: ${customer.customer_no}\nModel: ${customer.model}`,
-                icon: 'https://i.ibb.co.com/G4Cpm6YX/aci-group-logo-png-seeklogo-342185.png', // Using the app icon
-                badge: 'https://i.ibb.co.com/G4Cpm6YX/aci-group-logo-png-seeklogo-342185.png', // Small icon for Android status bar
-                tag: 'lead-assignment', // Replaces older notifications with same tag to prevent spam
-                requireInteraction: true, // KEY FEATURE: Keeps notification visible until user interacts, even if browser is minimized
-                vibrate: [200, 100, 200], // Vibration pattern for mobile (Vibrate, Pause, Vibrate)
-                timestamp: Date.now() // Actual time of assignment
+                body: `Officer: ${officerName}\nPhone: ${customer.customer_no}\nModel: ${customer.model}`,
+                icon: 'https://i.ibb.co.com/G4Cpm6YX/aci-group-logo-png-seeklogo-342185.png', 
+                badge: 'https://i.ibb.co.com/G4Cpm6YX/aci-group-logo-png-seeklogo-342185.png',
+                tag: 'lead-' + Date.now(), // Unique tag ensures it always pops up new
+                requireInteraction: true,  // CRITICAL: Keeps it on screen until clicked
+                renotify: true,            // CRITICAL: Forces sound/vibration even if one exists
+                silent: false
             };
 
-            // Request permission if not already granted
-            if (Notification.permission === "granted") {
-                // Use ServiceWorker registration if available for better mobile background handling
-                if (navigator.serviceWorker && navigator.serviceWorker.ready) {
-                    navigator.serviceWorker.ready.then(function(registration) {
-                        registration.showNotification(title, options);
-                    }).catch(function() {
-                        new Notification(title, options); // Fallback
-                    });
-                } else {
-                    new Notification(title, options);
+            const fire = () => {
+                try {
+                    const n = new Notification(title, options);
+                    n.onclick = function(event) {
+                        event.preventDefault(); // Prevent browser from focusing tab if it acts weird
+                        window.focus();         // Bring browser to front
+                        this.close(); 
+                        clearInterval(blinkInterval);
+                        document.title = oldTitle;
+                    };
+                    showToast(`Notification sent to ${officerName}`, "success");
+                } catch(e) {
+                    console.error("Notification Error:", e);
                 }
-                showToast(`Notification sent to ${officerName}`, "success");
+            };
+
+            if (Notification.permission === "granted") {
+                fire();
             } else if (Notification.permission !== "denied") {
                 Notification.requestPermission().then(function (permission) {
                     if (permission === "granted") {
-                        new Notification(title, options);
-                        showToast(`Notification sent to ${officerName}`, "success");
-                    } else {
-                        showToast("Notification permission denied", "warning");
+                        fire();
                     }
                 });
             } else {
-                showToast("Notifications are blocked in browser settings", "error");
+                // If blocked, fallback to alert so they definitely see it when they come back
+                showToast("⚠️ Notifications blocked! Enable them to see alerts when minimized.", "warning");
             }
         }
     </script>
