@@ -15,6 +15,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         /* CSS REMAINS EXACTLY THE SAME AS PREVIOUS VERSIONS */
         :root { --primary: #10B981; --primary-dark: #059669; --secondary: #34D399; --danger: #EF4444; --warning: #F59E0B; --info: #3B82F6; --accent: #8B5CF6; --text-main: #111827; --text-muted: #6B7280; --bg-body: #F3F4F6; --bg-panel: #ffffff; --radius-lg: 24px; --radius-md: 16px; --radius-sm: 10px; --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
@@ -193,6 +194,11 @@
         .dash-tab-btn:hover { color: var(--primary); }
         .dash-tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
 
+        /* [NEW STYLES FOR TABLE FILTERS] */
+        .table-filter-input { width: 100%; min-width: 40px; padding: 4px 6px; border: 1px solid transparent; border-bottom: 1px dashed #E5E7EB; background: rgba(255,255,255,0.5); font-size: 0.7rem; font-weight: 500; color: var(--text-main); transition: var(--transition); border-radius: 4px; margin-top: 6px; box-sizing: border-box; }
+        .table-filter-input:focus { outline: none; border-color: var(--primary); background: #F9FAFB; border-bottom-style: solid; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.05); }
+        .table-filter-input::placeholder { color: #D1D5DB; font-weight: 400; }
+
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); z-index: 1002; box-shadow: 2px 0 30px rgba(0,0,0,0.15); }
             .sidebar.open { transform: translateX(0); }
@@ -273,9 +279,10 @@
                 <div class="page-header"><h1>Dashboard</h1><p>Business Unit: <strong style="color:var(--primary);" id="dash-business-title"></strong></p></div>
                 
                 <!-- Dashboard Tabs -->
-                <div style="display: flex; gap: 20px; margin-bottom: 24px; border-bottom: 1px solid #E5E7EB;">
+                <div style="display: flex; gap: 20px; margin-bottom: 24px; border-bottom: 1px solid #E5E7EB; overflow-x: auto;">
                     <button id="tab-btn-overview" class="dash-tab-btn active" onclick="switchDashTab('overview')">Overview</button>
                     <button id="tab-btn-visited" class="dash-tab-btn" onclick="switchDashTab('visited')">Visited Report</button>
+                    <button id="tab-btn-summary" class="dash-tab-btn" onclick="switchDashTab('summary')" style="color: var(--danger);"><i class="fas fa-camera"></i> Snapshot Summary</button>
                 </div>
 
                 <!-- Overview Section -->
@@ -297,7 +304,27 @@
                         <div class="card"><h3 class="card-title" style="margin-bottom: 16px;">Top Pending Officers</h3><div class="chart-container"><canvas id="topOfficersChart"></canvas></div></div>
                         <div class="card"><h3 class="card-title" style="margin-bottom: 16px;">Lead Status</h3><div class="chart-container"><canvas id="leadChart"></canvas></div></div>
                     </div>
-                    <div class="card"><div class="card-header"><h3 class="card-title">Officer Performance</h3></div><div class="table-wrapper"><table id="officer-performance-table"><thead><tr><th>Territory</th><th>Officer</th><th>Assigned</th><th>Visited</th><th>Pending</th><th>Hot</th><th>Booked</th><th>Delivered</th><th>%</th></tr></thead><tbody id="officer-performance-body"></tbody></table></div></div>
+                    <div class="card">
+                        <div class="card-header"><h3 class="card-title">Officer Performance</h3></div>
+                        <div class="table-wrapper">
+                            <table id="officer-performance-table">
+                                <thead>
+                                    <tr>
+                                        <th>Territory<input type="text" class="table-filter-input" data-target="0" placeholder="Filter..."></th>
+                                        <th>Officer<input type="text" class="table-filter-input" data-target="1" placeholder="Filter..."></th>
+                                        <th>Assigned<input type="text" class="table-filter-input" data-target="2" placeholder=">5, <10..." title="Use > or < for ranges"></th>
+                                        <th>Visited<input type="text" class="table-filter-input" data-target="3" placeholder="Search..."></th>
+                                        <th>Pending<input type="text" class="table-filter-input" data-target="4" placeholder="Search..."></th>
+                                        <th>Hot<input type="text" class="table-filter-input" data-target="5" placeholder="Search..."></th>
+                                        <th>Booked<input type="text" class="table-filter-input" data-target="6" placeholder="Search..."></th>
+                                        <th>Delivered<input type="text" class="table-filter-input" data-target="7" placeholder="Search..."></th>
+                                        <th>%<input type="text" class="table-filter-input" data-target="8" placeholder=">50..."></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="officer-performance-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Visited Report Section -->
@@ -351,6 +378,43 @@
                                     </tr>
                                 </thead>
                                 <tbody id="visited-report-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Report Section -->
+                <div id="dashboard-summary-report" class="hidden">
+                    <div class="card" id="snapshot-capture-area" style="padding: 0; overflow: hidden; border: 2px solid #E5E7EB; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); max-width: 1000px; margin: 0 auto;">
+                        <div style="padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; background: #F9FAFB; border-bottom: 1px solid #E5E7EB; flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="background: var(--danger); color: white; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div>
+                                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); font-weight: 800;">Pending Follow-up Summary</h3>
+                                    <p style="margin: 0; font-size: 0.75rem; color: var(--text-muted);">For <strong id="summary-bu-text" style="color:var(--primary);"></strong> | <span id="summary-date-text"></span></p>
+                                </div>
+                            </div>
+                            <div class="filters" style="margin: 0; display: flex; align-items: center; gap: 10px;">
+                                 <input type="month" id="summary-filter-month" class="form-control" style="padding: 4px 10px; font-size: 0.8rem; height: auto;" onchange="loadSummaryReport()">
+                                 <button class="btn btn-primary btn-sm" style="padding: 4px 10px;" onclick="downloadSnapshot()"><i class="fas fa-download"></i> Save Image</button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper" style="border-radius: 0; border: none; margin: 0;">
+                            <table style="width: 100%; border-collapse: collapse; text-align: center; min-width: 700px;">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left; background: #F3F4F6; padding: 4px 8px;">Territory</th>
+                                        <th style="text-align: left; background: #F3F4F6; padding: 4px 8px;">Officer Name</th>
+                                        <th style="background: #EFF6FF; color: var(--info); border-left: 2px solid white; text-align: center; padding: 4px 8px;">New<br><span style="font-size: 0.65rem; color: var(--text-muted); text-transform: none;">Assigned</span></th>
+                                        <th style="background: #FEF2F2; color: var(--danger); text-align: center; padding: 4px 8px;">New<br><span style="font-size: 0.65rem; color: var(--danger); text-transform: none; font-weight: 800;">Pending</span></th>
+                                        <th style="background: #F5F3FF; color: var(--accent); border-left: 2px solid white; text-align: center; padding: 4px 8px;">Resale<br><span style="font-size: 0.65rem; color: var(--text-muted); text-transform: none;">Assigned</span></th>
+                                        <th style="background: #FFFBEB; color: #B45309; text-align: center; padding: 4px 8px;">Resale<br><span style="font-size: 0.65rem; color: #B45309; text-transform: none; font-weight: 800;">Pending</span></th>
+                                        <th style="background: #111827; color: white; border-left: 2px solid white; text-align: center; padding: 4px 8px;">Total<br><span style="font-size: 0.65rem; color: #9CA3AF; text-transform: none;">Pending</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="summary-report-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -474,7 +538,7 @@
         </div>
     </div>
 
-    <div id="customer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Add Customer</h3><button class="modal-close" onclick="closeCustomerModal()">×</button></div><form id="customer-form"><input type="hidden" id="customer-id"><div class="form-group"><label>Customer Number *</label><input type="text" id="customer-no" class="form-control" placeholder="01xxxxxxxxx" maxlength="11" inputmode="numeric" required></div><div class="form-group"><label>Name *</label><input type="text" id="customer-name" class="form-control" required></div><div class="form-group"><label>Date *</label><input type="date" id="customer-date" class="form-control" required></div><div class="form-group"><label>Address</label><input type="text" id="customer-address" class="form-control"></div><div class="form-group"><label>Model</label><input type="text" id="customer-model" class="form-control" required></div><div class="form-group"><label>Sale Type *</label><select id="customer-sale-type" class="form-select"><option value="Resale">Resale</option><option value="New">New Sale</option></select></div><div class="form-group"><label>Officer</label><select id="customer-officer" class="form-select"></select></div><button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Save</button></form></div></div>
+    <div id="customer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Add Customer</h3><button class="modal-close" onclick="closeCustomerModal()">×</button></div><form id="customer-form"><input type="hidden" id="customer-id"><div class="form-group"><label>Customer Number *</label><input type="text" id="customer-no" class="form-control" placeholder="+XX... or 01..." maxlength="16" inputmode="tel" required></div><div class="form-group"><label>Name *</label><input type="text" id="customer-name" class="form-control" required></div><div class="form-group"><label>Date *</label><input type="date" id="customer-date" class="form-control" required></div><div class="form-group"><label>Address</label><input type="text" id="customer-address" class="form-control"></div><div class="form-group"><label>Model</label><input type="text" id="customer-model" class="form-control" required></div><div class="form-group"><label>Sale Type *</label><select id="customer-sale-type" class="form-select"><option value="Resale">Resale</option><option value="New">New Sale</option></select></div><div class="form-group"><label>Officer</label><select id="customer-officer" class="form-select"></select></div><button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Save</button></form></div></div>
     <div id="visit-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Update Visit</h3><button class="modal-close" onclick="closeVisitModal()">×</button></div><form id="visit-form"><input type="hidden" id="visit-customer-id"><div class="form-group"><label>Completed?</label><select id="visit-completed" class="form-select"><option value="Yes">Yes</option><option value="No">No</option></select></div><div class="form-group"><label>Rating</label><select id="visit-rating" class="form-select"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div><div class="form-group"><label>Notes *</label><textarea id="visit-notes" class="form-control" required></textarea></div><button type="submit" class="btn btn-success" style="width:100%;">Update</button></form></div></div>
     <div id="officer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Create Officer</h3><button class="modal-close" onclick="closeOfficerModal()">×</button></div><form id="officer-form"><input type="hidden" id="officer-id"><div class="form-group"><label>Name *</label><input type="text" id="officer-name" class="form-control" required></div><div class="form-group"><label>Territory/Area</label><input type="text" id="officer-territory" class="form-control"></div><div class="form-group"><label>Employee ID (Password)</label><input type="text" id="officer-form-password" class="form-control" required></div><button type="submit" class="btn btn-primary" style="width:100%;">Save</button></form></div></div>
     <div id="bulk-import-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Bulk Import Customers</h3><button class="modal-close" onclick="closeBulkImportModal()">×</button></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Select CSV file</p><a href="#" id="download-template-btn" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 500;">Download Template</a></div><p style="margin-bottom: 16px; color: var(--text-muted); font-size: 0.8rem; background: #F9FAFB; padding: 8px; border-radius: 6px;">Columns: customer_no, name, date, address, model, sale_type (Resale/New), officer_id (employee_id)</p><input type="file" id="csv-file" accept=".csv" class="form-control" style="margin-bottom: 16px;"><div style="display: flex; gap: 12px;"><button id="process-csv-btn" class="btn btn-primary" style="flex: 1;">Import</button><button class="btn btn-secondary" onclick="closeBulkImportModal()">Cancel</button></div></div></div>
@@ -966,15 +1030,116 @@
             document.getElementById(`tab-btn-${tabName}`).classList.add('active');
             
             // Update views
+            document.getElementById('dashboard-overview').classList.add('hidden');
+            document.getElementById('dashboard-visited-report').classList.add('hidden');
+            document.getElementById('dashboard-summary-report').classList.add('hidden');
+
             if(tabName === 'overview') {
                 document.getElementById('dashboard-overview').classList.remove('hidden');
-                document.getElementById('dashboard-visited-report').classList.add('hidden');
                 loadDashboardData(); // Refresh stats
-            } else {
-                document.getElementById('dashboard-overview').classList.add('hidden');
+            } else if (tabName === 'visited') {
                 document.getElementById('dashboard-visited-report').classList.remove('hidden');
                 loadVisitedReport(); // Load table
+            } else if (tabName === 'summary') {
+                document.getElementById('dashboard-summary-report').classList.remove('hidden');
+                loadSummaryReport(); // Load Snapshot Report
             }
+        }
+
+        async function loadSummaryReport() {
+            showLoader();
+            try {
+                document.getElementById('summary-bu-text').textContent = currentBusiness;
+                document.getElementById('summary-date-text').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+                let { data: customers } = await fetchCustomers();
+                const { data: officers } = await fetchOfficers();
+
+                const monthVal = document.getElementById('summary-filter-month').value;
+                if (monthVal) {
+                    customers = customers.filter(c => {
+                        if (!c.date) return false;
+                        if (String(c.date).startsWith(monthVal)) return true;
+                        
+                        let d;
+                        if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
+                            d = new Date((c.date - 25569) * 86400 * 1000);
+                        } else {
+                            const str = String(c.date);
+                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                        }
+                        if (isNaN(d.getTime())) return false;
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        return `${y}-${m}` === monthVal;
+                    });
+                }
+
+                const validOfficers = officers.filter(o => o.role === 'officer' && (!o.business || o.business === currentBusiness));
+
+                let summaryData = validOfficers.map(off => {
+                    const myCust = customers.filter(c => c.officer_id === off.id);
+                    const newSales = myCust.filter(c => c.sale_type === 'New');
+                    const resale = myCust.filter(c => c.sale_type === 'Resale');
+
+                    const newAssigned = newSales.length;
+                    const newPending = newSales.filter(c => c.visit_completed !== 'Yes').length;
+
+                    const resaleAssigned = resale.length;
+                    const resalePending = resale.filter(c => c.visit_completed !== 'Yes').length;
+
+                    const totalPending = newPending + resalePending;
+
+                    return { territory: off.territory, name: off.full_name, newAssigned, newPending, resaleAssigned, resalePending, totalPending };
+                });
+
+                // Sort purely by total pending (Highest pending at the top)
+                summaryData.sort((a, b) => b.totalPending - a.totalPending);
+
+                document.getElementById('summary-report-body').innerHTML = summaryData.map((row, index) => {
+                    const bgRow = index % 2 === 0 ? 'background: #ffffff;' : 'background: #FAFAFA;';
+                    
+                    // Emphasize the bad metrics (Pending)
+                    const dangerText = row.totalPending > 0 ? 'font-weight: 800; color: white; background: var(--danger);' : 'color: var(--text-muted); background: transparent;';
+                    const pendingNewStyle = row.newPending > 0 ? 'font-weight: 800; color: var(--danger); background: #FEF2F2;' : 'color: #9CA3AF;';
+                    const pendingResaleStyle = row.resalePending > 0 ? 'font-weight: 800; color: #B45309; background: #FFFBEB;' : 'color: #9CA3AF;';
+                    
+                    return `<tr style="${bgRow} border-bottom: 1px solid #F3F4F6;">
+                        <td style="text-align: left; font-size: 0.75rem; color: var(--text-muted); padding: 6px 12px;"><i class="fas fa-map-marker-alt" style="opacity: 0.5; margin-right: 4px; color: var(--primary);"></i>${row.territory}</td>
+                        <td style="text-align: left; font-weight: 700; color: var(--text-main); font-size: 0.85rem; padding: 6px 12px;">${row.name}</td>
+                        <td style="border-left: 2px solid #F3F4F6; padding: 6px 12px; font-size: 0.85rem;">${row.newAssigned}</td>
+                        <td style="${pendingNewStyle} padding: 6px 12px; font-size: 0.85rem;">${row.newPending}</td>
+                        <td style="border-left: 2px solid #F3F4F6; padding: 6px 12px; font-size: 0.85rem;">${row.resaleAssigned}</td>
+                        <td style="${pendingResaleStyle} padding: 6px 12px; font-size: 0.85rem;">${row.resalePending}</td>
+                        <td style="border-left: 2px solid #F3F4F6; ${dangerText} font-size: 0.95rem; padding: 6px 12px;">${row.totalPending}</td>
+                    </tr>`;
+                }).join('');
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function downloadSnapshot() {
+            showToast('Capturing Image...', 'info');
+            const element = document.getElementById('snapshot-capture-area');
+            
+            // Temporarily hide filters for a clean screenshot
+            const filtersDiv = element.querySelector('.filters');
+            const prevDisplay = filtersDiv.style.display;
+            filtersDiv.style.display = 'none';
+
+            html2canvas(element, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Pending_Summary_${currentBusiness.replace(/\s/g,'_')}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                filtersDiv.style.display = prevDisplay; // Restore filters
+                showToast('Image Downloaded', 'success');
+            }).catch(err => {
+                console.error('Error capturing image:', err);
+                filtersDiv.style.display = prevDisplay;
+                showToast('Failed to download image', 'error');
+            });
         }
 
         async function loadVisitedReport() {
@@ -1218,9 +1383,53 @@
                     }, 
                     options:{maintainAspectRatio:false} 
                 });
+                
+                // Apply active filters on re-render
+                applyPerformanceFilters();
             } finally {
                 hideLoader();
             }
+        }
+
+        // --- NEW: PERFORMANCE TABLE FILTER LOGIC ---
+        function applyPerformanceFilters() {
+            const inputs = document.querySelectorAll('.table-filter-input');
+            const rows = document.querySelectorAll('#officer-performance-body tr');
+            
+            if(rows.length === 1 && rows[0].querySelector('.empty-state')) return;
+
+            rows.forEach(row => {
+                let showRow = true;
+                inputs.forEach(input => {
+                    const colIndex = parseInt(input.getAttribute('data-target'));
+                    const filterValue = input.value.trim().toLowerCase();
+                    
+                    if (filterValue) {
+                        const cell = row.cells[colIndex];
+                        if (cell) {
+                            const cellText = cell.textContent.trim().toLowerCase();
+                            
+                            // Creative evaluation for numbers (>, <, =)
+                            if (filterValue.startsWith('>')) {
+                                const val = parseFloat(filterValue.substring(1));
+                                const cellVal = parseFloat(cellText.replace(/%/g, ''));
+                                if (isNaN(cellVal) || cellVal <= val) showRow = false;
+                            } else if (filterValue.startsWith('<')) {
+                                const val = parseFloat(filterValue.substring(1));
+                                const cellVal = parseFloat(cellText.replace(/%/g, ''));
+                                if (isNaN(cellVal) || cellVal >= val) showRow = false;
+                            } else if (filterValue.startsWith('=')) {
+                                const val = parseFloat(filterValue.substring(1));
+                                const cellVal = parseFloat(cellText.replace(/%/g, ''));
+                                if (isNaN(cellVal) || cellVal !== val) showRow = false;
+                            } else if (!cellText.includes(filterValue)) {
+                                showRow = false;
+                            }
+                        }
+                    }
+                });
+                row.style.display = showRow ? '' : 'none';
+            });
         }
 
         // --- DATA ENTRY TABLE ---
@@ -1515,7 +1724,14 @@
         };
 
         // Helpers
-        function getPhonePill(n) { return `<a href="tel:${n}" class="phone-pill"><i class="fas fa-phone"></i> ${n}</a>`; }
+        function getPhonePill(n) { 
+            if (n && n.startsWith('+')) {
+                // WhatsApp Link for Foreign Numbers
+                return `<a href="https://wa.me/${n.replace('+', '')}" target="_blank" class="phone-pill" style="background: linear-gradient(135deg, #25D366, #128C7E);"><i class="fab fa-whatsapp"></i> ${n}</a>`;
+            }
+            // Standard Call Link for Local Numbers
+            return `<a href="tel:${n}" class="phone-pill"><i class="fas fa-phone"></i> ${n}</a>`; 
+        }
         function getSaleTypeBadge(t) { return `<span class="badge" style="background:${t==='Resale'?'#EBF3FF':'#F3E8FF'}">${t}</span>`; }
         function getVisitBadge(s) { return s==='Yes'?`<span class="badge badge-yes">Yes</span>`:`<span class="badge badge-no">No</span>`; }
         function getLeadBadge(t) { return t==='Hot'?`<span class="badge badge-hot">Hot</span>`:t==='Warm'?`<span class="badge badge-warm">Warm</span>`:t==='Cold'?`<span class="badge badge-cold">Cold</span>`:'-'; }
@@ -1529,20 +1745,36 @@
             e.preventDefault(); 
             
             const phoneInput = document.getElementById('customer-no');
-            let phoneNo = phoneInput.value.replace(/\D/g, ''); 
+            let phoneNo = phoneInput.value.trim(); 
+            const isInternational = phoneNo.startsWith('+');
 
-            if (phoneNo.length === 10 && /^1[3-9]/.test(phoneNo)) {
-                phoneNo = '0' + phoneNo;
-                phoneInput.value = phoneNo; 
-                showToast('Auto-corrected number format (added leading 0)', 'info'); 
-            }
+            if (!isInternational) {
+                phoneNo = phoneNo.replace(/\D/g, ''); 
 
-            if (!/^01[3-9]\d{8}$/.test(phoneNo)) {
-                showToast('Invalid BD Phone Number! Must be 11 digits (01...) or 10 digits (1...).', 'error');
-                phoneInput.focus();
-                phoneInput.style.animation = 'shake 0.3s';
-                setTimeout(()=> phoneInput.style.animation='', 300);
-                return;
+                if (phoneNo.length === 10 && /^1[3-9]/.test(phoneNo)) {
+                    phoneNo = '0' + phoneNo;
+                    phoneInput.value = phoneNo; 
+                    showToast('Auto-corrected number format (added leading 0)', 'info'); 
+                }
+
+                if (!/^01[3-9]\d{8}$/.test(phoneNo)) {
+                    showToast('Invalid BD Phone Number! Must be 11 digits (01...) or 10 digits (1...).', 'error');
+                    phoneInput.focus();
+                    phoneInput.style.animation = 'shake 0.3s';
+                    setTimeout(()=> phoneInput.style.animation='', 300);
+                    return;
+                }
+            } else {
+                const cleanIntl = phoneNo.replace(/[^\d+]/g, ''); // Keep '+' and digits
+                if (cleanIntl.length < 8 || cleanIntl.length > 16) {
+                    showToast('Invalid International Number! Must be between 7 and 15 digits.', 'error');
+                    phoneInput.focus();
+                    phoneInput.style.animation = 'shake 0.3s';
+                    setTimeout(()=> phoneInput.style.animation='', 300);
+                    return;
+                }
+                phoneNo = cleanIntl;
+                phoneInput.value = phoneNo;
             }
 
             showLoader();
@@ -1988,7 +2220,7 @@
                     
                     for (let i = 1; i < lines.length; i++) {
                         const line = lines[i].trim(); if (!line) continue;
-                        const cols = line.split(",").map(c => c.trim().replace(/^"|"$/g, ''));
+                        const cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.trim().replace(/^"|"$/g, ''));
                         
                         if (type === 'customer' && cols.length >= 6) {
                             const empId = cols[6] || ""; 
@@ -2084,6 +2316,11 @@
             ['my-filter-visit','my-filter-lead','my-filter-month'].forEach(id => document.getElementById(id).addEventListener('change', loadMyCustomers));
             document.getElementById('dashboard-filter-month').addEventListener('change', loadDashboardData); 
             
+            // Attach listener for Officer Performance Table Filters
+            document.querySelectorAll('.table-filter-input').forEach(input => {
+                input.addEventListener('input', applyPerformanceFilters);
+            });
+
             // New Listeners for Visited Report
             ['report-filter-month','report-filter-sale-type','report-filter-officer','report-filter-lead'].forEach(id => document.getElementById(id).addEventListener('change', loadVisitedReport));
 
@@ -2107,24 +2344,53 @@
 
             const phoneInput = document.getElementById('customer-no');
             phoneInput.addEventListener('input', (e) => {
-                let val = e.target.value.replace(/\D/g, '');
+                let val = e.target.value;
+                const isInternational = val.startsWith('+');
                 
-                const isValidStandard = val.length === 11 && /^01[3-9]/.test(val);
-                const isValidShort = val.length === 10 && /^1[3-9]/.test(val);
+                let isValid = false;
+                let isWarning = false;
+                let isError = false;
 
-                if (isValidStandard || isValidShort) {
+                if (isInternational) {
+                    const digitsOnly = val.replace(/[^\d]/g, '');
+                    if (digitsOnly.length >= 7 && digitsOnly.length <= 15) {
+                        isValid = true;
+                    } else if (digitsOnly.length > 15) {
+                        isError = true;
+                    } else {
+                        isWarning = true;
+                    }
+                    e.target.value = '+' + digitsOnly;
+                } else {
+                    let digitsOnly = val.replace(/\D/g, '');
+                    const isValidStandard = digitsOnly.length === 11 && /^01[3-9]/.test(digitsOnly);
+                    const isValidShort = digitsOnly.length === 10 && /^1[3-9]/.test(digitsOnly);
+
+                    if (isValidStandard || isValidShort) {
+                        isValid = true;
+                    } else {
+                        const isValidPrefix = /^01/.test(digitsOnly) || /^1/.test(digitsOnly) || digitsOnly === '0';
+                        const isTooLong = digitsOnly.length > 11;
+
+                        if (digitsOnly.length > 0 && (!isValidPrefix || isTooLong)) {
+                             isError = true;
+                        } else if (digitsOnly.length > 0) {
+                             isWarning = true;
+                        }
+                    }
+                    e.target.value = digitsOnly;
+                }
+
+                if (isValid) {
                     e.target.style.borderColor = 'var(--secondary)';
                     e.target.style.boxShadow = '0 0 0 3px rgba(52, 199, 89, 0.1)';
                     e.target.style.background = 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 512 512\' fill=\'%2334C759\'%3E%3Cpath d=\'M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z\'/%3E%3C/svg%3E") no-repeat right 10px center/15px, white';
                 } else {
                     e.target.style.background = 'white';
-                    
-                    const isValidPrefix = /^01/.test(val) || /^1/.test(val) || val === '0';
-                    const isTooLong = val.length > 11;
-
-                    if (val.length > 0 && (!isValidPrefix || isTooLong)) {
+                    if (isError) {
                          e.target.style.borderColor = 'var(--danger)'; 
-                    } else if (val.length > 0) {
+                         e.target.style.boxShadow = 'none';
+                    } else if (isWarning) {
                          e.target.style.borderColor = 'var(--warning)'; 
                          e.target.style.boxShadow = 'none';
                     } else {
@@ -2132,7 +2398,6 @@
                          e.target.style.boxShadow = 'none';
                     }
                 }
-                e.target.value = val;
             });
         }
         
