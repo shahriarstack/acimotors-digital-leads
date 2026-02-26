@@ -992,8 +992,8 @@
             document.getElementById('sidebar-business-label').textContent = currentBusiness; document.getElementById('dash-business-title').textContent = currentBusiness; document.getElementById('entry-business-title').textContent = currentBusiness; document.getElementById('officer-business-title').textContent = currentBusiness; document.getElementById('mgmt-business-title').textContent = currentBusiness;
             document.getElementById('officer-portal-name').textContent = currentUser.full_name; document.getElementById('officer-portal-territory').textContent = currentUser.territory;
             
-            // Add notification trigger button in header if permission is not granted
-            if (Notification.permission !== "granted") {
+            // Add notification trigger button in header if permission is not granted (Safe Check for Mobile Devices)
+            if (typeof Notification !== 'undefined' && Notification.permission !== "granted") {
                 const notifyBtn = document.createElement('button');
                 notifyBtn.innerHTML = '<i class="fas fa-bell-slash"></i>';
                 notifyBtn.className = 'close-sidebar-btn';
@@ -1004,10 +1004,14 @@
             }
 
             const nav = document.getElementById('nav-menu'); nav.innerHTML = '';
-            const items = currentRole === 'admin' ? [{id:'admin-dashboard',i:'fa-chart-line',t:'Dashboard'}, {id:'data-entry',i:'fa-database',t:'Data Entry'}, {id:'user-management',i:'fa-users-cog',t:'User Management'}] : currentRole.includes('admin') ? [{id:'data-entry',i:'fa-database',t:'Data Entry'}] : [{id:'user-panel',i:'fa-tasks',t:'My Customers'}];
+            
+            // Bulletproof Role Fallback to prevent crashes if a role is missing
+            const safeRole = currentRole || 'officer';
+            
+            const items = safeRole === 'admin' ? [{id:'admin-dashboard',i:'fa-chart-line',t:'Dashboard'}, {id:'data-entry',i:'fa-database',t:'Data Entry'}, {id:'user-management',i:'fa-users-cog',t:'User Management'}] : safeRole.includes('admin') ? [{id:'data-entry',i:'fa-database',t:'Data Entry'}] : [{id:'user-panel',i:'fa-tasks',t:'My Customers'}];
             items.forEach(x => { const li = document.createElement('li'); li.className = 'nav-item'; li.innerHTML = `<a href="#" class="nav-link" onclick="navigateTo('${x.id}')"><i class="fas ${x.i}"></i> ${x.t}</a>`; nav.appendChild(li); });
             
-            if (currentRole === 'admin') navigateTo('admin-dashboard'); else if (currentRole.includes('admin')) navigateTo('data-entry'); else navigateTo('user-panel');
+            if (safeRole === 'admin') navigateTo('admin-dashboard'); else if (safeRole.includes('admin')) navigateTo('data-entry'); else navigateTo('user-panel');
         }
 
         function navigateTo(id) {
