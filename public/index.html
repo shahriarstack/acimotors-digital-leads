@@ -932,10 +932,6 @@
         }
 
         async function login(type) {
-            // FIX FOR iPHONE: Request permission IMMEDIATELY on click, before any await/delay
-            if ("Notification" in window && Notification.permission === "default") {
-                Notification.requestPermission().catch(err => console.log("Permission request error:", err));
-            }
 
             const btnId = type === 'admin' ? 'admin-login-btn' : 'officer-login-btn';
             const btn = document.getElementById(btnId);
@@ -992,16 +988,6 @@
             document.getElementById('sidebar-business-label').textContent = currentBusiness; document.getElementById('dash-business-title').textContent = currentBusiness; document.getElementById('entry-business-title').textContent = currentBusiness; document.getElementById('officer-business-title').textContent = currentBusiness; document.getElementById('mgmt-business-title').textContent = currentBusiness;
             document.getElementById('officer-portal-name').textContent = currentUser.full_name; document.getElementById('officer-portal-territory').textContent = currentUser.territory;
             
-            // Add notification trigger button in header if permission is not granted (Safe Check for Mobile Devices)
-            if (typeof Notification !== 'undefined' && Notification.permission !== "granted") {
-                const notifyBtn = document.createElement('button');
-                notifyBtn.innerHTML = '<i class="fas fa-bell-slash"></i>';
-                notifyBtn.className = 'close-sidebar-btn';
-                notifyBtn.style.right = '45px'; // Position next to close button
-                notifyBtn.style.color = 'var(--warning)';
-                notifyBtn.onclick = () => Notification.requestPermission().then(p => { if(p==='granted') showToast('Notifications Enabled!', 'success'); });
-                document.querySelector('.sidebar-header').appendChild(notifyBtn);
-            }
 
             const nav = document.getElementById('nav-menu'); nav.innerHTML = '';
             
@@ -1712,7 +1698,6 @@
                     showToast('Officer Assigned', 'success');
                     if(officer) {
                         input.classList.remove('unassigned');
-                        triggerNotification(officer.full_name, c); 
                     } else {
                         input.classList.add('unassigned');
                     }
@@ -1902,7 +1887,6 @@
                     await apiCall('/customers', 'POST', { ...c, officer_id: newOfficerId, officer_name: newOfficerName });
                     showToast('Forwarded', 'success'); 
                     closeForwardModal(); 
-                    triggerNotification(newOfficerName, c);
                     loadMyCustomers();
                 } catch(e) {
                     showToast('DB Error: ' + e.message, 'error');
@@ -2405,72 +2389,6 @@
             });
         }
         
-        function triggerNotification(officerName, customer) {
-            // --- 1. Audio Alert (Robust Fallback) ---
-            try {
-                const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-                audio.volume = 1.0;
-                audio.play().catch(e => console.warn("Audio autoplay blocked by browser policy"));
-            } catch (e) { console.error(e); }
-
-            // --- 2. Tab Title Flashing (Visual Fallback) ---
-            let oldTitle = document.title;
-            let blinkCount = 0;
-            const blinkInterval = setInterval(() => {
-                document.title = document.title === "🔔 New Lead Assigned!" ? oldTitle : "🔔 New Lead Assigned!";
-                blinkCount++;
-                if (blinkCount > 20) { 
-                    clearInterval(blinkInterval);
-                    document.title = oldTitle;
-                }
-            }, 1000);
-
-            // --- 3. Native Browser Notification (Works when Minimized) ---
-            if (!("Notification" in window)) {
-                showToast("Desktop notifications not supported on this device", "error");
-                return;
-            }
-
-            const title = `New Assignment: ${customer.name}`;
-            const options = {
-                body: `Officer: ${officerName}\nPhone: ${customer.customer_no}\nModel: ${customer.model}`,
-                icon: 'https://i.ibb.co.com/G4Cpm6YX/aci-group-logo-png-seeklogo-342185.png', 
-                badge: 'https://i.ibb.co.com/G4Cpm6YX/aci-group-logo-png-seeklogo-342185.png',
-                tag: 'lead-' + Date.now(), // Unique tag ensures it always pops up new
-                requireInteraction: true,  // CRITICAL: Keeps it on screen until clicked
-                renotify: true,            // CRITICAL: Forces sound/vibration even if one exists
-                silent: false
-            };
-
-            const fire = () => {
-                try {
-                    const n = new Notification(title, options);
-                    n.onclick = function(event) {
-                        event.preventDefault(); // Prevent browser from focusing tab if it acts weird
-                        window.focus();         // Bring browser to front
-                        this.close(); 
-                        clearInterval(blinkInterval);
-                        document.title = oldTitle;
-                    };
-                    showToast(`Notification sent to ${officerName}`, "success");
-                } catch(e) {
-                    console.error("Notification Error:", e);
-                }
-            };
-
-            if (Notification.permission === "granted") {
-                fire();
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then(function (permission) {
-                    if (permission === "granted") {
-                        fire();
-                    }
-                });
-            } else {
-                // If blocked, fallback to alert so they definitely see it when they come back
-                showToast("⚠️ Notifications blocked! Enable them to see alerts when minimized.", "warning");
-            }
-        }
     </script>
 </body>
 </html>
