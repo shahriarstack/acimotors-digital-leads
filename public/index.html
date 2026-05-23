@@ -199,6 +199,22 @@
         .table-filter-input:focus { outline: none; border-color: var(--primary); background: #F9FAFB; border-bottom-style: solid; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.05); }
         .table-filter-input::placeholder { color: #D1D5DB; font-weight: 400; }
 
+        /* [ACTIVE FILTER STYLES FOR STAT CARDS] */
+        .stat-card.active-filter {
+            border: 2px solid var(--primary) !important;
+            box-shadow: 0 12px 25px -5px rgba(16, 185, 129, 0.2), 0 8px 10px -6px rgba(16, 185, 129, 0.15) !important;
+            transform: translateY(-5px);
+            background: linear-gradient(180deg, #ffffff 0%, #F0FDF4 100%) !important;
+        }
+        .stat-card.active-filter .stat-icon {
+            transform: scale(1.15);
+        }
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); z-index: 1002; box-shadow: 2px 0 30px rgba(0,0,0,0.15); }
             .sidebar.open { transform: translateX(0); }
@@ -300,6 +316,71 @@
                     </div>
 
                     <div class="stats-grid" id="dashboard-stats"></div>
+
+                    <!-- Collapsible Dashboard Detailed Customer List Panel -->
+                    <div id="dashboard-customer-list-panel" class="card hidden" style="margin-bottom: 24px; animation: slideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1.5px solid rgba(16, 185, 129, 0.15); background: linear-gradient(180deg, #ffffff 0%, #FAFAFB 100%);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #E5E7EB; padding-bottom: 14px;">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div id="dash-list-icon-bg" style="width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white; background: var(--primary); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
+                                    <i id="dash-list-icon" class="fas fa-users"></i>
+                                </div>
+                                <div>
+                                    <h3 id="dash-list-title" style="margin: 0; font-size: 1.2rem; color: var(--text-main); font-weight: 800; letter-spacing: -0.3px;">Detailed Customer View</h3>
+                                    <p id="dash-list-subtitle" style="margin: 2px 0 0 0; font-size: 0.75rem; color: var(--text-muted); font-weight: 500;"></p>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-secondary btn-sm" onclick="exportDashListToCSV()" style="border-radius: 8px;"><i class="fas fa-file-csv"></i> Export CSV</button>
+                                <button class="btn btn-secondary btn-sm" onclick="closeDashboardCustomerList()" style="border-radius: 8px;"><i class="fas fa-times"></i> Close List</button>
+                            </div>
+                        </div>
+                        
+                        <!-- List Filtering Controls -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; background: #F9FAFB; padding: 12px; border-radius: 12px; border: 1px solid #E5E7EB;">
+                            <div class="form-group" style="margin: 0;">
+                                <label style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block;">Search Name / Phone</label>
+                                <div style="position: relative;">
+                                    <i class="fas fa-search" style="position: absolute; left: 10px; top: 11px; color: #9CA3AF; font-size: 0.8rem;"></i>
+                                    <input type="text" id="dash-list-search" class="form-control" placeholder="Type to search..." style="padding-left: 28px; padding-top: 8px; padding-bottom: 8px; font-size: 0.8rem;" oninput="renderDashboardCustomers()">
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block;">Sales Officer</label>
+                                <select id="dash-list-officer-filter" class="form-select" style="padding-top: 6px; padding-bottom: 6px; font-size: 0.8rem;" onchange="renderDashboardCustomers()">
+                                    <option value="">All Officers</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block;">Model</label>
+                                <input type="text" id="dash-list-model" class="form-control" placeholder="Filter by model..." style="padding-top: 8px; padding-bottom: 8px; font-size: 0.8rem;" oninput="renderDashboardCustomers()">
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label style="font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: block;">Location</label>
+                                <input type="text" id="dash-list-location" class="form-control" placeholder="Filter by location..." style="padding-top: 8px; padding-bottom: 8px; font-size: 0.8rem;" oninput="renderDashboardCustomers()">
+                            </div>
+                        </div>
+                        
+                        <div class="table-wrapper">
+                            <table id="dash-detailed-customers-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px; text-align: center;">S.L.</th>
+                                        <th>Contact</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Model</th>
+                                        <th>Sales Officer</th>
+                                        <th>Rating</th>
+                                        <th>Visited</th>
+                                        <th>Closure Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-detailed-customers-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 30px;">
                         <div class="card"><h3 class="card-title" style="margin-bottom: 16px;">Top Pending Officers</h3><div class="chart-container"><canvas id="topOfficersChart"></canvas></div></div>
                         <div class="card"><h3 class="card-title" style="margin-bottom: 16px;">Lead Status</h3><div class="chart-container"><canvas id="leadChart"></canvas></div></div>
@@ -639,6 +720,13 @@
         let topOfficersChart = null, leadChart = null, confirmCallback = null;
         let loadingRequestCount = 0; 
         let isSuperAdminVerification = false;
+
+        // Detailed Dashboard Customer List Globals
+        let activeDashFilter = null;
+        let currentDashboardBaseCustomers = [];
+        let currentDashDetailedFilteredList = [];
+
+
 
         let loaderTimeout;
         function showLoader() {
@@ -1003,6 +1091,7 @@
         function navigateTo(id) {
             document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden')); document.getElementById(id).classList.remove('hidden');
             document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('active');
+            if (window.closeDashboardCustomerList) closeDashboardCustomerList();
             if(id === 'admin-dashboard') { 
                 loadDashboardData(); 
                 // Reset to overview tab by default
@@ -1023,6 +1112,10 @@
             document.getElementById('dashboard-overview').classList.add('hidden');
             document.getElementById('dashboard-visited-report').classList.add('hidden');
             document.getElementById('dashboard-summary-report').classList.add('hidden');
+
+            if (tabName !== 'overview' && window.closeDashboardCustomerList) {
+                closeDashboardCustomerList();
+            }
 
             if(tabName === 'overview') {
                 document.getElementById('dashboard-overview').classList.remove('hidden');
@@ -1274,22 +1367,31 @@
                     });
                 }
 
+                // Cache baseline dashboard customers globally
+                currentDashboardBaseCustomers = filtered;
+
                 const stats = { 
                     total: filtered.length, 
                     visited: filtered.filter(c => c.visit_completed === 'Yes').length, 
                     pending: filtered.filter(c => c.visit_completed !== 'Yes' && c.officer_id).length, 
                     hot: filtered.filter(c => c.customer_type === 'Hot').length,
+                    warm: filtered.filter(c => c.customer_type === 'Warm').length,
+                    cold: filtered.filter(c => c.customer_type === 'Cold').length,
                     booked: filtered.filter(c => c.booking_info).length,
                     delivered: filtered.filter(c => c.delivery_info).length
                 };
+
+                const getActiveCls = (cat) => activeDashFilter === cat ? ' active-filter' : '';
                 
                 document.getElementById('dashboard-stats').innerHTML = `
-                    <div class="stat-card"><div class="stat-icon" style="background:#E5F6FD;color:var(--primary)"><i class="fas fa-users"></i></div><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div>
-                    <div class="stat-card"><div class="stat-icon" style="background:#E8F8EE;color:var(--secondary)"><i class="fas fa-check-circle"></i></div><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div>
-                    <div class="stat-card"><div class="stat-icon" style="background:#FFF4E5;color:var(--warning)"><i class="fas fa-hourglass-half"></i></div><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div>
-                    <div class="stat-card"><div class="stat-icon" style="background:#FFEBEA;color:var(--danger)"><i class="fas fa-fire"></i></div><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div>
-                    <div class="stat-card"><div class="stat-icon" style="background:#EFF6FF;color:var(--info)"><i class="fas fa-bookmark"></i></div><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div>
-                    <div class="stat-card"><div class="stat-icon" style="background:#F5F3FF;color:var(--accent)"><i class="fas fa-truck"></i></div><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div>
+                    <div class="stat-card${getActiveCls('total')}" id="stat-card-total" onclick="toggleDashboardCustomerFilter('total')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E5F6FD;color:#3B82F6"><i class="fas fa-users"></i></div><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div>
+                    <div class="stat-card${getActiveCls('visited')}" id="stat-card-visited" onclick="toggleDashboardCustomerFilter('visited')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E8F8EE;color:#10B981"><i class="fas fa-check-circle"></i></div><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div>
+                    <div class="stat-card${getActiveCls('pending')}" id="stat-card-pending" onclick="toggleDashboardCustomerFilter('pending')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FFF4E5;color:#F59E0B"><i class="fas fa-hourglass-half"></i></div><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div>
+                    <div class="stat-card${getActiveCls('hot')}" id="stat-card-hot" onclick="toggleDashboardCustomerFilter('hot')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FFEBEA;color:#EF4444"><i class="fas fa-fire"></i></div><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div>
+                    <div class="stat-card${getActiveCls('warm')}" id="stat-card-warm" onclick="toggleDashboardCustomerFilter('warm')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FEF3C7;color:#D97706"><i class="fas fa-bolt"></i></div><div class="stat-value">${stats.warm}</div><div class="stat-label">Warm</div></div>
+                    <div class="stat-card${getActiveCls('cold')}" id="stat-card-cold" onclick="toggleDashboardCustomerFilter('cold')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E6FFFA;color:#0D9488"><i class="fas fa-snowflake"></i></div><div class="stat-value">${stats.cold}</div><div class="stat-label">Cold</div></div>
+                    <div class="stat-card${getActiveCls('booked')}" id="stat-card-booked" onclick="toggleDashboardCustomerFilter('booked')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#EFF6FF;color:#2563EB"><i class="fas fa-bookmark"></i></div><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div>
+                    <div class="stat-card${getActiveCls('delivered')}" id="stat-card-delivered" onclick="toggleDashboardCustomerFilter('delivered')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#F5F3FF;color:#8B5CF6"><i class="fas fa-truck"></i></div><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div>
                 `;
                 
                 const { data: officers } = await fetchOfficers(); 
@@ -1376,10 +1478,244 @@
                 
                 // Apply active filters on re-render
                 applyPerformanceFilters();
+
+                // Refresh collapsible customer list if currently open
+                if (activeDashFilter) {
+                    renderDashboardCustomers();
+                }
             } finally {
                 hideLoader();
             }
         }
+
+        // --- DYNAMIC DETAILED CUSTOMER TRAY logic ---
+        function getCustomersByCategory(baseList, category) {
+            switch(category) {
+                case 'total':
+                    return baseList;
+                case 'visited':
+                    return baseList.filter(c => c.visit_completed === 'Yes');
+                case 'pending':
+                    return baseList.filter(c => c.visit_completed !== 'Yes' && c.officer_id);
+                case 'hot':
+                    return baseList.filter(c => c.customer_type === 'Hot');
+                case 'warm':
+                    return baseList.filter(c => c.customer_type === 'Warm');
+                case 'cold':
+                    return baseList.filter(c => c.customer_type === 'Cold');
+                case 'booked':
+                    return baseList.filter(c => c.booking_info);
+                case 'delivered':
+                    return baseList.filter(c => c.delivery_info);
+                default:
+                    return baseList;
+            }
+        }
+
+        window.toggleDashboardCustomerFilter = function(filterType) {
+            const panel = document.getElementById('dashboard-customer-list-panel');
+            
+            // Remove active-filter class from all stat cards
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active-filter');
+            });
+            
+            if (activeDashFilter === filterType) {
+                activeDashFilter = null;
+                panel.classList.add('hidden');
+                return;
+            }
+            
+            activeDashFilter = filterType;
+            panel.classList.remove('hidden');
+            
+            // Highlight the active card
+            const activeCard = document.getElementById(`stat-card-${filterType}`);
+            if (activeCard) {
+                activeCard.classList.add('active-filter');
+            }
+            
+            // Reset filters
+            document.getElementById('dash-list-search').value = '';
+            document.getElementById('dash-list-location').value = '';
+            document.getElementById('dash-list-model').value = '';
+            
+            // Refresh officer select dropdown options dynamically
+            populateDashListOfficerFilter();
+            
+            // Render table content
+            renderDashboardCustomers();
+            
+            // Smoothly scroll down to the panel
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+        
+        window.closeDashboardCustomerList = function() {
+            activeDashFilter = null;
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active-filter');
+            });
+            document.getElementById('dashboard-customer-list-panel').classList.add('hidden');
+        };
+        
+        function populateDashListOfficerFilter() {
+            const select = document.getElementById('dash-list-officer-filter');
+            select.innerHTML = '<option value="">All Officers</option>';
+            
+            const list = getCustomersByCategory(currentDashboardBaseCustomers, activeDashFilter);
+            const seen = new Set();
+            const uniqueOfficers = [];
+            
+            list.forEach(c => {
+                if (c.officer_id && !seen.has(c.officer_id)) {
+                    seen.add(c.officer_id);
+                    uniqueOfficers.push({ id: c.officer_id, name: c.officer_name || 'Unassigned' });
+                }
+            });
+            
+            uniqueOfficers.forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o.id;
+                opt.textContent = o.name;
+                select.appendChild(opt);
+            });
+        }
+        
+        window.renderDashboardCustomers = function() {
+            if (!activeDashFilter) return;
+            
+            let list = getCustomersByCategory(currentDashboardBaseCustomers, activeDashFilter);
+            
+            const searchVal = document.getElementById('dash-list-search').value.toLowerCase().trim();
+            const officerVal = document.getElementById('dash-list-officer-filter').value;
+            const modelVal = document.getElementById('dash-list-model').value.toLowerCase().trim();
+            const locationVal = document.getElementById('dash-list-location').value.toLowerCase().trim();
+            
+            if (searchVal) {
+                list = list.filter(c => 
+                    (c.name && c.name.toLowerCase().includes(searchVal)) ||
+                    (c.customer_no && c.customer_no.toLowerCase().includes(searchVal))
+                );
+            }
+            if (officerVal) {
+                list = list.filter(c => c.officer_id === officerVal);
+            }
+            if (modelVal) {
+                list = list.filter(c => c.model && c.model.toLowerCase().includes(modelVal));
+            }
+            if (locationVal) {
+                list = list.filter(c => c.address && c.address.toLowerCase().includes(locationVal));
+            }
+            
+            const titleEl = document.getElementById('dash-list-title');
+            const subtitleEl = document.getElementById('dash-list-subtitle');
+            const iconEl = document.getElementById('dash-list-icon');
+            const iconBgEl = document.getElementById('dash-list-icon-bg');
+            
+            const categoryMeta = {
+                total: { text: 'Total Inquiries', icon: 'fa-users', color: '#3B82F6' },
+                visited: { text: 'Visited Customers', icon: 'fa-check-circle', color: '#10B981' },
+                pending: { text: 'Pending Follow-ups', icon: 'fa-hourglass-half', color: '#F59E0B' },
+                hot: { text: 'Hot Leads (Immediate Sales)', icon: 'fa-fire', color: '#EF4444' },
+                warm: { text: 'Warm Leads (High Potential)', icon: 'fa-bolt', color: '#D97706' },
+                cold: { text: 'Cold Leads (Nurturing)', icon: 'fa-snowflake', color: '#0D9488' },
+                booked: { text: 'Booked Orders', icon: 'fa-bookmark', color: '#2563EB' },
+                delivered: { text: 'Delivered Products', icon: 'fa-truck', color: '#8B5CF6' }
+            };
+            
+            const meta = categoryMeta[activeDashFilter] || categoryMeta.total;
+            titleEl.textContent = meta.text;
+            subtitleEl.innerHTML = `Showing <strong>${list.length}</strong> record(s) matching criteria | Period: <strong>${document.getElementById('dashboard-filter-month').value || 'All Time'}</strong>`;
+            iconEl.className = `fas ${meta.icon}`;
+            iconBgEl.style.backgroundColor = meta.color;
+            
+            const formatDateDisplay = (dateStr) => {
+                if (!dateStr) return '-';
+                let date;
+                if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
+                    date = new Date((dateStr - 25569) * 86400 * 1000);
+                } else {
+                    const str = String(dateStr);
+                    date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                }
+                if (isNaN(date.getTime())) return dateStr;
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = date.toLocaleString('default', { month: 'short' });
+                const year = date.getFullYear().toString().slice(-2);
+                return `${day}-${month}-${year}`;
+            };
+            
+            const bodyEl = document.getElementById('dash-detailed-customers-body');
+            bodyEl.innerHTML = list.length ? list.map((c, i) => {
+                const ratingBadge = getLeadBadge(c.customer_type);
+                const visitBadge = getVisitBadge(c.visit_completed);
+                const phonePill = getPhonePill(c.customer_no);
+                
+                let closureStatus = '<span class="badge" style="background:#F3F4F6;color:var(--text-muted);">In Process</span>';
+                if (c.delivery_info) {
+                    closureStatus = '<span class="badge badge-purple" style="background:#F5F3FF;color:var(--accent);"><i class="fas fa-truck" style="margin-right:4px;"></i>Delivered</span>';
+                } else if (c.booking_info) {
+                    closureStatus = '<span class="badge badge-yes" style="background:#EFF6FF;color:var(--info);"><i class="fas fa-bookmark" style="margin-right:4px;"></i>Booked</span>';
+                }
+                
+                return `
+                    <tr style="border-bottom: 1px solid #F3F4F6;">
+                        <td style="font-weight: 600; color: var(--text-muted); text-align: center;">${i + 1}</td>
+                        <td>${phonePill}</td>
+                        <td><strong>${c.name}</strong></td>
+                        <td>${formatDateDisplay(c.date)}</td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-map-marker-alt" style="margin-right:4px; opacity:0.6; color:var(--primary);"></i>${c.address || '-'}</td>
+                        <td><span class="badge" style="background:#F3F4F6;">${c.model}</span></td>
+                        <td><strong>${c.officer_name || '<span class="text-muted" style="font-weight:400;">Unassigned</span>'}</strong></td>
+                        <td>${ratingBadge}</td>
+                        <td>${visitBadge}</td>
+                        <td>${closureStatus}</td>
+                    </tr>
+                `;
+            }).join('') : `<tr><td colspan="10" class="empty-state">No matching customers found for this category</td></tr>`;
+
+            // Cache current sub-filtered dataset globally for dynamic CSV exporting
+            currentDashDetailedFilteredList = list;
+        };
+
+        window.exportDashListToCSV = function() {
+            if (!currentDashDetailedFilteredList || currentDashDetailedFilteredList.length === 0) {
+                showToast('No customer data to export', 'error');
+                return;
+            }
+            
+            const headers = ['Serial No', 'Customer Name', 'Phone Number', 'Date', 'Address', 'Model', 'Sale Type', 'Officer Name', 'Rating', 'Visit Completed', 'Closure Status'];
+            
+            const rows = currentDashDetailedFilteredList.map((c, i) => {
+                let status = 'In Process';
+                if (c.delivery_info) status = 'Delivered';
+                else if (c.booking_info) status = 'Booked';
+                
+                return [
+                    i + 1,
+                    `"${(c.name || '').replace(/"/g, '""')}"`,
+                    `"${c.customer_no || ''}"`,
+                    `"${c.date || ''}"`,
+                    `"${(c.address || '').replace(/"/g, '""')}"`,
+                    `"${c.model || ''}"`,
+                    `"${c.sale_type || ''}"`,
+                    `"${(c.officer_name || '').replace(/"/g, '""')}"`,
+                    `"${c.customer_type || ''}"`,
+                    `"${c.visit_completed || 'No'}"`,
+                    `"${status}"`
+                ];
+            });
+            
+            const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const filename = `Detailed_Leads_${activeDashFilter}_${currentBusiness.replace(/\s/g,'_')}.csv`;
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            showToast('CSV Exported Successfully!', 'success');
+        };
+
 
         // --- NEW: PERFORMANCE TABLE FILTER LOGIC ---
         function applyPerformanceFilters() {
