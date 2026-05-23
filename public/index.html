@@ -1377,7 +1377,7 @@
                     hot: filtered.filter(c => c.customer_type === 'Hot').length,
                     warm: filtered.filter(c => c.customer_type === 'Warm').length,
                     cold: filtered.filter(c => c.customer_type === 'Cold').length,
-                    booked: filtered.filter(c => c.booking_info).length,
+                    booked: filtered.filter(c => c.booking_info && !c.delivery_info).length,
                     delivered: filtered.filter(c => c.delivery_info).length
                 };
 
@@ -1411,7 +1411,7 @@
                         <td><span style="font-weight:800; color:var(--secondary);">${v}</span></td>
                         <td><span style="font-weight:800; color:var(--warning);">${pending}</span></td>
                         <td><span style="font-weight:800; color:var(--danger);">${myCust.filter(c=>c.customer_type==='Hot').length}</span></td>
-                        <td><span style="font-weight:800; color:var(--info);">${myCust.filter(c=>c.booking_info).length}</span></td>
+                        <td><span style="font-weight:800; color:var(--info);">${myCust.filter(c=>c.booking_info && !c.delivery_info).length}</span></td>
                         <td><span style="font-weight:800; color:var(--accent);">${myCust.filter(c=>c.delivery_info).length}</span></td>
                         <td><span class="badge" style="background:${pct===100?'var(--primary)':'#F3F4F6'}; color:${pct===100?'white':'var(--text-main)'}">${pct}%</span></td>
                     </tr>`; 
@@ -1504,7 +1504,7 @@
                 case 'cold':
                     return baseList.filter(c => c.customer_type === 'Cold');
                 case 'booked':
-                    return baseList.filter(c => c.booking_info);
+                    return baseList.filter(c => c.booking_info && !c.delivery_info);
                 case 'delivered':
                     return baseList.filter(c => c.delivery_info);
                 default:
@@ -1775,7 +1775,7 @@
                         visited: myStatsData.filter(c => c.visit_completed === 'Yes').length,
                         pending: myStatsData.filter(c => c.visit_completed !== 'Yes').length,
                         hot: myStatsData.filter(c => c.customer_type === 'Hot').length,
-                        booked: myStatsData.filter(c => c.booking_info).length,
+                        booked: myStatsData.filter(c => c.booking_info && !c.delivery_info).length,
                         delivered: myStatsData.filter(c => c.delivery_info).length
                     };
 
@@ -1953,7 +1953,7 @@
                     visited: myData.filter(c=>c.visit_completed==='Yes').length, 
                     pending: myData.filter(c=>c.visit_completed!=='Yes').length, 
                     hot: myData.filter(c=>c.customer_type==='Hot').length,
-                    booked: myData.filter(c=>c.booking_info).length,
+                    booked: myData.filter(c=>c.booking_info && !c.delivery_info).length,
                     delivered: myData.filter(c=>c.delivery_info).length
                 };
                 document.getElementById('my-stats-strip').innerHTML = `
