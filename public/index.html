@@ -1723,7 +1723,18 @@
             const bodyEl = document.getElementById('dash-detailed-customers-body');
             bodyEl.innerHTML = list.length ? list.map((c, i) => {
                 const ratingBadge = getLeadBadge(c.customer_type);
-                const visitBadge = getVisitBadge(c.visit_completed);
+                let visitBadge = getVisitBadge(c.visit_completed);
+                if (c.visit_completed === 'Yes') {
+                    let count = 1;
+                    if (c.field_visit_notes) {
+                        count += (c.field_visit_notes.match(/---/g) || []).length;
+                    }
+                    if (count > 1) {
+                        visitBadge = `<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">${visitBadge}<span style="font-size:0.7rem; color:#4F46E5; background:#EEF2FF; padding:2px 6px; border-radius:10px; font-weight:700; white-space:nowrap;"><i class="fas fa-sync-alt" style="margin-right:3px;"></i>${count} Touchpoints</span></div>`;
+                    } else {
+                        visitBadge = `<div style="display:flex;flex-direction:column;gap:4px;align-items:flex-start;">${visitBadge}<span style="font-size:0.7rem; color:#059669; background:#D1FAE5; padding:2px 6px; border-radius:10px; font-weight:700; white-space:nowrap;"><i class="fas fa-check" style="margin-right:3px;"></i>1st Visit</span></div>`;
+                    }
+                }
                 const phonePill = getPhonePill(c.customer_no);
                 
                 let closureStatus = '<span class="badge" style="background:#F3F4F6;color:var(--text-muted);">In Process</span>';
