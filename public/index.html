@@ -2083,10 +2083,23 @@
                         `;
                     }
                     
+                    let followupCount = 1;
+                    if (c.field_visit_notes) {
+                        followupCount = (c.field_visit_notes.match(/---/g) || []).length + 2; 
+                    }
+                    
+                    const ordinal = (n) => {
+                        const s = ["th", "st", "nd", "rd"];
+                        const v = n % 100;
+                        return n + (s[(v - 20) % 10] || s[v] || s[0]);
+                    };
+                    
+                    const followupLabel = `${ordinal(followupCount)} Follow-up`;
+
                     const nameHtml = `
-                        <div style="font-weight:700;font-size:1.05rem; display:flex; align-items:center; gap:8px;">
+                        <div style="font-weight:700;font-size:1.05rem; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                             ${c.name}
-                            ${isVisited ? `<button onclick="openVisitModal('${c.id}')" style="background:#EEF2FF; color:#4F46E5; border:1px solid #C7D2FE; border-radius:12px; padding:2px 8px; font-size:0.7rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.background='#E0E7FF'" onmouseout="this.style.background='#EEF2FF'"><i class="fas fa-comment-dots"></i> Follow-up</button>` : ''}
+                            ${isVisited ? `<button onclick="openVisitModal('${c.id}')" style="background:#EEF2FF; color:#4F46E5; border:1px solid #C7D2FE; border-radius:12px; padding:2px 8px; font-size:0.7rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.background='#E0E7FF'" onmouseout="this.style.background='#EEF2FF'"><i class="fas fa-comment-dots"></i> ${followupLabel}</button>` : ''}
                         </div>
                     `;
                     
