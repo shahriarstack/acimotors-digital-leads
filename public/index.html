@@ -1677,27 +1677,27 @@
             document.getElementById('dashboard-customer-list-panel').classList.add('hidden');
         };
         
-        function populateDashListOfficerFilter() {
+        async function populateDashListOfficerFilter() {
             const select = document.getElementById('dash-list-officer-filter');
-            select.innerHTML = '<option value="">All Officers</option>';
+            const prevValue = select.value;
+            select.innerHTML = '<option value="">Loading Officers...</option>';
             
-            const list = getCustomersByCategory(currentDashboardBaseCustomers, activeDashFilter);
-            const seen = new Set();
-            const uniqueOfficers = [];
-            
-            list.forEach(c => {
-                if (c.officer_id && !seen.has(c.officer_id)) {
-                    seen.add(c.officer_id);
-                    uniqueOfficers.push({ id: c.officer_id, name: c.officer_name || 'Unassigned' });
-                }
-            });
-            
-            uniqueOfficers.forEach(o => {
-                const opt = document.createElement('option');
-                opt.value = o.id;
-                opt.textContent = o.name;
-                select.appendChild(opt);
-            });
+            try {
+                const { data } = await fetchOfficers();
+                const filteredOfficers = data.filter(o => o.role === 'officer' && (!o.business || o.business === currentBusiness));
+                
+                select.innerHTML = '<option value="">All Officers</option>';
+                filteredOfficers.forEach(o => {
+                    const opt = document.createElement('option');
+                    opt.value = o.id;
+                    opt.textContent = `${o.full_name} (${o.territory || 'Unassigned'})`;
+                    select.appendChild(opt);
+                });
+                select.value = prevValue;
+            } catch(e) {
+                console.error(e);
+                select.innerHTML = '<option value="">All Officers</option>';
+            }
         }
         
         window.renderDashboardCustomers = function() {
