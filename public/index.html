@@ -375,6 +375,7 @@
                                         <th>Visited</th>
                                         <th>Visit Notes</th>
                                         <th>Closure Status</th>
+                                        <th style="text-align: right;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dash-detailed-customers-body"></tbody>
@@ -533,7 +534,7 @@
                 <div class="officer-header-container"><div><h1 style="font-size: 1.6rem;">My Customers</h1><p class="officer-header-sub">Portfolio: <strong id="officer-business-title"></strong></p></div><div class="officer-profile-minimal"><div id="officer-portal-name" class="officer-name-display"></div><div class="officer-territory-display"><i class="fas fa-map-marker-alt"></i> <span id="officer-portal-territory"></span></div></div></div>
                 <div style="margin-bottom: 24px;"><div style="display: inline-flex; background: white; padding: 4px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);"><button class="officer-sale-type-btn active" data-type="Resale"><i class="fas fa-redo"></i> Resale</button><button class="officer-sale-type-btn" data-type="New"><i class="fas fa-plus-circle"></i> New Sale</button></div></div>
                 <div id="my-stats-strip" class="officer-stats-strip"></div>
-                <div class="officer-toolbar"><div class="filter-pill"><i class="far fa-calendar-alt"></i><input type="month" id="my-filter-month"></div><div class="filter-pill"><i class="fas fa-check-double"></i><select id="my-filter-visit"><option value="">All Status</option><option value="Yes">Completed</option><option value="No">Pending</option></select></div><div class="filter-pill"><i class="fas fa-filter"></i><select id="my-filter-lead"><option value="">All Leads</option><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div></div>
+                <div class="officer-toolbar"><div class="filter-pill" style="border-color: #FDE68A;"><i class="fas fa-headset" style="color:#D97706;"></i><select id="my-filter-admin"><option value="">All Tasks</option><option value="Pending">Admin Followups</option></select></div><div class="filter-pill"><i class="far fa-calendar-alt"></i><input type="month" id="my-filter-month"></div><div class="filter-pill"><i class="fas fa-check-double"></i><select id="my-filter-visit"><option value="">All Status</option><option value="Yes">Completed</option><option value="No">Pending</option></select></div><div class="filter-pill"><i class="fas fa-filter"></i><select id="my-filter-lead"><option value="">All Leads</option><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div></div>
                 <div class="card" style="background: transparent; box-shadow: none; padding: 0;"><div class="table-wrapper"><table id="my-customers-table"><thead><tr><th style="width: 20%">Contact</th><th style="width: 35%">Customer Info</th><th style="width: 30%">Visit Status</th><th style="width: 15%; text-align: right;">Actions</th></tr></thead><tbody id="my-customers-body"></tbody></table></div></div>
             </div>
             <div id="user-management" class="page-content hidden">
@@ -621,12 +622,26 @@
     </div>
 
     <div id="customer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Add Customer</h3><button class="modal-close" onclick="closeCustomerModal()">×</button></div><form id="customer-form"><input type="hidden" id="customer-id"><div class="form-group"><label>Customer Number *</label><input type="text" id="customer-no" class="form-control" placeholder="+XX... or 01..." maxlength="16" inputmode="tel" required></div><div class="form-group"><label>Name *</label><input type="text" id="customer-name" class="form-control" required></div><div class="form-group"><label>Date *</label><input type="date" id="customer-date" class="form-control" required></div><div class="form-group"><label>Address</label><input type="text" id="customer-address" class="form-control"></div><div class="form-group"><label>Model</label><input type="text" id="customer-model" class="form-control" required></div><div class="form-group"><label>Sale Type *</label><select id="customer-sale-type" class="form-select"><option value="Resale">Resale</option><option value="New">New Sale</option></select></div><div class="form-group"><label>Officer</label><select id="customer-officer" class="form-select"></select></div><button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Save</button></form></div></div>
-    <div id="visit-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Update Visit</h3><button class="modal-close" onclick="closeVisitModal()">×</button></div><form id="visit-form"><input type="hidden" id="visit-customer-id"><div class="form-group"><label>Completed?</label><select id="visit-completed" class="form-select"><option value="Yes">Yes</option><option value="No">No</option></select></div><div class="form-group"><label>Rating</label><select id="visit-rating" class="form-select"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div><div class="form-group"><label>Notes *</label><textarea id="visit-notes" class="form-control" required></textarea></div><button type="submit" class="btn btn-success" style="width:100%;">Update</button></form></div></div>
+    <div id="visit-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Update Visit</h3><button class="modal-close" onclick="closeVisitModal()">×</button></div><form id="visit-form"><input type="hidden" id="visit-customer-id"><div class="form-group"><label>Completed?</label><select id="visit-completed" class="form-select"><option value="Yes">Yes</option><option value="No">No</option></select></div><div class="form-group"><label>Rating</label><select id="visit-rating" class="form-select"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div><div class="form-group"><label>Existing Notes History</label><div id="visit-notes-history" style="background: #F9FAFB; padding: 10px; border-radius: 8px; border: 1px solid #E5E7EB; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; max-height: 150px; overflow-y: auto; white-space: pre-wrap;"></div><label>Add New Followup Remark</label><textarea id="visit-notes" class="form-control" placeholder="E.g., 2nd follow up: Customer wants to buy next week..."></textarea></div><button type="submit" class="btn btn-success" style="width:100%;">Update & Append Note</button></form></div></div>
     <div id="officer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Create Officer</h3><button class="modal-close" onclick="closeOfficerModal()">×</button></div><form id="officer-form"><input type="hidden" id="officer-id"><div class="form-group"><label>Name *</label><input type="text" id="officer-name" class="form-control" required></div><div class="form-group"><label>Territory/Area</label><input type="text" id="officer-territory" class="form-control"></div><div class="form-group"><label>Employee ID (Password)</label><input type="text" id="officer-form-password" class="form-control" required></div><button type="submit" class="btn btn-primary" style="width:100%;">Save</button></form></div></div>
     <div id="bulk-import-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Bulk Import Customers</h3><button class="modal-close" onclick="closeBulkImportModal()">×</button></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Select CSV file</p><a href="#" id="download-template-btn" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 500;">Download Template</a></div><p style="margin-bottom: 16px; color: var(--text-muted); font-size: 0.8rem; background: #F9FAFB; padding: 8px; border-radius: 6px;">Columns: customer_no, name, date, address, model, sale_type (Resale/New), officer_id (employee_id)</p><input type="file" id="csv-file" accept=".csv" class="form-control" style="margin-bottom: 16px;"><div style="display: flex; gap: 12px;"><button id="process-csv-btn" class="btn btn-primary" style="flex: 1;">Import</button><button class="btn btn-secondary" onclick="closeBulkImportModal()">Cancel</button></div></div></div>
     <div id="bulk-import-officer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Bulk Import Officers</h3><button class="modal-close" onclick="closeBulkImportOfficerModal()">×</button></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Select CSV file</p><a href="#" id="download-officer-template-btn" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 500;">Download Template</a></div><p style="margin-bottom: 16px; color: var(--text-muted); font-size: 0.8rem; background: #F9FAFB; padding: 8px; border-radius: 6px;">Columns: full_name, territory, password/employee_id</p><input type="file" id="officer-csv-file" accept=".csv" class="form-control" style="margin-bottom: 16px;"><div style="display: flex; gap: 12px;"><button id="process-officer-csv-btn" class="btn btn-primary" style="flex: 1;">Import</button><button class="btn btn-secondary" onclick="closeBulkImportOfficerModal()">Cancel</button></div></div></div>
     <div id="forward-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Forward Customer</h3><button class="modal-close" onclick="closeForwardModal()">×</button></div><form id="forward-form"><input type="hidden" id="forward-customer-id"><div class="form-group"><label>Select New Officer</label><select id="forward-officer-select" class="form-select" required></select></div><button type="submit" class="btn btn-primary" style="width:100%;">Forward</button></form></div></div>
     <div id="admin-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Create Sub-Admin</h3><button class="modal-close" onclick="closeAdminModal()">×</button></div><form id="admin-form"><div class="form-group"><label>Username *</label><input type="text" id="admin-name" class="form-control" required placeholder="e.g. resale_admin"></div><div class="form-group"><label>Role *</label><select id="admin-role" class="form-select"><option value="admin_new">New Sale Admin</option><option value="admin_resale">Resale Admin</option></select></div><div class="form-group"><label>Password *</label><input type="text" id="admin-form-password" class="form-control" required></div><button type="submit" class="btn btn-primary" style="width:100%;">Create</button></form></div></div>
+    <div id="admin-followup-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-headset" style="color: var(--primary); margin-right: 8px;"></i>Add Admin Followup</h3>
+                <button class="modal-close" onclick="closeAdminFollowupModal()">&times;</button>
+            </div>
+            <input type="hidden" id="admin-followup-customer-id">
+            <div class="form-group">
+                <label>Instructions / Remarks for Officer</label>
+                <textarea id="admin-followup-notes" class="form-control" placeholder="E.g., Customer requested callback tomorrow morning. Offer discount." style="min-height: 100px;"></textarea>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="saveAdminFollowup()"><i class="fas fa-save"></i> Save & Assign Followup</button>
+        </div>
+    </div>
     <div id="confirm-modal" class="modal-overlay hidden"><div class="modal-box" style="max-width: 400px; text-align: center;"><div class="modal-header" style="justify-content:center;"><i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--warning); margin-bottom: 16px; display: block;"></i></div><h3 class="modal-title" id="confirm-title" style="margin-bottom: 8px;">Are you sure?</h3><p id="confirm-msg" style="color: var(--text-muted); margin-bottom: 20px;"></p><div style="display: flex; gap: 12px; justify-content: center;"><button id="confirm-yes-btn" class="btn btn-primary">Yes, Proceed</button><button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button></div></div></div>
     <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toast-msg"></span></div>
 
@@ -802,6 +817,56 @@
             checkboxes.forEach(cb => cb.checked = source.checked);
             updateDeleteButtonState();
         }
+
+        window.openAdminFollowupModal = function(id) {
+            const cust = currentCustomersList.find(c => c.id == id);
+            if (!cust) return;
+            document.getElementById('admin-followup-customer-id').value = id;
+            document.getElementById('admin-followup-notes').value = cust.admin_followup || '';
+            document.getElementById('admin-followup-modal').classList.remove('hidden');
+        };
+
+        window.closeAdminFollowupModal = function() {
+            document.getElementById('admin-followup-modal').classList.add('hidden');
+        };
+
+        window.resolveAdminFollowup = async function(id) {
+            const cust = currentCustomersList.find(c => c.id == id);
+            if (!cust) return;
+            showLoader();
+            try {
+                cust.admin_followup = null;
+                await apiCall('/customers', 'POST', cust);
+                showToast('Admin followup resolved', 'success');
+                if (window.renderDashboardCustomers) renderDashboardCustomers();
+                if (window.loadMyCustomers) loadMyCustomers();
+            } catch (error) {
+                showToast('Error resolving followup: ' + error.message, 'error');
+            } finally {
+                hideLoader();
+            }
+        };
+
+        window.saveAdminFollowup = async function() {
+            const id = document.getElementById('admin-followup-customer-id').value;
+            const notes = document.getElementById('admin-followup-notes').value.trim();
+            const cust = currentCustomersList.find(c => c.id == id);
+            if (!cust) return;
+            
+            showLoader();
+            try {
+                cust.admin_followup = notes;
+                await apiCall('/customers', 'POST', cust);
+                showToast('Follow-up assigned successfully', 'success');
+                closeAdminFollowupModal();
+                if (window.renderDashboardCustomers) renderDashboardCustomers();
+                if (window.loadMyCustomers) loadMyCustomers();
+            } catch (error) {
+                showToast('Error saving followup: ' + error.message, 'error');
+            } finally {
+                hideLoader();
+            }
+        };
 
         window.deleteSelectedCustomers = function() {
             const selectedCheckboxes = document.querySelectorAll('.customer-checkbox:checked');
@@ -1677,9 +1742,10 @@
                         <td>${visitBadge}</td>
                         <td>${notesHtml}</td>
                         <td>${closureStatus}</td>
+                        <td style="text-align: right;"><button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button></td>
                     </tr>
                 `;
-            }).join('') : `<tr><td colspan="11" class="empty-state">No matching customers found for this category</td></tr>`;
+            }).join('') : `<tr><td colspan="12" class="empty-state">No matching customers found for this category</td></tr>`;
 
             // Cache current sub-filtered dataset globally for dynamic CSV exporting
             currentDashDetailedFilteredList = list;
@@ -1902,9 +1968,11 @@
                 const visitFilter = document.getElementById('my-filter-visit').value;
                 const leadFilter = document.getElementById('my-filter-lead').value;
                 const monthFilter = document.getElementById('my-filter-month').value;
+                const adminFilter = document.getElementById('my-filter-admin').value;
 
                 if(visitFilter) myData = myData.filter(c => visitFilter === 'Yes' ? c.visit_completed === 'Yes' : c.visit_completed !== 'Yes');
                 if(leadFilter) myData = myData.filter(c => c.customer_type === leadFilter);
+                if(adminFilter) myData = myData.filter(c => c.admin_followup && c.admin_followup.trim() !== '');
                 
                 if (monthFilter) {
                     myData = myData.filter(c => {
@@ -1975,11 +2043,36 @@
                 
                 document.getElementById('my-customers-body').innerHTML = myData.map(c => {
                     const isVisited = c.visit_completed === 'Yes';
+                    const hasAdminFollowup = c.admin_followup && c.admin_followup.trim() !== '';
                     const statusClass = c.customer_type==='Hot' ? 'customer-card-hot' : c.customer_type==='Warm' ? 'customer-card-warm' : 'customer-card-cold';
                     const rowClass = isVisited ? `${statusClass} visited-row` : statusClass;
+                    
                     let actionButtons = !isVisited ? `<button class="btn btn-pending-action" onclick="openVisitModal('${c.id}')">⚠️ Complete Visit</button>` : `<div class="action-row" style="width:100%; justify-content:flex-end;"><span style="color:var(--secondary);font-size:1.2rem;margin-right:auto;"><i class="fas fa-check-circle"></i></span>${c.booking_info ? `<div class="status-icon-locked status-booked"><i class="fas fa-bookmark"></i></div>` : `<button class="btn-text-action btn-book-text" onclick="quickUpdate('${c.id}','book')">Book</button>`}${c.delivery_info ? `<div class="status-icon-locked status-delivered"><i class="fas fa-truck"></i></div>` : `<button class="btn-text-action btn-deliver-text" onclick="quickUpdate('${c.id}','deliver')">Deliver</button>`}</div>`;
+                    
+                    if (hasAdminFollowup) {
+                        actionButtons = `<button class="btn btn-pending-action" style="background:#FEF2F2; color:#DC2626; border-color:#FCA5A5; animation:pulse-border 2s infinite;" onclick="openVisitModal('${c.id}')">📞 Add Followup Note</button>` + (isVisited ? actionButtons : '');
+                    } else if (isVisited) {
+                        actionButtons = `<button class="btn btn-pending-action" style="background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE; margin-bottom: 8px;" onclick="openVisitModal('${c.id}')"><i class="fas fa-plus"></i> Add Note</button>` + actionButtons;
+                    }
+                    
                     const forwardBtn = `<button class="btn-icon-circle" title="Forward to another officer" onclick="openForwardModal('${c.id}')" style="background:#f2f2f7; color:var(--primary); margin-left:8px;"><i class="fas fa-share-square"></i></button>`;
-                    return `<tr class="${rowClass}"><td style="vertical-align:top;">${getPhonePill(c.customer_no)}</td><td style="vertical-align:top;"><div><div style="font-weight:700;font-size:1.05rem;">${c.name}</div><div style="font-size:0.8rem;color:var(--text-muted); margin-bottom:2px;"><i class="far fa-calendar-alt"></i> ${formatDateDisplay(c.date)}</div><div style="font-size:0.85rem;color:var(--text-muted);"><i class="fas fa-map-marker-alt"></i> ${c.address||'-'}</div><div style="margin-top:6px;"><span class="badge" style="background:#f2f2f7;">${c.model}</span></div></div></td><td style="vertical-align:top;"><div><div style="display:flex;gap:6px;margin-bottom:8px;">${getVisitBadge(c.visit_completed)} ${getLeadBadge(c.customer_type)}</div>${c.field_visit_notes ? `<div style="font-size:0.85rem;font-style:italic;">"${c.field_visit_notes}"</div>` : '<span style="color:#ccc;">No notes</span>'}</div></td><td style="vertical-align:top;"><div style="display:flex; align-items:center; width:100%;">${actionButtons}${forwardBtn}</div></td></tr>`;
+                    
+                    let adminAlert = '';
+                    let glowStyle = '';
+                    if (hasAdminFollowup) {
+                        glowStyle = 'box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); border: 2px solid #EF4444; position: relative; z-index: 10;';
+                        adminAlert = `
+                            <div style="margin-top: 12px; padding: 10px; background: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 6px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <strong style="color: #DC2626; font-size: 0.85rem;"><i class="fas fa-headset"></i> Admin Followup Required</strong>
+                                    <button onclick="resolveAdminFollowup('${c.id}')" style="background:none; border:none; color:var(--primary); cursor:pointer; font-size:0.8rem; font-weight:700;"><i class="fas fa-check"></i> Mark Resolved</button>
+                                </div>
+                                <div style="font-size: 0.85rem; color: #7F1D1D; margin-top: 4px; font-style:italic;">"${c.admin_followup}"</div>
+                            </div>
+                        `;
+                    }
+                    
+                    return `<tr class="${rowClass}" style="${glowStyle}"><td style="vertical-align:top;">${getPhonePill(c.customer_no)}</td><td style="vertical-align:top;"><div><div style="font-weight:700;font-size:1.05rem;">${c.name}</div><div style="font-size:0.8rem;color:var(--text-muted); margin-bottom:2px;"><i class="far fa-calendar-alt"></i> ${formatDateDisplay(c.date)}</div><div style="font-size:0.85rem;color:var(--text-muted);"><i class="fas fa-map-marker-alt"></i> ${c.address||'-'}</div><div style="margin-top:6px;"><span class="badge" style="background:#f2f2f7;">${c.model}</span></div>${adminAlert}</div></td><td style="vertical-align:top;"><div><div style="display:flex;gap:6px;margin-bottom:8px;">${getVisitBadge(c.visit_completed)} ${getLeadBadge(c.customer_type)}</div>${c.field_visit_notes ? `<div style="font-size:0.85rem;font-style:italic; white-space:pre-wrap; max-height:100px; overflow-y:auto;">${c.field_visit_notes}</div>` : '<span style="color:#ccc;">No notes</span>'}</div></td><td style="vertical-align:top;"><div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end; width:100%;"><div style="display:flex; align-items:center; width:100%;">${actionButtons}${forwardBtn}</div></div></td></tr>`;
                 }).join('');
             } finally {
                 hideLoader();
@@ -2169,7 +2262,16 @@
             if(c) {
                 document.getElementById('visit-completed').value = c.visit_completed || 'No';
                 document.getElementById('visit-rating').value = c.customer_type || 'Warm';
-                document.getElementById('visit-notes').value = c.field_visit_notes || '';
+                
+                const historyDiv = document.getElementById('visit-notes-history');
+                if (c.field_visit_notes) {
+                    historyDiv.innerText = c.field_visit_notes;
+                    historyDiv.style.display = 'block';
+                } else {
+                    historyDiv.style.display = 'none';
+                    historyDiv.innerText = '';
+                }
+                document.getElementById('visit-notes').value = '';
             }
         }
         function closeVisitModal() { document.getElementById('visit-modal').classList.add('hidden'); }
@@ -2177,16 +2279,22 @@
         async function handleSubmitVisit(e) {
             e.preventDefault(); 
             const id = document.getElementById('visit-customer-id').value;
-            const notes = document.getElementById('visit-notes').value.trim();
+            const newNote = document.getElementById('visit-notes').value.trim();
+            const c = currentCustomersList.find(x => x.id == id);
+            if (!c) return showToast('Customer not found', 'error');
 
-            if (!notes) {
+            const hasExistingNote = !!c.field_visit_notes;
+            if (!newNote && !hasExistingNote) {
                 showToast('Please add a visit note.', 'error');
                 document.getElementById('visit-notes').focus();
                 return;
             }
-            
-            const c = currentCustomersList.find(x => x.id == id);
-            if (!c) return showToast('Customer not found', 'error');
+
+            let finalNotes = c.field_visit_notes || '';
+            if (newNote) {
+                const timestamp = new Date().toLocaleString('en-US', { hour12: true, month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                finalNotes = finalNotes ? `${finalNotes}\n---\n[${timestamp}] ${newNote}` : `[${timestamp}] ${newNote}`;
+            }
 
             showLoader();
             try {
@@ -2194,7 +2302,7 @@
                     ...c,
                     visit_completed: document.getElementById('visit-completed').value, 
                     customer_type: document.getElementById('visit-rating').value, 
-                    field_visit_notes: notes 
+                    field_visit_notes: finalNotes 
                 };
 
                 await apiCall('/customers', 'POST', updates);

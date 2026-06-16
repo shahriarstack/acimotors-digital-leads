@@ -18,6 +18,10 @@ app.get('/init', async (c) => {
         if (!c.env.DATABASE_URL) return c.json({ error: 'Missing DATABASE_URL' }, 500);
         
         const sql = neon(c.env.DATABASE_URL);
+        
+        // Ensure admin_followup column exists
+        await sql`ALTER TABLE customers ADD COLUMN IF NOT EXISTS admin_followup TEXT;`;
+        
         const businessesRes = await sql`SELECT * FROM businesses`;
         const officersRes = await sql`SELECT * FROM officers`;
 
@@ -64,11 +68,11 @@ app.post('/customers', async (c) => {
             INSERT INTO customers (
                 id, customer_no, name, date, address, model, sale_type, 
                 officer_id, officer_name, business, visit_completed, 
-                customer_type, field_visit_notes, booking_info, delivery_info
+                customer_type, field_visit_notes, booking_info, delivery_info, admin_followup
             ) VALUES (
                 ${cust.id}, ${cust.customer_no}, ${cust.name}, ${cust.date}, ${cust.address}, ${cust.model}, ${cust.sale_type},
                 ${cust.officer_id}, ${cust.officer_name}, ${cust.business}, ${cust.visit_completed || 'No'},
-                ${cust.customer_type}, ${cust.field_visit_notes}, ${cust.booking_info}, ${cust.delivery_info}
+                ${cust.customer_type}, ${cust.field_visit_notes}, ${cust.booking_info}, ${cust.delivery_info}, ${cust.admin_followup || null}
             )
             ON CONFLICT (id) DO UPDATE SET
                 customer_no = EXCLUDED.customer_no,
@@ -84,7 +88,8 @@ app.post('/customers', async (c) => {
                 customer_type = EXCLUDED.customer_type,
                 field_visit_notes = EXCLUDED.field_visit_notes,
                 booking_info = EXCLUDED.booking_info,
-                delivery_info = EXCLUDED.delivery_info;
+                delivery_info = EXCLUDED.delivery_info,
+                admin_followup = EXCLUDED.admin_followup;
         `;
         return c.json({ success: true });
     } catch (err) {
