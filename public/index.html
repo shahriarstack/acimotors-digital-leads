@@ -1359,10 +1359,11 @@
             if (window.currentAnalyticsSaleType) {
                 data = data.filter(c => {
                     if (!c.sale_type) return false;
-                    const st = c.sale_type.trim().toLowerCase();
-                    const target = window.currentAnalyticsSaleType.toLowerCase();
-                    if (target === 'new') return st === 'new' || st === 'new sale';
-                    return st === target;
+                    const st = String(c.sale_type).toUpperCase();
+                    if (window.currentAnalyticsSaleType === 'New') {
+                        return st.includes('NEW');
+                    }
+                    return st.includes(String(window.currentAnalyticsSaleType).toUpperCase());
                 });
             }
 
@@ -1412,10 +1413,11 @@
             if (window.currentAnalyticsSaleType) {
                 baseTrendData = baseTrendData.filter(c => {
                     if (!c.sale_type) return false;
-                    const st = c.sale_type.trim().toLowerCase();
-                    const target = window.currentAnalyticsSaleType.toLowerCase();
-                    if (target === 'new') return st === 'new' || st === 'new sale';
-                    return st === target;
+                    const st = String(c.sale_type).toUpperCase();
+                    if (window.currentAnalyticsSaleType === 'New') {
+                        return st.includes('NEW');
+                    }
+                    return st.includes(String(window.currentAnalyticsSaleType).toUpperCase());
                 });
             }
             
@@ -1592,8 +1594,8 @@
 
                 let summaryData = validOfficers.map(off => {
                     const myCust = customers.filter(c => c.officer_id === off.id);
-                    const newSales = myCust.filter(c => c.sale_type === 'New');
-                    const resale = myCust.filter(c => c.sale_type === 'Resale');
+                    const newSales = myCust.filter(c => isSaleTypeMatch(c.sale_type, 'New'));
+                    const resale = myCust.filter(c => isSaleTypeMatch(c.sale_type, 'Resale'));
 
                     const newAssigned = newSales.length;
                     const newPending = newSales.filter(c => c.visit_completed !== 'Yes').length;
@@ -1677,7 +1679,7 @@
                 const fOfficer = document.getElementById('report-filter-officer').value;
                 const fLead = document.getElementById('report-filter-lead').value;
 
-                if(fType) data = data.filter(c => c.sale_type === fType);
+                if(fType) data = data.filter(c => isSaleTypeMatch(c.sale_type, fType));
                 if(fOfficer) data = data.filter(c => c.officer_id === fOfficer);
                 if(fLead) data = data.filter(c => c.customer_type === fLead);
                 
@@ -1771,7 +1773,7 @@
             showLoader();
             try {
                 const { data } = await fetchCustomers(); 
-                let filtered = data.filter(c => c.sale_type === currentSaleType);
+                let filtered = data.filter(c => isSaleTypeMatch(c.sale_type, currentSaleType));
                 
                 // Apply Month Filter
                 const monthVal = document.getElementById('dashboard-filter-month').value;
@@ -2224,7 +2226,7 @@
                 const subAdminSummary = document.getElementById('sub-admin-summary-section');
                 if (currentUser && currentUser.role && (currentUser.role === 'admin_new' || currentUser.role === 'admin_resale')) {
                     const myType = currentUser.role === 'admin_new' ? 'New' : 'Resale';
-                    const myStatsData = data.filter(c => c.sale_type === myType); // Filter raw data for stats
+                    const myStatsData = data.filter(c => isSaleTypeMatch(c.sale_type, myType)); // Filter raw data for stats
                     
                     const stats = {
                         total: myStatsData.length,
@@ -2280,7 +2282,7 @@
                 const visit = document.getElementById('filter-visit').value;
                 const lead = document.getElementById('filter-lead-type').value;
 
-                if(st && st !== "All Types") data = data.filter(c => c.sale_type === st); 
+                if(st && st !== "All Types") data = data.filter(c => isSaleTypeMatch(c.sale_type, st)); 
                 
                 if(off) {
                     if(off === 'Unassigned') data = data.filter(c => !c.officer_id);
@@ -2345,7 +2347,7 @@
             showLoader();
             try {
                 const { data } = await fetchCustomers(); 
-                let myData = data.filter(c => c.officer_id === currentUser.id && c.sale_type === currentOfficerSaleType);
+                let myData = data.filter(c => c.officer_id === currentUser.id && isSaleTypeMatch(c.sale_type, currentOfficerSaleType));
                 
                 const visitFilter = document.getElementById('my-filter-visit').value;
                 const leadFilter = document.getElementById('my-filter-lead').value;
@@ -2720,6 +2722,13 @@
             return `<a href="tel:${n}" class="phone-pill"><i class="fas fa-phone"></i> ${n}</a>`; 
         }
         function getSaleTypeBadge(t) { return `<span class="badge" style="background:${t==='Resale'?'#EBF3FF':'#F3E8FF'}">${t}</span>`; }
+        function isSaleTypeMatch(st, target) {
+            if (!st) return false;
+            const s = String(st).toUpperCase();
+            const t = String(target).toUpperCase();
+            if (t === 'NEW') return s.includes('NEW');
+            return s.includes(t);
+        }
         function getVisitBadge(s) { return s==='Yes'?`<span class="badge badge-yes">Yes</span>`:`<span class="badge badge-no">No</span>`; }
         function getLeadBadge(t) { return t==='Hot'?`<span class="badge badge-hot">Hot</span>`:t==='Warm'?`<span class="badge badge-warm">Warm</span>`:t==='Cold'?`<span class="badge badge-cold">Cold</span>`:'-'; }
         function showToast(msg, type) { const t = document.getElementById('toast'); document.getElementById('toast-msg').textContent = msg; t.className = 'toast show'; setTimeout(() => t.classList.remove('show'), 3000); }
