@@ -144,6 +144,11 @@
         .officer-sale-type-btn { border: none; padding: 8px 16px; background: transparent; color: var(--text-muted); border-radius: 6px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; font-size: 0.9rem; }
         .officer-sale-type-btn:hover { background: #F3F4F6; }
         .officer-sale-type-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); transform: translateY(-1px); }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
         .officer-stats-strip { display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); overflow-x: auto; border: 1px solid rgba(255,255,255,0.5); transition: var(--transition); }
         .officer-stats-strip:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .strip-item { text-align: center; flex: 1; min-width: 60px; position: relative; }
@@ -534,9 +539,12 @@
                 <div class="officer-header-container" style="margin-bottom: 16px;"><div><h1 style="font-size: 1.3rem;">My Customers</h1><p class="officer-header-sub" style="font-size:0.75rem;">Portfolio: <strong id="officer-business-title"></strong></p></div><div class="officer-profile-minimal"><div id="officer-portal-name" class="officer-name-display" style="font-size:0.85rem;"></div><div class="officer-territory-display" style="font-size:0.7rem;"><i class="fas fa-map-marker-alt"></i> <span id="officer-portal-territory"></span></div></div></div>
                 
                 <!-- NEW TABS -->
-                <div style="margin-bottom: 12px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 16px;">
-                    <button id="tab-btn-tasks" onclick="switchOfficerTab('tasks')" style="background:none; border:none; border-bottom: 2px solid var(--primary); padding: 4px 12px; font-weight: 700; color: var(--primary); font-size: 0.9rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-tasks"></i> Tasks & Leads</button>
-                    <button id="tab-btn-analytics" onclick="switchOfficerTab('analytics')" style="background:none; border:none; border-bottom: 2px solid transparent; padding: 4px 12px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-chart-pie"></i> Insights & Analytics</button>
+                <div style="margin-bottom: 12px; border-bottom: 1px solid #E5E7EB; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; gap: 16px;">
+                        <button id="tab-btn-tasks" onclick="switchOfficerTab('tasks')" style="background:none; border:none; border-bottom: 2px solid var(--primary); padding: 4px 12px; font-weight: 700; color: var(--primary); font-size: 0.9rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-tasks"></i> Tasks & Leads</button>
+                        <button id="tab-btn-analytics" onclick="switchOfficerTab('analytics')" style="background:none; border:none; border-bottom: 2px solid transparent; padding: 4px 12px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-chart-pie"></i> Insights & Analytics</button>
+                    </div>
+                    <div id="admin-req-btn-container"></div>
                 </div>
 
                 <!-- TASKS TAB -->
@@ -2086,13 +2094,24 @@
                     pending: myData.filter(c=>c.visit_completed!=='Yes').length, 
                     hot: myData.filter(c=>c.customer_type==='Hot').length,
                     booked: myData.filter(c=>c.booking_info && !c.delivery_info).length,
-                    delivered: myData.filter(c=>c.delivery_info).length
+                    delivered: myData.filter(c=>c.delivery_info).length,
+                    adminReq: myData.filter(c=>c.admin_followup && c.admin_followup.trim() !== '').length
                 };
                 window.currentOfficerDataForAnalytics = myData;
                 window.currentOfficerStatsForAnalytics = stats;
                 if (!document.getElementById('officer-tab-analytics').classList.contains('hidden')) {
                     if (window.renderOfficerAnalytics) renderOfficerAnalytics();
                 }
+                
+                const adminReqBtnContainer = document.getElementById('admin-req-btn-container');
+                if (adminReqBtnContainer) {
+                    if (stats.adminReq > 0) {
+                        adminReqBtnContainer.innerHTML = `<button onclick="switchOfficerTab('tasks'); document.getElementById('my-filter-admin').value='Pending'; loadMyCustomers();" style="background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; animation: pulse-red 2s infinite;"><i class="fas fa-exclamation-circle"></i> ${stats.adminReq} Admin Req.</button>`;
+                    } else {
+                        adminReqBtnContainer.innerHTML = '';
+                    }
+                }
+
                 document.getElementById('my-stats-strip').innerHTML = `
                     <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-lead').value=''; document.getElementById('my-filter-visit').value=''; document.getElementById('my-filter-admin').value=''; loadMyCustomers();"><div class="strip-label">Total</div><div class="strip-value">${stats.total}</div></div>
                     <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-visit').value='Yes'; loadMyCustomers();"><div class="strip-label">Visited</div><div class="strip-value text-success">${stats.visited}</div></div>
