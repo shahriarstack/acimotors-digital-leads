@@ -1357,7 +1357,13 @@
                 data = data.filter(c => c.date && String(c.date).startsWith(monthFilter));
             }
             if (window.currentAnalyticsSaleType) {
-                data = data.filter(c => c.sale_type === window.currentAnalyticsSaleType);
+                data = data.filter(c => {
+                    if (!c.sale_type) return false;
+                    const st = c.sale_type.trim().toLowerCase();
+                    const target = window.currentAnalyticsSaleType.toLowerCase();
+                    if (target === 'new') return st === 'new' || st === 'new sale';
+                    return st === target;
+                });
             }
 
             if (data.length === 0) {
@@ -1404,7 +1410,13 @@
             const trendData = {};
             let baseTrendData = currentDashboardBaseCustomers || [];
             if (window.currentAnalyticsSaleType) {
-                baseTrendData = baseTrendData.filter(c => c.sale_type === window.currentAnalyticsSaleType);
+                baseTrendData = baseTrendData.filter(c => {
+                    if (!c.sale_type) return false;
+                    const st = c.sale_type.trim().toLowerCase();
+                    const target = window.currentAnalyticsSaleType.toLowerCase();
+                    if (target === 'new') return st === 'new' || st === 'new sale';
+                    return st === target;
+                });
             }
             
             baseTrendData.forEach(c => {
