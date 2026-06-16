@@ -1293,43 +1293,90 @@
                     return;
                 }
 
-                // Analytics Calculations
-                const total = data.length;
-                const visited = data.filter(c => c.visit_completed === 'Yes').length;
-                const booked = data.filter(c => c.booking_info && !c.delivery_info).length;
-                const delivered = data.filter(c => c.delivery_info).length;
-                
-                const hot = data.filter(c => c.customer_type === 'Hot').length;
-                const warm = data.filter(c => c.customer_type === 'Warm').length;
-                const cold = data.filter(c => c.customer_type === 'Cold').length;
-                
-                const unassigned = data.filter(c => !c.officer_id).length;
-                const pendingAdminReq = data.filter(c => c.admin_followup && c.admin_followup.trim() !== '').length;
-
-                // Model Demand Calculation
-                const modelCounts = {};
+                // Extract unique months
+                const months = new Set();
                 data.forEach(c => {
-                    const m = c.model || 'Unknown';
-                    modelCounts[m] = (modelCounts[m] || 0) + 1;
-                });
-                const topModels = Object.entries(modelCounts).sort((a,b) => b[1] - a[1]).slice(0, 4);
-
-                // Officer Leaderboard Calculation
-                const officerStats = {};
-                data.forEach(c => {
-                    if (c.officer_id) {
-                        if (!officerStats[c.officer_id]) {
-                            officerStats[c.officer_id] = { name: c.officer_name || 'Unknown', total: 0, visited: 0, delivered: 0 };
-                        }
-                        officerStats[c.officer_id].total++;
-                        if (c.visit_completed === 'Yes') officerStats[c.officer_id].visited++;
-                        if (c.delivery_info) officerStats[c.officer_id].delivered++;
+                    if(c.date) {
+                        const dStr = String(c.date);
+                        if(dStr.length >= 7) months.add(dStr.substring(0,7));
                     }
                 });
-                const leaderboard = Object.values(officerStats).sort((a,b) => b.delivered - a.delivered || b.visited - a.visited).slice(0, 5);
+                const monthOptions = Array.from(months).sort().reverse().map(m => {
+                    const dateObj = new Date(m + '-01');
+                    const label = isNaN(dateObj) ? m : dateObj.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+                    return `<option value="${m}">${label}</option>`;
+                }).join('');
 
-                // Build UI Layout
                 container.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                        <h2 style="font-size:1.2rem; margin:0; color:var(--text-main);">Performance Analytics</h2>
+                        <select id="analytics-month-filter" class="form-select" style="width: auto; padding: 6px 12px; font-weight:600;" onchange="renderAnalyticsWidgets()">
+                            <option value="">All Time</option>
+                            ${monthOptions}
+                        </select>
+                    </div>
+                    <div id="analytics-widgets-container"></div>
+                `;
+                
+                window.renderAnalyticsWidgets();
+
+            } catch (e) {
+                container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--danger);"><i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:10px;"></i><br>Error loading analytics: ${e.message}</div>`;
+                console.error(e);
+            }
+        }
+
+        window.renderAnalyticsWidgets = function() {
+            const container = document.getElementById('analytics-widgets-container');
+            const monthFilter = document.getElementById('analytics-month-filter').value;
+            
+            let data = currentDashboardBaseCustomers || [];
+            if (monthFilter) {
+                data = data.filter(c => c.date && String(c.date).startsWith(monthFilter));
+            }
+
+            if (data.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding: 40px; color:var(--text-muted); background:white; border-radius:12px; border:1px solid #E5E7EB;">No data available for the selected month.</div>';
+                return;
+            }
+
+            // Analytics Calculations
+            const total = data.length;
+            const visited = data.filter(c => c.visit_completed === 'Yes').length;
+            const booked = data.filter(c => c.booking_info && !c.delivery_info).length;
+            const delivered = data.filter(c => c.delivery_info).length;
+            
+            const hot = data.filter(c => c.customer_type === 'Hot').length;
+            const warm = data.filter(c => c.customer_type === 'Warm').length;
+            const cold = data.filter(c => c.customer_type === 'Cold').length;
+            
+            const unassigned = data.filter(c => !c.officer_id).length;
+            const pendingAdminReq = data.filter(c => c.admin_followup && c.admin_followup.trim() !== '').length;
+
+            // Model Demand Calculation
+            const modelCounts = {};
+            data.forEach(c => {
+                const m = c.model || 'Unknown';
+                modelCounts[m] = (modelCounts[m] || 0) + 1;
+            });
+            const topModels = Object.entries(modelCounts).sort((a,b) => b[1] - a[1]).slice(0, 4);
+
+            // Officer Leaderboard Calculation
+            const officerStats = {};
+            data.forEach(c => {
+                if (c.officer_id) {
+                    if (!officerStats[c.officer_id]) {
+                        officerStats[c.officer_id] = { name: c.officer_name || 'Unknown', total: 0, visited: 0, delivered: 0 };
+                    }
+                    officerStats[c.officer_id].total++;
+                    if (c.visit_completed === 'Yes') officerStats[c.officer_id].visited++;
+                    if (c.delivery_info) officerStats[c.officer_id].delivered++;
+                }
+            });
+            const leaderboard = Object.values(officerStats).sort((a,b) => b.delivered - a.delivered || b.visited - a.visited).slice(0, 5);
+
+            // Build UI Layout
+            container.innerHTML = `
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px;">
                         
                         <!-- Funnel Analytics Card -->
@@ -1424,10 +1471,6 @@
                     </div>
                 `;
 
-            } catch (e) {
-                container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--danger);"><i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:10px;"></i><br>Error loading analytics: ${e.message}</div>`;
-                console.error(e);
-            }
         }
 
         async function loadSummaryReport() {
