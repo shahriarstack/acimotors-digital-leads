@@ -2053,12 +2053,12 @@
                     delivered: myData.filter(c=>c.delivery_info).length
                 };
                 document.getElementById('my-stats-strip').innerHTML = `
-                    <div class="strip-item"><div class="strip-label">Total</div><div class="strip-value">${stats.total}</div></div>
-                    <div class="strip-item"><div class="strip-label">Visited</div><div class="strip-value text-success">${stats.visited}</div></div>
-                    <div class="strip-item"><div class="strip-label">Pending</div><div class="strip-value text-warning">${stats.pending}</div></div>
-                    <div class="strip-item"><div class="strip-label">Hot</div><div class="strip-value text-danger">${stats.hot}</div></div>
-                    <div class="strip-item"><div class="strip-label">Booked</div><div class="strip-value" style="color:var(--info);">${stats.booked}</div></div>
-                    <div class="strip-item"><div class="strip-label">Delivered</div><div class="strip-value" style="color:var(--accent);">${stats.delivered}</div></div>
+                    <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-lead').value=''; document.getElementById('my-filter-visit').value=''; document.getElementById('my-filter-admin').value=''; loadMyCustomers();"><div class="strip-label">Total</div><div class="strip-value">${stats.total}</div></div>
+                    <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-visit').value='Yes'; loadMyCustomers();"><div class="strip-label">Visited</div><div class="strip-value text-success">${stats.visited}</div></div>
+                    <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-visit').value='No'; loadMyCustomers();"><div class="strip-label">Pending</div><div class="strip-value text-warning">${stats.pending}</div></div>
+                    <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-lead').value='Hot'; loadMyCustomers();"><div class="strip-label">Hot</div><div class="strip-value text-danger">${stats.hot}</div></div>
+                    <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-lead').value='Warm'; loadMyCustomers();"><div class="strip-label">Warm</div><div class="strip-value" style="color:#F59E0B;">${myData.filter(c=>c.customer_type==='Warm').length}</div></div>
+                    <div class="strip-item" style="cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='white'" onclick="document.getElementById('my-filter-lead').value='Cold'; loadMyCustomers();"><div class="strip-label">Cold</div><div class="strip-value" style="color:#3B82F6;">${myData.filter(c=>c.customer_type==='Cold').length}</div></div>
                 `;
                 
                 document.getElementById('my-customers-body').innerHTML = myData.map(c => {
@@ -2113,8 +2113,41 @@
                             ${isVisited ? `<button onclick="openVisitModal('${c.id}')" style="background:#EEF2FF; color:#4F46E5; border:1px solid #C7D2FE; border-radius:12px; padding:2px 8px; font-size:0.7rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all 0.2s; box-shadow:0 1px 2px rgba(0,0,0,0.05);" onmouseover="this.style.background='#E0E7FF'" onmouseout="this.style.background='#EEF2FF'"><i class="fas fa-comment-dots"></i> ${followupLabel}</button>` : ''}
                         </div>
                     `;
-                    
-                    return `<tr class="${rowClass}" style="${glowStyle}"><td style="vertical-align:top;">${getPhonePill(c.customer_no)}</td><td style="vertical-align:top;"><div>${nameHtml}<div style="font-size:0.8rem;color:var(--text-muted); margin-bottom:2px;"><i class="far fa-calendar-alt"></i> ${formatDateDisplay(c.date)}</div><div style="font-size:0.85rem;color:var(--text-muted);"><i class="fas fa-map-marker-alt"></i> ${c.address||'-'}</div><div style="margin-top:6px;"><span class="badge" style="background:#f2f2f7;">${c.model}</span></div>${adminAlert}</div></td><td style="vertical-align:top;"><div><div style="display:flex;gap:6px;margin-bottom:8px;">${getVisitBadge(c.visit_completed)} ${getLeadBadge(c.customer_type)}</div>${c.field_visit_notes ? `<div style="font-size:0.85rem;font-style:italic; white-space:pre-wrap; max-height:100px; overflow-y:auto;">${c.field_visit_notes}</div>` : '<span style="color:#ccc;">No notes</span>'}</div></td><td style="vertical-align:top;"><div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end; width:100%;"><div style="display:flex; align-items:center; width:100%;">${actionButtons}${forwardBtn}</div></div></td></tr>`;
+                    let lastFollowupDate = null;
+                    if (c.field_visit_notes) {
+                        const dateMatches = c.field_visit_notes.match(/\[([a-zA-Z]{3} \d{1,2}, \d{2}:\d{2} [AP]M)\]/g);
+                        if (dateMatches && dateMatches.length > 0) {
+                            const lastDateStr = dateMatches[dateMatches.length - 1].replace('[', '').replace(']', '');
+                            const d = new Date(lastDateStr + ' ' + new Date().getFullYear());
+                            if (!isNaN(d.getTime())) lastFollowupDate = d;
+                        }
+                    }
+                    if (!lastFollowupDate && c.date) {
+                        let dStr = c.date;
+                        let d;
+                        if (!isNaN(dStr) && dStr > 25569 && dStr < 2958465) d = new Date((dStr - 25569) * 86400 * 1000);
+                        else {
+                            const str = String(dStr);
+                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                        }
+                        if (!isNaN(d.getTime())) lastFollowupDate = d;
+                    }
+
+                    let daysSinceFollowupHtml = '';
+                    if (lastFollowupDate) {
+                        const diffDays = Math.floor(Math.abs(new Date() - lastFollowupDate) / (1000 * 60 * 60 * 24));
+                        if (c.customer_type === 'Hot') {
+                            if (diffDays >= 3) {
+                                daysSinceFollowupHtml = `<div style="margin-top:8px; padding:6px; background:#FEF2F2; border-left:3px solid #EF4444; border-radius:4px; font-size:0.75rem; color:#B91C1C; display:inline-block; animation: pulse-border 2s infinite;"><i class="fas fa-fire-alt" style="margin-right:4px;"></i><strong>${diffDays} Days</strong> since last follow-up! Needs attention!</div>`;
+                            } else {
+                                daysSinceFollowupHtml = `<div style="margin-top:4px; font-size:0.75rem; color:var(--text-muted);"><i class="far fa-clock"></i> Last touch: <strong>${diffDays === 0 ? 'Today' : diffDays + ' days ago'}</strong></div>`;
+                            }
+                        } else {
+                            daysSinceFollowupHtml = `<div style="margin-top:4px; font-size:0.75rem; color:var(--text-muted);"><i class="far fa-clock"></i> Last touch: <strong>${diffDays === 0 ? 'Today' : diffDays + ' days ago'}</strong></div>`;
+                        }
+                    }
+
+                    return `<tr class="${rowClass}" style="${glowStyle}"><td style="vertical-align:top;">${getPhonePill(c.customer_no)}</td><td style="vertical-align:top;"><div>${nameHtml}<div style="font-size:0.8rem;color:var(--text-muted); margin-bottom:2px;"><i class="far fa-calendar-alt"></i> ${formatDateDisplay(c.date)}</div><div style="font-size:0.85rem;color:var(--text-muted);"><i class="fas fa-map-marker-alt"></i> ${c.address||'-'}</div><div style="margin-top:6px;"><span class="badge" style="background:#f2f2f7;">${c.model}</span></div>${daysSinceFollowupHtml}${adminAlert}</div></td><td style="vertical-align:top;"><div><div style="display:flex;gap:6px;margin-bottom:8px;">${getVisitBadge(c.visit_completed)} ${getLeadBadge(c.customer_type)}</div>${c.field_visit_notes ? `<div style="font-size:0.85rem;font-style:italic; white-space:pre-wrap; max-height:100px; overflow-y:auto;">${c.field_visit_notes}</div>` : '<span style="color:#ccc;">No notes</span>'}</div></td><td style="vertical-align:top;"><div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end; width:100%;"><div style="display:flex; align-items:center; width:100%;">${actionButtons}${forwardBtn}</div></div></td></tr>`;
                 }).join('');
             } finally {
                 hideLoader();
