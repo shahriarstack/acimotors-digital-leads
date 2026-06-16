@@ -1793,8 +1793,13 @@
                     `<div onclick="if(this.style.whiteSpace==='nowrap'){this.style.whiteSpace='normal';this.style.backgroundColor='#F3F4F6';this.style.padding='8px';this.style.borderRadius='8px';}else{this.style.whiteSpace='nowrap';this.style.backgroundColor='transparent';this.style.padding='0';}" style="max-width:200px; font-size:0.85rem; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; transition:all 0.2s; color:var(--text-muted);" title="Click to toggle full text">${hasLongNote ? '<i class="fas fa-expand-alt" style="font-size:0.7rem; color:var(--primary); margin-right:4px;"></i>' : ''}"${c.field_visit_notes}"</div>` : 
                     '-';
                 
+                let adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button>`;
+                if (c.admin_followup && c.admin_followup.trim() !== '') {
+                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #EF4444, #DC2626); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); animation: pulse-red 2s infinite;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Request Pending</button>`;
+                }
+                
                 return `
-                    <tr style="border-bottom: 1px solid #F3F4F6;">
+                    <tr style="border-bottom: 1px solid #f1f5f9; background: white; transition: background 0.2s; cursor:pointer;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'">
                         <td style="font-weight: 600; color: var(--text-muted); text-align: center;">${i + 1}</td>
                         <td>${phonePill}</td>
                         <td><strong>${c.name}</strong></td>
@@ -1806,7 +1811,7 @@
                         <td>${visitBadge}</td>
                         <td>${notesHtml}</td>
                         <td>${closureStatus}</td>
-                        <td style="text-align: right;"><button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button></td>
+                        <td style="text-align: right;">${adminBtnHtml}</td>
                     </tr>
                 `;
             }).join('') : `<tr><td colspan="12" class="empty-state">No matching customers found for this category</td></tr>`;
