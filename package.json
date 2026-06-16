@@ -1,0 +1,15 @@
+{
+  "name": "aci-motors-edge",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public"
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "@neondatabase/serverless": "^0.9.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
