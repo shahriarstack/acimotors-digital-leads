@@ -1796,6 +1796,8 @@
                 let adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button>`;
                 if (c.admin_followup && c.admin_followup.trim() !== '') {
                     adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #EF4444, #DC2626); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); animation: pulse-red 2s infinite;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Request Pending</button>`;
+                } else if (c.field_visit_notes && c.field_visit_notes.includes('Admin Followup Resolved:')) {
+                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #10B981, #059669); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
                 }
                 
                 return `
