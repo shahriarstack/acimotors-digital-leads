@@ -1312,8 +1312,7 @@
                         <h2 style="font-size:1.2rem; margin:0; color:var(--text-main);">Performance Analytics</h2>
                         <div style="display:flex; align-items:center; gap: 15px; flex-wrap:wrap;">
                             <div style="display: flex; background: #F3F4F6; padding: 4px; border-radius: 8px;">
-                                <button id="analytics-sale-all" onclick="setAnalyticsSaleType('')" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; border:none; cursor:pointer; font-weight:600; background:white; color:var(--text-main); box-shadow:0 1px 2px rgba(0,0,0,0.1); transition: all 0.2s;">All Sales</button>
-                                <button id="analytics-sale-new" onclick="setAnalyticsSaleType('New')" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; border:none; cursor:pointer; font-weight:600; background:transparent; color:var(--text-muted); transition: all 0.2s;">New Sale</button>
+                                <button id="analytics-sale-new" onclick="setAnalyticsSaleType('New')" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; border:none; cursor:pointer; font-weight:600; background:white; color:var(--text-main); box-shadow:0 1px 2px rgba(0,0,0,0.1); transition: all 0.2s;">New Sale</button>
                                 <button id="analytics-sale-resale" onclick="setAnalyticsSaleType('Resale')" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; border:none; cursor:pointer; font-weight:600; background:transparent; color:var(--text-muted); transition: all 0.2s;">Resale</button>
                             </div>
                             <select id="analytics-month-filter" class="form-select" style="width: auto; padding: 6px 12px; font-weight:600;" onchange="renderAnalyticsWidgets()">
@@ -1325,7 +1324,7 @@
                     <div id="analytics-widgets-container"></div>
                 `;
                 
-                window.currentAnalyticsSaleType = '';
+                window.currentAnalyticsSaleType = 'New';
                 window.renderAnalyticsWidgets();
 
             } catch (e) {
@@ -1338,10 +1337,6 @@
             window.currentAnalyticsSaleType = type;
             
             // Update button styles visually
-            document.getElementById('analytics-sale-all').style.background = type === '' ? 'white' : 'transparent';
-            document.getElementById('analytics-sale-all').style.color = type === '' ? 'var(--text-main)' : 'var(--text-muted)';
-            document.getElementById('analytics-sale-all').style.boxShadow = type === '' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none';
-            
             document.getElementById('analytics-sale-new').style.background = type === 'New' ? 'white' : 'transparent';
             document.getElementById('analytics-sale-new').style.color = type === 'New' ? 'var(--text-main)' : 'var(--text-muted)';
             document.getElementById('analytics-sale-new').style.boxShadow = type === 'New' ? '0 1px 2px rgba(0,0,0,0.1)' : 'none';
