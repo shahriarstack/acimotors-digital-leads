@@ -1282,12 +1282,11 @@
             container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);"><div class="loading-spinner"></div> Analyzing Data...</div>`;
             
             try {
-                // Ensure we have data
-                if (!currentDashboardBaseCustomers || currentDashboardBaseCustomers.length === 0) {
-                    await loadDashboardData();
-                }
+                // Ensure we have raw, unfiltered data for analytics
+                const response = await fetchCustomers();
+                window.currentAnalyticsBaseCustomers = response.data || [];
                 
-                const data = currentDashboardBaseCustomers || [];
+                const data = window.currentAnalyticsBaseCustomers;
                 if (data.length === 0) {
                     container.innerHTML = '<div style="text-align:center; padding: 40px; color:var(--text-muted);">No data available for analytics.</div>';
                     return;
@@ -1352,7 +1351,7 @@
             const container = document.getElementById('analytics-widgets-container');
             const monthFilter = document.getElementById('analytics-month-filter').value;
             
-            let data = currentDashboardBaseCustomers || [];
+            let data = window.currentAnalyticsBaseCustomers || [];
             if (monthFilter) {
                 data = data.filter(c => c.date && String(c.date).startsWith(monthFilter));
             }
@@ -1409,7 +1408,7 @@
 
             // Month-wise Trend Calculation (Last 6 Months, respect Sale Type filter but not Month filter)
             const trendData = {};
-            let baseTrendData = currentDashboardBaseCustomers || [];
+            let baseTrendData = window.currentAnalyticsBaseCustomers || [];
             if (window.currentAnalyticsSaleType) {
                 baseTrendData = baseTrendData.filter(c => {
                     if (!c.sale_type) return false;
