@@ -144,12 +144,12 @@
         .officer-sale-type-btn { border: none; padding: 8px 16px; background: transparent; color: var(--text-muted); border-radius: 6px; font-weight: 600; cursor: pointer; transition: var(--transition); display: flex; align-items: center; gap: 6px; font-size: 0.9rem; }
         .officer-sale-type-btn:hover { background: #F3F4F6; }
         .officer-sale-type-btn.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25); transform: translateY(-1px); }
-        .officer-stats-strip { display: flex; justify-content: space-between; background: white; padding: 16px 24px; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); overflow-x: auto; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
-        .officer-stats-strip:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.05); }
-        .strip-item { text-align: center; flex: 1; min-width: 70px; position: relative; }
-        .strip-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: #E5E7EB; }
-        .strip-label { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px; }
-        .strip-value { font-size: 1.3rem; font-weight: 800; color: var(--text-main); }
+        .officer-stats-strip { display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); overflow-x: auto; border: 1px solid rgba(255,255,255,0.5); transition: var(--transition); }
+        .officer-stats-strip:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .strip-item { text-align: center; flex: 1; min-width: 60px; position: relative; }
+        .strip-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 20%; height: 60%; width: 1px; background: rgba(0,0,0,0.05); }
+        .strip-label { font-size: 0.55rem; text-transform: uppercase; color: var(--text-muted); font-weight: 800; margin-bottom: 2px; letter-spacing: 0.5px; }
+        .strip-value { font-size: 1.05rem; font-weight: 800; color: var(--text-main); }
         .strip-value.text-success { color: var(--secondary); }
         .strip-value.text-warning { color: var(--warning); }
         .strip-value.text-danger { color: var(--danger); }
@@ -222,10 +222,10 @@
             #menu-btn { display: block; }
             .main-content { margin-left: 0; padding: 16px; padding-top: 70px; }
             .stats-grid { grid-template-columns: 1fr 1fr; }
-            .officer-stats-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; height: auto; }
-            .strip-item { text-align: left; background: white; padding: 12px 16px; border-radius: 12px; border: 1px solid #F2F4F6; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+            .officer-stats-strip { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 12px; height: auto; }
+            .strip-item { text-align: center; background: white; padding: 8px; border-radius: 8px; border: 1px solid #F2F4F6; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
             .strip-item:not(:last-child)::after { display: none; }
-            .strip-value { font-size: 1.5rem; }
+            .strip-value { font-size: 1.1rem; }
             .officer-toolbar { flex-wrap: wrap; overflow-x: visible; }
             #user-panel .table-wrapper { overflow-x: visible; background: transparent; border: none; }
             #user-panel .table-wrapper table { min-width: 0; width: 100%; display: block; }
@@ -531,12 +531,12 @@
                 </div>
             </div>
             <div id="user-panel" class="page-content hidden">
-                <div class="officer-header-container"><div><h1 style="font-size: 1.6rem;">My Customers</h1><p class="officer-header-sub">Portfolio: <strong id="officer-business-title"></strong></p></div><div class="officer-profile-minimal"><div id="officer-portal-name" class="officer-name-display"></div><div class="officer-territory-display"><i class="fas fa-map-marker-alt"></i> <span id="officer-portal-territory"></span></div></div></div>
+                <div class="officer-header-container" style="margin-bottom: 16px;"><div><h1 style="font-size: 1.3rem;">My Customers</h1><p class="officer-header-sub" style="font-size:0.75rem;">Portfolio: <strong id="officer-business-title"></strong></p></div><div class="officer-profile-minimal"><div id="officer-portal-name" class="officer-name-display" style="font-size:0.85rem;"></div><div class="officer-territory-display" style="font-size:0.7rem;"><i class="fas fa-map-marker-alt"></i> <span id="officer-portal-territory"></span></div></div></div>
                 
                 <!-- NEW TABS -->
-                <div style="margin-bottom: 20px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 20px;">
-                    <button id="tab-btn-tasks" onclick="switchOfficerTab('tasks')" style="background:none; border:none; border-bottom: 3px solid var(--primary); padding: 8px 16px; font-weight: 700; color: var(--primary); font-size: 1.05rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-tasks"></i> Tasks & Leads</button>
-                    <button id="tab-btn-analytics" onclick="switchOfficerTab('analytics')" style="background:none; border:none; border-bottom: 3px solid transparent; padding: 8px 16px; font-weight: 600; color: var(--text-muted); font-size: 1.05rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-chart-pie"></i> Insights & Analytics</button>
+                <div style="margin-bottom: 12px; border-bottom: 1px solid #E5E7EB; display: flex; gap: 16px;">
+                    <button id="tab-btn-tasks" onclick="switchOfficerTab('tasks')" style="background:none; border:none; border-bottom: 2px solid var(--primary); padding: 4px 12px; font-weight: 700; color: var(--primary); font-size: 0.9rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-tasks"></i> Tasks & Leads</button>
+                    <button id="tab-btn-analytics" onclick="switchOfficerTab('analytics')" style="background:none; border:none; border-bottom: 2px solid transparent; padding: 4px 12px; font-weight: 600; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; transition: all 0.2s;"><i class="fas fa-chart-pie"></i> Insights & Analytics</button>
                 </div>
 
                 <!-- TASKS TAB -->
@@ -2241,61 +2241,61 @@
             
             container.innerHTML = `
                 <!-- Task Progress Card -->
-                <div class="card" style="padding: 24px;">
-                    <h3 style="margin-bottom: 16px; color:var(--text-color); font-size:1.1rem;"><i class="fas fa-tasks" style="color:var(--primary); margin-right:8px;"></i> Task Completion</h3>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                        <span style="color:var(--text-muted); font-size:0.9rem;">${stats.visited} of ${stats.total} visits completed</span>
-                        <span style="font-weight:700; color:var(--primary);">${completionRate}%</span>
+                <div class="card" style="padding: 16px;">
+                    <h3 style="margin-bottom: 12px; color:var(--text-color); font-size:0.95rem;"><i class="fas fa-tasks" style="color:var(--primary); margin-right:6px;"></i> Task Completion</h3>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                        <span style="color:var(--text-muted); font-size:0.8rem;">${stats.visited} of ${stats.total} visits completed</span>
+                        <span style="font-weight:700; color:var(--primary); font-size:0.85rem;">${completionRate}%</span>
                     </div>
-                    <div style="background:#E5E7EB; height:10px; border-radius:5px; overflow:hidden;">
+                    <div style="background:#E5E7EB; height:8px; border-radius:4px; overflow:hidden;">
                         <div style="background:var(--primary); height:100%; width:${completionRate}%; transition:width 0.5s ease-out;"></div>
                     </div>
-                    <div style="margin-top:20px; display:flex; gap:16px;">
-                        <div style="flex:1; background:#F3F4F6; padding:12px; border-radius:8px; text-align:center;">
-                            <div style="font-size:1.5rem; font-weight:700; color:var(--success);">${stats.visited}</div>
-                            <div style="font-size:0.8rem; color:var(--text-muted);">Completed</div>
+                    <div style="margin-top:16px; display:flex; gap:12px;">
+                        <div style="flex:1; background:#F3F4F6; padding:8px; border-radius:8px; text-align:center;">
+                            <div style="font-size:1.2rem; font-weight:700; color:var(--success);">${stats.visited}</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted);">Completed</div>
                         </div>
-                        <div style="flex:1; background:#F3F4F6; padding:12px; border-radius:8px; text-align:center;">
-                            <div style="font-size:1.5rem; font-weight:700; color:var(--warning);">${stats.pending}</div>
-                            <div style="font-size:0.8rem; color:var(--text-muted);">Pending</div>
+                        <div style="flex:1; background:#F3F4F6; padding:8px; border-radius:8px; text-align:center;">
+                            <div style="font-size:1.2rem; font-weight:700; color:var(--warning);">${stats.pending}</div>
+                            <div style="font-size:0.7rem; color:var(--text-muted);">Pending</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Lead Quality Breakdown -->
-                <div class="card" style="padding: 24px;">
-                    <h3 style="margin-bottom: 16px; color:var(--text-color); font-size:1.1rem;"><i class="fas fa-fire-alt" style="color:#EF4444; margin-right:8px;"></i> Lead Quality Pipeline</h3>
-                    <div style="display:flex; flex-direction:column; gap:12px;">
+                <div class="card" style="padding: 16px;">
+                    <h3 style="margin-bottom: 12px; color:var(--text-color); font-size:0.95rem;"><i class="fas fa-fire-alt" style="color:#EF4444; margin-right:6px;"></i> Lead Quality</h3>
+                    <div style="display:flex; flex-direction:column; gap:10px;">
                         <div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.85rem;"><span><i class="fas fa-circle" style="color:#EF4444; font-size:0.6rem; margin-right:6px;"></i>Hot</span><strong>${stats.hot}</strong></div>
-                            <div style="background:#FEF2F2; height:8px; border-radius:4px;"><div style="background:#EF4444; height:100%; border-radius:4px; width:${stats.total ? (stats.hot/stats.total)*100 : 0}%"></div></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.75rem;"><span><i class="fas fa-circle" style="color:#EF4444; font-size:0.5rem; margin-right:4px;"></i>Hot</span><strong>${stats.hot}</strong></div>
+                            <div style="background:#FEF2F2; height:6px; border-radius:3px;"><div style="background:#EF4444; height:100%; border-radius:3px; width:${stats.total ? (stats.hot/stats.total)*100 : 0}%"></div></div>
                         </div>
                         <div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.85rem;"><span><i class="fas fa-circle" style="color:#F59E0B; font-size:0.6rem; margin-right:6px;"></i>Warm</span><strong>${warmCount}</strong></div>
-                            <div style="background:#FFFBEB; height:8px; border-radius:4px;"><div style="background:#F59E0B; height:100%; border-radius:4px; width:${stats.total ? (warmCount/stats.total)*100 : 0}%"></div></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.75rem;"><span><i class="fas fa-circle" style="color:#F59E0B; font-size:0.5rem; margin-right:4px;"></i>Warm</span><strong>${warmCount}</strong></div>
+                            <div style="background:#FFFBEB; height:6px; border-radius:3px;"><div style="background:#F59E0B; height:100%; border-radius:3px; width:${stats.total ? (warmCount/stats.total)*100 : 0}%"></div></div>
                         </div>
                         <div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.85rem;"><span><i class="fas fa-circle" style="color:#3B82F6; font-size:0.6rem; margin-right:6px;"></i>Cold</span><strong>${coldCount}</strong></div>
-                            <div style="background:#EFF6FF; height:8px; border-radius:4px;"><div style="background:#3B82F6; height:100%; border-radius:4px; width:${stats.total ? (coldCount/stats.total)*100 : 0}%"></div></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:2px; font-size:0.75rem;"><span><i class="fas fa-circle" style="color:#3B82F6; font-size:0.5rem; margin-right:4px;"></i>Cold</span><strong>${coldCount}</strong></div>
+                            <div style="background:#EFF6FF; height:6px; border-radius:3px;"><div style="background:#3B82F6; height:100%; border-radius:3px; width:${stats.total ? (coldCount/stats.total)*100 : 0}%"></div></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Conversion Metrics -->
-                <div class="card" style="padding: 24px; grid-column: 1 / -1;">
-                    <h3 style="margin-bottom: 16px; color:var(--text-color); font-size:1.1rem;"><i class="fas fa-trophy" style="color:#F59E0B; margin-right:8px;"></i> Conversion Success</h3>
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:16px;">
-                        <div style="background:linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%); padding:20px; border-radius:12px; text-align:center; border:1px solid #C7D2FE;">
-                            <div style="font-size:2.5rem; font-weight:800; color:#4F46E5; margin-bottom:4px;">${conversionRate}%</div>
-                            <div style="font-size:0.9rem; color:#4338CA; font-weight:600;">Overall Conversion Rate</div>
+                <div class="card" style="padding: 16px; grid-column: 1 / -1;">
+                    <h3 style="margin-bottom: 12px; color:var(--text-color); font-size:0.95rem;"><i class="fas fa-trophy" style="color:#F59E0B; margin-right:6px;"></i> Conversion Success</h3>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:12px;">
+                        <div style="background:linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%); padding:16px; border-radius:10px; text-align:center; border:1px solid #C7D2FE;">
+                            <div style="font-size:1.8rem; font-weight:800; color:#4F46E5; margin-bottom:2px;">${conversionRate}%</div>
+                            <div style="font-size:0.75rem; color:#4338CA; font-weight:600;">Overall Conversion</div>
                         </div>
-                        <div style="background:linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); padding:20px; border-radius:12px; text-align:center; border:1px solid #BBF7D0;">
-                            <div style="font-size:2.5rem; font-weight:800; color:#16A34A; margin-bottom:4px;">${stats.booked}</div>
-                            <div style="font-size:0.9rem; color:#15803D; font-weight:600;">Total Booked</div>
+                        <div style="background:linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); padding:16px; border-radius:10px; text-align:center; border:1px solid #BBF7D0;">
+                            <div style="font-size:1.8rem; font-weight:800; color:#16A34A; margin-bottom:2px;">${stats.booked}</div>
+                            <div style="font-size:0.75rem; color:#15803D; font-weight:600;">Total Booked</div>
                         </div>
-                        <div style="background:linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%); padding:20px; border-radius:12px; text-align:center; border:1px solid #E9D5FF;">
-                            <div style="font-size:2.5rem; font-weight:800; color:#9333EA; margin-bottom:4px;">${stats.delivered}</div>
-                            <div style="font-size:0.9rem; color:#7E22CE; font-weight:600;">Total Delivered</div>
+                        <div style="background:linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%); padding:16px; border-radius:10px; text-align:center; border:1px solid #E9D5FF;">
+                            <div style="font-size:1.8rem; font-weight:800; color:#9333EA; margin-bottom:2px;">${stats.delivered}</div>
+                            <div style="font-size:0.75rem; color:#7E22CE; font-weight:600;">Total Delivered</div>
                         </div>
                     </div>
                 </div>
