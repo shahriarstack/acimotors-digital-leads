@@ -2484,6 +2484,7 @@
                     const forwardBtn = `<button class="btn-icon-circle" title="Forward to another officer" onclick="openForwardModal('${c.id}')" style="background:#f2f2f7; color:var(--primary); margin-left:8px;"><i class="fas fa-share-square"></i></button>`;
                     
                     let adminAlert = '';
+                    let adminCommentHtml = '';
                     let glowStyle = '';
                     if (hasAdminFollowup) {
                         glowStyle = 'box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); border: 2px solid #EF4444; position: relative; z-index: 10;';
@@ -2555,7 +2556,33 @@
                         }
                     }
 
-                    return `<tr class="${rowClass}" style="${glowStyle}"><td style="vertical-align:top;">${getPhonePill(c.customer_no)}</td><td style="vertical-align:top;"><div>${nameHtml}<div style="font-size:0.8rem;color:var(--text-muted); margin-bottom:2px;"><i class="far fa-calendar-alt"></i> ${formatDateDisplay(c.date)}</div><div style="font-size:0.85rem;color:var(--text-muted);"><i class="fas fa-map-marker-alt"></i> ${c.address||'-'}</div><div style="margin-top:6px;"><span class="badge" style="background:#f2f2f7;">${c.model}</span></div>${daysSinceFollowupHtml}${adminAlert}</div></td><td style="vertical-align:top;"><div><div style="display:flex;gap:6px;margin-bottom:8px;">${getVisitBadge(c.visit_completed)} ${getLeadBadge(c.customer_type)}</div>${c.field_visit_notes ? `<div style="font-size:0.85rem;font-style:italic; white-space:pre-wrap; max-height:100px; overflow-y:auto;">${c.field_visit_notes}</div>` : '<span style="color:#ccc;">No notes</span>'}</div></td><td style="vertical-align:top;"><div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end; width:100%;"><div style="display:flex; align-items:center; width:100%;">${actionButtons}${forwardBtn}</div></div></td></tr>`;
+                    if (c.field_visit_notes && c.field_visit_notes.includes('Admin Comment:')) {
+                        const lines = c.field_visit_notes.split('\n').filter(l => l.includes('Admin Comment:'));
+                        if (lines.length > 0) {
+                            const comments = lines.map(line => {
+                                let timeStr = "";
+                                let contentStr = line;
+                                const match = line.match(/\[(.*?)\] Admin Comment: (.*)/);
+                                if (match) {
+                                    timeStr = match[1];
+                                    contentStr = match[2];
+                                } else {
+                                    contentStr = line.replace('Admin Comment:', '').trim();
+                                }
+                                return `<div style="font-size: 0.85rem; color: #065F46; margin-top: 4px; font-style:italic;">"${contentStr}" <span style="font-size:0.7rem; color:#10B981;">- ${timeStr}</span></div>`;
+                            }).join('');
+
+                            adminCommentHtml = `
+                            <div style="margin-top: 8px; padding: 10px; background: #ECFDF5; border-left: 4px solid #10B981; border-radius: 6px;">
+                                <div style="display:flex; align-items:center;">
+                                    <strong style="color: #059669; font-size: 0.85rem;"><i class="fas fa-comment-dots"></i> Admin Comment</strong>
+                                </div>
+                                ${comments}
+                            </div>`;
+                        }
+                    }
+
+                    return `<tr class="${rowClass}" style="${glowStyle}"><td style="vertical-align:top;">${getPhonePill(c.customer_no)}</td><td style="vertical-align:top;"><div>${nameHtml}<div style="font-size:0.8rem;color:var(--text-muted); margin-bottom:2px;"><i class="far fa-calendar-alt"></i> ${formatDateDisplay(c.date)}</div><div style="font-size:0.85rem;color:var(--text-muted);"><i class="fas fa-map-marker-alt"></i> ${c.address||'-'}</div><div style="margin-top:6px;"><span class="badge" style="background:#f2f2f7;">${c.model}</span></div>${daysSinceFollowupHtml}${adminAlert}${adminCommentHtml}</div></td><td style="vertical-align:top;"><div><div style="display:flex;gap:6px;margin-bottom:8px;">${getVisitBadge(c.visit_completed)} ${getLeadBadge(c.customer_type)}</div>${c.field_visit_notes ? `<div style="font-size:0.85rem;font-style:italic; white-space:pre-wrap; max-height:100px; overflow-y:auto;">${c.field_visit_notes}</div>` : '<span style="color:#ccc;">No notes</span>'}</div></td><td style="vertical-align:top;"><div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end; width:100%;"><div style="display:flex; align-items:center; width:100%;">${actionButtons}${forwardBtn}</div></div></td></tr>`;
                 }).join('');
             } finally {
                 hideLoader();
