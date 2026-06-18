@@ -686,10 +686,13 @@
             </div>
             <input type="hidden" id="admin-followup-customer-id">
             <div class="form-group">
-                <label>Instructions / Remarks for Officer</label>
+                <label>Instructions / Remarks</label>
                 <textarea id="admin-followup-notes" class="form-control" placeholder="E.g., Customer requested callback tomorrow morning. Offer discount." style="min-height: 100px;"></textarea>
             </div>
-            <button class="btn btn-primary" style="width: 100%;" onclick="saveAdminFollowup()"><i class="fas fa-save"></i> Save & Assign Followup</button>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" style="flex: 1; padding: 10px; font-size: 0.9rem;" onclick="saveAdminFollowup()"><i class="fas fa-save"></i> Assign to Officer</button>
+                <button class="btn" style="flex: 1; background: #10B981; color: white; border: none; padding: 10px; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(16,185,129,0.2); transition: all 0.2s;" onclick="saveAdminCommentOnly()"><i class="fas fa-check-circle"></i> Save & Mark Resolved</button>
+            </div>
         </div>
     </div>
     <div id="confirm-modal" class="modal-overlay hidden"><div class="modal-box" style="max-width: 400px; text-align: center;"><div class="modal-header" style="justify-content:center;"><i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--warning); margin-bottom: 16px; display: block;"></i></div><h3 class="modal-title" id="confirm-title" style="margin-bottom: 8px;">Are you sure?</h3><p id="confirm-msg" style="color: var(--text-muted); margin-bottom: 20px;"></p><div style="display: flex; gap: 12px; justify-content: center;"><button id="confirm-yes-btn" class="btn btn-primary">Yes, Proceed</button><button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button></div></div></div>
@@ -922,6 +925,32 @@
                 if (window.loadMyCustomers) loadMyCustomers();
             } catch (error) {
                 showToast('Error saving followup: ' + error.message, 'error');
+            } finally {
+                hideLoader();
+            }
+        };
+
+        window.saveAdminCommentOnly = async function() {
+            const id = document.getElementById('admin-followup-customer-id').value;
+            const notes = document.getElementById('admin-followup-notes').value.trim();
+            const cust = currentCustomersList.find(c => c.id == id);
+            if (!cust) return;
+            
+            showLoader();
+            try {
+                if (notes) {
+                    const timestamp = new Date().toLocaleString('en-US', { hour12: true, month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    const newNoteLine = `[${timestamp}] Admin Comment: ${notes}`;
+                    cust.field_visit_notes = cust.field_visit_notes ? `${cust.field_visit_notes}\n---\n${newNoteLine}` : newNoteLine;
+                }
+                cust.admin_followup = null; // Mark as not pending
+                await apiCall('/customers', 'POST', cust);
+                showToast('Comment saved & marked as resolved', 'success');
+                closeAdminFollowupModal();
+                if (window.renderDashboardCustomers) renderDashboardCustomers();
+                if (window.loadMyCustomers) loadMyCustomers();
+            } catch (error) {
+                showToast('Error saving comment: ' + error.message, 'error');
             } finally {
                 hideLoader();
             }
