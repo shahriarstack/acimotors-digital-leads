@@ -614,6 +614,31 @@
                     </div>
                 </div>
                 <div id="sub-admin-section" class="card hidden"><div class="card-header"><h3 class="card-title">System Administrators</h3><button class="btn btn-sm btn-secondary" onclick="openAdminModal()">Add Admin</button></div><div class="table-wrapper"><table><thead><tr><th>Username</th><th>Role</th><th>Password</th><th>Actions</th></tr></thead><tbody id="admins-body"></tbody></table></div></div>
+                
+                <!-- Main Admin Password Management Card -->
+                <div id="main-admin-section" class="card hidden">
+                    <div class="card-header" style="border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 12px; margin-bottom: 16px;">
+                        <h3 class="card-title" style="display: flex; align-items: center; gap: 8px; font-size: 1rem;"><i class="fas fa-user-shield" style="color: var(--primary);"></i> System Main Admin Password Management</h3>
+                    </div>
+                    <form id="main-admin-password-form">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: flex-end;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: block;">Main Admin Username</label>
+                                <input type="text" value="admin" class="form-control" disabled style="background: #F3F4F6; cursor: not-allowed; font-weight: bold;">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; display: block;">New Main Admin Password *</label>
+                                <div style="position: relative; display: flex; align-items: center;">
+                                    <input type="password" id="main-admin-password-input" class="form-control" required placeholder="Enter new password" style="padding-right: 40px; width: 100%;">
+                                    <span style="position: absolute; right: 12px; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; height: 100%;" onclick="toggleMainAdminPasswordVisibility()"><i class="fas fa-eye-slash" id="toggle-sa-pass-icon"></i></span>
+                                </div>
+                            </div>
+                            <div>
+                                <button type="submit" class="btn btn-primary" style="width: 100%; height: 42px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fas fa-save"></i> Update Password</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
             <footer class="copyright-footer" style="text-align: center; margin-top: 40px; padding-bottom: 20px; color: var(--text-muted);">
                 <p style="font-weight: 500;">&copy; <span id="current-year"></span> ACI Motors.</p>
@@ -2715,7 +2740,19 @@
 
                 if(currentUser.role==='admin') { 
                     document.getElementById('sub-admin-section').classList.remove('hidden'); 
+                    document.getElementById('main-admin-section').classList.remove('hidden'); 
+                    
+                    const mainAdmin = data.find(o => o.role === 'admin' || o.id === 'adm-001');
+                    if (mainAdmin) {
+                        document.getElementById('main-admin-password-input').value = mainAdmin.password || '';
+                    } else {
+                        document.getElementById('main-admin-password-input').value = 'admin@4321';
+                    }
+                    
                     document.getElementById('admins-body').innerHTML = data.filter(o=>o.role.includes('admin') && o.role !== 'admin').map(a => `<tr><td><strong>${a.full_name}</strong></td><td><span class="badge badge-purple">${a.role}</span></td><td><code>${a.password}</code></td><td><button class="btn-icon-circle btn-delete" onclick="deleteAdmin('${a.id}')"><i class="fas fa-trash"></i></button></td></tr>`).join(''); 
+                } else {
+                    document.getElementById('sub-admin-section').classList.add('hidden');
+                    document.getElementById('main-admin-section').classList.add('hidden');
                 }
             } finally {
                 hideLoader();
@@ -3239,6 +3276,43 @@
                 hideLoader();
             }
         });
+
+        document.getElementById('main-admin-password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById('main-admin-password-input').value.trim();
+            if (!newPassword) return;
+            
+            showLoader();
+            try {
+                const data = {
+                    id: "adm-001",
+                    full_name: "admin",
+                    territory: "Head Office",
+                    password: newPassword,
+                    role: "admin",
+                    business: "Head Office"
+                };
+                await apiCall('/officers', 'POST', data);
+                showToast('System Main Admin Password updated successfully!', 'success');
+                loadOfficers();
+            } catch(e) {
+                showToast('DB Error: ' + e.message, 'error');
+            } finally {
+                hideLoader();
+            }
+        });
+
+        window.toggleMainAdminPasswordVisibility = function() {
+            const input = document.getElementById('main-admin-password-input');
+            const icon = document.getElementById('toggle-sa-pass-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fas fa-eye';
+            } else {
+                input.type = 'password';
+                icon.className = 'fas fa-eye-slash';
+            }
+        };
         
         window.deleteAdmin = async function(id) {
             if(confirm('Delete this admin?')) {
