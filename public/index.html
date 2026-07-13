@@ -2549,8 +2549,11 @@
                     return getTimestamp(b.date) - getTimestamp(a.date);
                 });
 
+                const officerMap = {};
+                allOfficers.forEach(o => { officerMap[o.id] = o; });
+
                 document.getElementById('customers-body').innerHTML = data.map((c,i) => {
-                    const assignedOfficer = allOfficers.find(o => o.id === c.officer_id);
+                    const assignedOfficer = officerMap[c.officer_id];
                     const inputValue = assignedOfficer ? `${assignedOfficer.full_name} (${assignedOfficer.territory})` : '';
                     const officerInput = `<input type="text" list="officer_datalist_global" class="officer-search-input ${!c.officer_id ? 'unassigned' : ''}" value="${inputValue}" placeholder="${!c.officer_id ? '⚠️ Assign' : 'Search...'}" onchange="handleOfficerAssignmentChange('${c.id}', this)">`;
                     return `<tr><td><input type="checkbox" class="customer-checkbox" value="${c.id}" onchange="updateDeleteButtonState()"></td><td>${i+1}</td><td>${getPhonePill(c.customer_no)}</td><td><strong>${c.name}</strong></td><td>${formatDateDisplay(c.date)}</td><td>${c.address || ''}</td><td>${c.model}</td><td>${officerInput}</td><td>${getSaleTypeBadge(c.sale_type)}</td><td>${getVisitBadge(c.visit_completed)}</td><td>${getLeadBadge(c.customer_type)}</td><td><button class="btn-icon-circle btn-edit" onclick="openCustomerModal('${c.id}')"><i class="fas fa-pen"></i></button></td></tr>`;
