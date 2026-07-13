@@ -2042,7 +2042,8 @@
                     warm: filtered.filter(c => c.customer_type === 'Warm').length,
                     cold: filtered.filter(c => c.customer_type === 'Cold').length,
                     booked: filtered.filter(c => c.booking_info && !c.delivery_info).length,
-                    delivered: filtered.filter(c => c.delivery_info).length
+                    delivered: filtered.filter(c => c.delivery_info).length,
+                    unassigned: filtered.filter(c => !c.officer_id).length
                 };
 
                 const getActiveCls = (cat) => activeDashFilter === cat ? ' active-filter' : '';
@@ -2056,6 +2057,7 @@
                     <div class="stat-card${getActiveCls('cold')}" id="stat-card-cold" onclick="toggleDashboardCustomerFilter('cold')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E6FFFA;color:#0D9488"><i class="fas fa-snowflake"></i></div><div class="stat-value">${stats.cold}</div><div class="stat-label">Cold</div></div>
                     <div class="stat-card${getActiveCls('booked')}" id="stat-card-booked" onclick="toggleDashboardCustomerFilter('booked')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#EFF6FF;color:#2563EB"><i class="fas fa-bookmark"></i></div><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div>
                     <div class="stat-card${getActiveCls('delivered')}" id="stat-card-delivered" onclick="toggleDashboardCustomerFilter('delivered')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#F5F3FF;color:#8B5CF6"><i class="fas fa-truck"></i></div><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div>
+                    <div class="stat-card${getActiveCls('unassigned')}" id="stat-card-unassigned" onclick="toggleDashboardCustomerFilter('unassigned')" style="cursor: pointer; transition: var(--transition); ${stats.unassigned > 0 ? 'border: 1.5px dashed #EF4444; background:#FEF2F2;' : ''}"><div class="stat-icon" style="background:${stats.unassigned > 0 ? '#FFEBEA' : '#ECFDF5'};color:${stats.unassigned > 0 ? '#EF4444' : '#10B981'}"><i class="fas ${stats.unassigned > 0 ? 'fa-user-times' : 'fa-check'}"></i></div><div class="stat-value" style="color:${stats.unassigned > 0 ? '#EF4444' : ''}">${stats.unassigned}</div><div class="stat-label">Unassigned</div></div>
                 `;
                 
                 const { data: officers } = await fetchOfficers(); 
