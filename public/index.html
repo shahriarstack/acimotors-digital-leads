@@ -975,6 +975,8 @@
         let officersCache = null; 
         let selectedDashMonths = [];
         let selectedAnalyticsMonths = []; 
+        let isDashMonthsInitialized = false;
+        let isAnalyticsMonthsInitialized = false;
         
         let currentSaleType = 'Resale', currentOfficerSaleType = 'Resale';
         let topOfficersChart = null, leadChart = null, confirmCallback = null;
@@ -1370,7 +1372,23 @@
             document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').style.display = 'none'; document.getElementById('landing-screen').style.display = 'flex';
         }
         
-        function selectBusiness(name) { currentBusiness = name; customersCache = null; officersCache = null; selectedDashMonths = []; selectedAnalyticsMonths = []; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
+        function selectBusiness(name) { 
+            currentBusiness = name; 
+            customersCache = null; 
+            officersCache = null; 
+            selectedDashMonths = []; 
+            selectedAnalyticsMonths = []; 
+            isDashMonthsInitialized = false;
+            isAnalyticsMonthsInitialized = false;
+            const dashC = document.getElementById('dash-month-options-container');
+            if (dashC) dashC.innerHTML = '';
+            const analC = document.getElementById('analytics-month-options-container');
+            if (analC) analC.innerHTML = '';
+            document.getElementById('landing-screen').style.display = 'none'; 
+            document.getElementById('login-screen').style.display = 'flex'; 
+            document.getElementById('login-context-badge').textContent = name; 
+            loadOfficersForLogin(name); 
+        }
         function backToLanding() { document.getElementById('login-screen').style.display = 'none'; renderLandingPage(); }
         
         async function loadOfficersForLogin(business) {
@@ -1574,6 +1592,7 @@
                 `;
                 
                 initMultiSelectForScope('analytics', uniqueMonths);
+                isAnalyticsMonthsInitialized = true;
                 
                 window.currentAnalyticsSaleType = 'New';
                 window.renderAnalyticsWidgets();
@@ -2040,10 +2059,10 @@
                 const { data } = await fetchCustomers(); 
                 
                 // Initialize month filter on first load
-                const dashContainer = document.getElementById('dash-month-options-container');
-                if (dashContainer && !dashContainer.children.length) {
+                if (!isDashMonthsInitialized) {
                     const uniqueMonths = getUniqueMonthsFromData(data);
                     initMultiSelectForScope('dash', uniqueMonths);
+                    isDashMonthsInitialized = true;
                 }
 
                 let filtered = data.filter(c => isSaleTypeMatch(c.sale_type, currentSaleType));
