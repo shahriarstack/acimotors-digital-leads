@@ -62,6 +62,14 @@
         .btn-icon-circle:hover { transform: scale(1.1); }
         .btn-edit { background: #F3F4F6; color: var(--text-muted); }
         .btn-edit:hover { background: #E5E7EB; color: var(--primary); }
+        .urgent-action-card { transition: all 0.2s ease; border: 1.5px solid transparent; }
+        .urgent-action-card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.06) !important; }
+        .urgent-action-card.active-filter { border: 1.5px solid var(--danger) !important; background: #FFEBEA !important; animation: none !important; }
+        .pulse-border { border: 1.5px solid rgba(239, 68, 68, 0.2); animation: borderPulse 2s infinite alternate; }
+        @keyframes borderPulse {
+            0% { border-color: rgba(239, 68, 68, 0.25); }
+            100% { border-color: rgba(239, 68, 68, 0.7); box-shadow: 0 0 8px rgba(239, 68, 68, 0.12); }
+        }
         .btn-delete { background: #FEF2F2; color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.1); }
         .btn-delete:hover { background: var(--danger); color: white; transform: scale(1.1); }
         .btn-key { background: #FFFBEB; color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.15); }
@@ -1698,8 +1706,12 @@
                         <div class="card" style="padding: 24px; background: linear-gradient(135deg, #F8FAFC, #F1F5F9); border-radius: 16px; border: 1px solid #E5E7EB;">
                             <h3 style="margin-top:0; font-size: 1.1rem; color: var(--text-main); display:flex; align-items:center; gap:8px;"><i class="fas fa-bolt" style="color:#F59E0B;"></i> Urgent Actions</h3>
                             <div style="margin-top: 16px; display:flex; flex-direction:column; gap:12px;">
-                                <div style="background:white; padding:16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
-                                    <div><div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Unassigned Leads</div><div style="font-size:1.5rem; font-weight:700; color:${unassigned > 0 ? '#EF4444' : '#10B981'};">${unassigned}</div></div>
+                                <div class="urgent-action-card ${unassigned > 0 ? 'pulse-border' : ''}" id="stat-card-unassigned" onclick="if(${unassigned} > 0) toggleDashboardCustomerFilter('unassigned')" style="background:white; padding:16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.02); cursor:${unassigned > 0 ? 'pointer' : 'default'}; transition: all 0.2s;">
+                                    <div>
+                                        <div style="font-size:0.8rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Unassigned Leads</div>
+                                        <div style="font-size:1.5rem; font-weight:700; color:${unassigned > 0 ? '#EF4444' : '#10B981'};">${unassigned}</div>
+                                        ${unassigned > 0 ? `<div style="font-size:0.7rem; color:#EF4444; font-weight:700; margin-top:4px;"><i class="fas fa-exclamation-circle"></i> Click to assign now</div>` : ''}
+                                    </div>
                                     <div style="width:40px; height:40px; border-radius:50%; background:${unassigned > 0 ? '#FEF2F2' : '#ECFDF5'}; display:flex; align-items:center; justify-content:center; color:${unassigned > 0 ? '#EF4444' : '#10B981'};"><i class="fas ${unassigned > 0 ? 'fa-user-times' : 'fa-check'}"></i></div>
                                 </div>
                                 <div style="background:white; padding:16px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.02);">
@@ -2159,6 +2171,8 @@
                     return baseList.filter(c => c.booking_info && !c.delivery_info);
                 case 'delivered':
                     return baseList.filter(c => c.delivery_info);
+                case 'unassigned':
+                    return baseList.filter(c => !c.officer_id);
                 default:
                     return baseList;
             }
@@ -2168,7 +2182,7 @@
             const panel = document.getElementById('dashboard-customer-list-panel');
             
             // Remove active-filter class from all stat cards
-            document.querySelectorAll('.stat-card').forEach(card => {
+            document.querySelectorAll('.stat-card, .urgent-action-card').forEach(card => {
                 card.classList.remove('active-filter');
             });
             
@@ -2204,7 +2218,7 @@
         
         window.closeDashboardCustomerList = function() {
             activeDashFilter = null;
-            document.querySelectorAll('.stat-card').forEach(card => {
+            document.querySelectorAll('.stat-card, .urgent-action-card').forEach(card => {
                 card.classList.remove('active-filter');
             });
             document.getElementById('dashboard-customer-list-panel').classList.add('hidden');
@@ -2272,7 +2286,8 @@
                 warm: { text: 'Warm Leads (High Potential)', icon: 'fa-bolt', color: '#D97706' },
                 cold: { text: 'Cold Leads (Nurturing)', icon: 'fa-snowflake', color: '#0D9488' },
                 booked: { text: 'Booked Orders', icon: 'fa-bookmark', color: '#2563EB' },
-                delivered: { text: 'Delivered Products', icon: 'fa-truck', color: '#8B5CF6' }
+                delivered: { text: 'Delivered Products', icon: 'fa-truck', color: '#8B5CF6' },
+                unassigned: { text: 'Unassigned Leads (Immediate Action Required)', icon: 'fa-user-times', color: '#EF4444' }
             };
             
             const meta = categoryMeta[activeDashFilter] || categoryMeta.total;
@@ -2346,7 +2361,10 @@
                         <td>${visitBadge}</td>
                         <td>${notesHtml}</td>
                         <td>${closureStatus}</td>
-                        <td style="text-align: right;">${adminBtnHtml}</td>
+                        <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                            ${adminBtnHtml}
+                            <button class="btn-icon-circle btn-edit" title="Edit Customer Details" onclick="event.stopPropagation(); openCustomerModal('${c.id}')"><i class="fas fa-pen" style="font-size: 0.8rem;"></i></button>
+                        </td>
                     </tr>
                 `;
             }).join('') : `<tr><td colspan="12" class="empty-state">No matching customers found for this category</td></tr>`;
