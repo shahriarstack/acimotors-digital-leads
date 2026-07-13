@@ -83,6 +83,16 @@
         .officer-search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
         .officer-search-input.unassigned { border: 1.5px dashed var(--warning); background-color: #FFFBEB; color: #B45309; font-weight: 600; }
         .officer-search-input.unassigned::placeholder { color: #B45309; opacity: 0.8; }
+        
+        /* Multi-select Dropdown CSS */
+        .multi-select-container { position: relative; display: inline-block; min-width: 140px; }
+        .multi-select-btn { background: transparent; border: none; outline: none; font-family: inherit; font-size: 0.9rem; color: var(--primary); font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
+        .multi-select-dropdown { position: absolute; top: 100%; right: 0; background: white; border: 1px solid #E5E7EB; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 1000; min-width: 180px; max-height: 250px; overflow-y: auto; margin-top: 8px; padding: 8px 0; text-align: left; }
+        .multi-select-dropdown.hidden { display: none; }
+        .multi-select-option { padding: 8px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: background 0.15s ease; font-size: 0.85rem; color: var(--text-main); font-weight: 500; user-select: none; }
+        .multi-select-option:hover { background: #F9FAFB; }
+        .multi-select-option input[type="checkbox"] { cursor: pointer; width: 15px; height: 15px; accent-color: var(--primary); margin: 0; }
+        .multi-select-option label { cursor: pointer; margin: 0; flex-grow: 1; font-weight: inherit; color: inherit; font-size: 0.85rem; }
         #landing-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%); }
         .landing-header { margin-bottom: 40px; animation: slideUp 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .landing-header h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), #34D399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; margin-top: 10px; }
@@ -445,9 +455,21 @@
                             <button class="sale-type-btn" data-type="New"><i class="fas fa-plus-circle"></i> New Sale</button>
                         </div>
 
-                        <div style="background: white; padding: 6px 14px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 10px; border: 1px solid #E5E7EB;">
+                        <div style="background: white; padding: 6px 14px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 10px; border: 1px solid #E5E7EB; position: relative;">
                             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Filter Period:</span>
-                            <input type="month" id="dashboard-filter-month" style="border: none; outline: none; font-family: inherit; font-size: 0.9rem; color: var(--primary); font-weight: 600; background: transparent; cursor: pointer;">
+                            <div class="multi-select-container" id="dash-month-select-container">
+                                <button class="multi-select-btn" id="dash-month-select-btn" onclick="toggleMultiSelectDropdown('dash-month-dropdown')">
+                                    <span id="dash-month-select-label">All Time</span>
+                                    <i class="fas fa-chevron-down" style="color: var(--text-muted); font-size: 0.8rem;"></i>
+                                </button>
+                                <div class="multi-select-dropdown hidden" id="dash-month-dropdown">
+                                    <div class="multi-select-option" onclick="toggleSelectAllMonths('dash')">
+                                        <input type="checkbox" id="dash-month-all" checked>
+                                        <label for="dash-month-all">All Months</label>
+                                    </div>
+                                    <div id="dash-month-options-container"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -951,6 +973,8 @@
         let currentCustomersList = []; 
         let customersCache = null;
         let officersCache = null; 
+        let selectedDashMonths = [];
+        let selectedAnalyticsMonths = []; 
         
         let currentSaleType = 'Resale', currentOfficerSaleType = 'Resale';
         let topOfficersChart = null, leadChart = null, confirmCallback = null;
@@ -1346,7 +1370,7 @@
             document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').style.display = 'none'; document.getElementById('landing-screen').style.display = 'flex';
         }
         
-        function selectBusiness(name) { currentBusiness = name; customersCache = null; officersCache = null; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
+        function selectBusiness(name) { currentBusiness = name; customersCache = null; officersCache = null; selectedDashMonths = []; selectedAnalyticsMonths = []; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
         function backToLanding() { document.getElementById('login-screen').style.display = 'none'; renderLandingPage(); }
         
         async function loadOfficersForLogin(business) {
@@ -1511,7 +1535,6 @@
             container.innerHTML = `<div style="text-align:center; padding: 40px; color: var(--text-muted);"><div class="loading-spinner"></div> Analyzing Data...</div>`;
             
             try {
-                // Ensure we have raw, unfiltered data for analytics
                 const response = await fetchCustomers();
                 window.currentAnalyticsBaseCustomers = response.data || [];
                 
@@ -1521,19 +1544,7 @@
                     return;
                 }
 
-                // Extract unique months
-                const months = new Set();
-                data.forEach(c => {
-                    if(c.date) {
-                        const dStr = String(c.date);
-                        if(dStr.length >= 7) months.add(dStr.substring(0,7));
-                    }
-                });
-                const monthOptions = Array.from(months).sort().reverse().map(m => {
-                    const dateObj = new Date(m + '-01');
-                    const label = isNaN(dateObj) ? m : dateObj.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-                    return `<option value="${m}">${label}</option>`;
-                }).join('');
+                const uniqueMonths = getUniqueMonthsFromData(data);
 
                 container.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; flex-wrap:wrap; gap: 15px;">
@@ -1543,14 +1554,26 @@
                                 <button id="analytics-sale-new" onclick="setAnalyticsSaleType('New')" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; border:none; cursor:pointer; font-weight:600; background:white; color:var(--text-main); box-shadow:0 1px 2px rgba(0,0,0,0.1); transition: all 0.2s;">NEW</button>
                                 <button id="analytics-sale-resale" onclick="setAnalyticsSaleType('Resale')" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 6px; border:none; cursor:pointer; font-weight:600; background:transparent; color:var(--text-muted); transition: all 0.2s;">Resale</button>
                             </div>
-                            <select id="analytics-month-filter" class="form-select" style="width: auto; padding: 6px 12px; font-weight:600;" onchange="renderAnalyticsWidgets()">
-                                <option value="">All Time</option>
-                                ${monthOptions}
-                            </select>
+                            
+                            <div class="multi-select-container" id="analytics-month-select-container" style="background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 6px 12px;">
+                                <button class="multi-select-btn" id="analytics-month-select-btn" onclick="toggleMultiSelectDropdown('analytics-month-dropdown')">
+                                    <span id="analytics-month-select-label" style="font-weight:600; color:var(--primary);">All Time</span>
+                                    <i class="fas fa-chevron-down" style="margin-left: 8px; color:var(--text-muted); font-size:0.8rem;"></i>
+                                </button>
+                                <div class="multi-select-dropdown hidden" id="analytics-month-dropdown" style="right: auto; left: 0;">
+                                    <div class="multi-select-option" onclick="toggleSelectAllMonths('analytics')">
+                                        <input type="checkbox" id="analytics-month-all" checked>
+                                        <label for="analytics-month-all">All Months</label>
+                                    </div>
+                                    <div id="analytics-month-options-container"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="analytics-widgets-container"></div>
                 `;
+                
+                initMultiSelectForScope('analytics', uniqueMonths);
                 
                 window.currentAnalyticsSaleType = 'New';
                 window.renderAnalyticsWidgets();
@@ -1578,12 +1601,22 @@
 
         window.renderAnalyticsWidgets = function() {
             const container = document.getElementById('analytics-widgets-container');
-            const monthFilter = document.getElementById('analytics-month-filter').value;
             
             let data = window.currentAnalyticsBaseCustomers || [];
-            if (monthFilter) {
-                data = data.filter(c => c.date && String(c.date).startsWith(monthFilter));
-            }
+            data = data.filter(c => {
+                if (!c.date) return false;
+                let dStr = String(c.date);
+                let yyyymm = null;
+                if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
+                    const date = new Date((c.date - 25569) * 86400 * 1000);
+                    if (!isNaN(date.getTime())) {
+                        yyyymm = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    }
+                } else if (dStr.length >= 7) {
+                    yyyymm = dStr.substring(0, 7);
+                }
+                return selectedAnalyticsMonths.includes(yyyymm);
+            });
             if (window.currentAnalyticsSaleType) {
                 data = data.filter(c => {
                     if (!c.sale_type) return false;
@@ -2005,31 +2038,31 @@
             showLoader(false);
             try {
                 const { data } = await fetchCustomers(); 
+                
+                // Initialize month filter on first load
+                const dashContainer = document.getElementById('dash-month-options-container');
+                if (dashContainer && !dashContainer.children.length) {
+                    const uniqueMonths = getUniqueMonthsFromData(data);
+                    initMultiSelectForScope('dash', uniqueMonths);
+                }
+
                 let filtered = data.filter(c => isSaleTypeMatch(c.sale_type, currentSaleType));
                 
-                // Apply Month Filter
-                const monthVal = document.getElementById('dashboard-filter-month').value;
-                if (monthVal) {
-                    filtered = filtered.filter(c => {
-                        if (!c.date) return false;
-                        // Standard string match
-                        if (String(c.date).startsWith(monthVal)) return true;
-                        
-                        // Fallback: Parse date
-                        let d;
-                        if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
-                            d = new Date((c.date - 25569) * 86400 * 1000);
-                        } else {
-                            const str = String(c.date);
-                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                // Filter by multi-selected months
+                filtered = filtered.filter(c => {
+                    if (!c.date) return false;
+                    let dStr = String(c.date);
+                    let yyyymm = null;
+                    if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
+                        const date = new Date((c.date - 25569) * 86400 * 1000);
+                        if (!isNaN(date.getTime())) {
+                            yyyymm = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
                         }
-                        
-                        if (isNaN(d.getTime())) return false;
-                        const y = d.getFullYear();
-                        const m = String(d.getMonth() + 1).padStart(2, '0');
-                        return `${y}-${m}` === monthVal;
-                    });
-                }
+                    } else if (dStr.length >= 7) {
+                        yyyymm = dStr.substring(0, 7);
+                    }
+                    return selectedDashMonths.includes(yyyymm);
+                });
 
                 // Cache baseline dashboard customers globally
                 currentDashboardBaseCustomers = filtered;
@@ -2292,7 +2325,8 @@
             
             const meta = categoryMeta[activeDashFilter] || categoryMeta.total;
             titleEl.textContent = meta.text;
-            subtitleEl.innerHTML = `Showing <strong>${list.length}</strong> record(s) matching criteria | Period: <strong>${document.getElementById('dashboard-filter-month').value || 'All Time'}</strong>`;
+            const labelText = document.getElementById('dash-month-select-label').textContent;
+            subtitleEl.innerHTML = `Showing <strong>${list.length}</strong> record(s) matching criteria | Period: <strong>${labelText}</strong>`;
             iconEl.className = `fas ${meta.icon}`;
             iconBgEl.style.backgroundColor = meta.color;
             
@@ -2372,6 +2406,151 @@
             // Cache current sub-filtered dataset globally for dynamic CSV exporting
             currentDashDetailedFilteredList = list;
         };
+
+        // --- NEW: Multi-Select Month Filter Helpers ---
+        function getUniqueMonthsFromData(data) {
+            const monthsSet = new Set();
+            data.forEach(c => {
+                if (c.date) {
+                    const dStr = String(c.date);
+                    let yyyymm = null;
+                    if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
+                        const date = new Date((c.date - 25569) * 86400 * 1000);
+                        if (!isNaN(date.getTime())) {
+                            yyyymm = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                        }
+                    } else if (dStr.length >= 7) {
+                        yyyymm = dStr.substring(0, 7);
+                    }
+                    if (yyyymm && /^\d{4}-\d{2}$/.test(yyyymm)) {
+                        monthsSet.add(yyyymm);
+                    }
+                }
+            });
+            return Array.from(monthsSet).sort().reverse();
+        }
+
+        function initMultiSelectForScope(scope, uniqueMonths) {
+            const container = document.getElementById(`${scope}-month-options-container`);
+            if (!container) return;
+
+            const formatMonthDisplay = (mStr) => {
+                const [year, month] = mStr.split('-');
+                const d = new Date(year, parseInt(month) - 1, 1);
+                return d.toLocaleString('default', { month: 'short', year: 'numeric' });
+            };
+
+            container.innerHTML = uniqueMonths.map(m => `
+                <div class="multi-select-option" onclick="toggleMonthCheckbox('${scope}', '${m}', event)">
+                    <input type="checkbox" class="${scope}-month-chk" value="${m}" id="chk-${scope}-${m}" checked>
+                    <label for="chk-${scope}-${m}">${formatMonthDisplay(m)}</label>
+                </div>
+            `).join('');
+
+            if (scope === 'dash') {
+                selectedDashMonths = [...uniqueMonths];
+            } else {
+                selectedAnalyticsMonths = [...uniqueMonths];
+            }
+
+            updateMultiSelectLabel(scope);
+        }
+
+        window.toggleMultiSelectDropdown = function(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const isHidden = dropdown.classList.contains('hidden');
+            // Hide all multi-select dropdowns first
+            document.querySelectorAll('.multi-select-dropdown').forEach(d => d.classList.add('hidden'));
+            if (isHidden) {
+                dropdown.classList.remove('hidden');
+            }
+        };
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.multi-select-container')) {
+                document.querySelectorAll('.multi-select-dropdown').forEach(d => d.classList.add('hidden'));
+            }
+        });
+
+        window.toggleMonthCheckbox = function(scope, value, event) {
+            if (event.target.tagName === 'INPUT') {
+                event.stopPropagation();
+            } else {
+                const chk = document.getElementById(`chk-${scope}-${value}`);
+                if (chk) chk.checked = !chk.checked;
+            }
+
+            const checkboxes = document.querySelectorAll(`.${scope}-month-chk`);
+            const allChk = document.getElementById(`${scope}-month-all`);
+            const selected = [];
+            checkboxes.forEach(c => {
+                if (c.checked) selected.push(c.value);
+            });
+
+            if (scope === 'dash') {
+                selectedDashMonths = selected;
+            } else {
+                selectedAnalyticsMonths = selected;
+            }
+
+            allChk.checked = (selected.length === checkboxes.length);
+            updateMultiSelectLabel(scope);
+            
+            if (scope === 'dash') {
+                loadDashboardData();
+            } else {
+                renderAnalyticsWidgets();
+            }
+        };
+
+        window.toggleSelectAllMonths = function(scope) {
+            const allChk = document.getElementById(`${scope}-month-all`);
+            const checkboxes = document.querySelectorAll(`.${scope}-month-chk`);
+            
+            checkboxes.forEach(c => {
+                c.checked = allChk.checked;
+            });
+
+            const selected = [];
+            if (allChk.checked) {
+                checkboxes.forEach(c => selected.push(c.value));
+            }
+
+            if (scope === 'dash') {
+                selectedDashMonths = selected;
+                loadDashboardData();
+            } else {
+                selectedAnalyticsMonths = selected;
+                renderAnalyticsWidgets();
+            }
+
+            updateMultiSelectLabel(scope);
+        };
+
+        function updateMultiSelectLabel(scope) {
+            const labelEl = document.getElementById(`${scope}-month-select-label`);
+            const checkboxes = document.querySelectorAll(`.${scope}-month-chk`);
+            const selected = scope === 'dash' ? selectedDashMonths : selectedAnalyticsMonths;
+
+            if (selected.length === 0) {
+                labelEl.textContent = 'None';
+            } else if (selected.length === checkboxes.length) {
+                labelEl.textContent = 'All Time';
+            } else {
+                const shortNames = selected.map(mStr => {
+                    const [year, month] = mStr.split('-');
+                    const d = new Date(year, parseInt(month) - 1, 1);
+                    return d.toLocaleString('default', { month: 'short', year: '2-digit' });
+                });
+                
+                if (shortNames.length <= 2) {
+                    labelEl.textContent = shortNames.join(', ');
+                } else {
+                    labelEl.textContent = `${shortNames.slice(0, 2).join(', ')} (+${shortNames.length - 2})`;
+                }
+            }
+        }
 
         window.exportDashListToCSV = function() {
             if (!currentDashDetailedFilteredList || currentDashDetailedFilteredList.length === 0) {
@@ -3678,7 +3857,7 @@
             
             ['filter-sale-type','filter-officer','filter-visit','filter-lead-type'].forEach(id => document.getElementById(id).addEventListener('change', loadCustomersData));
             ['my-filter-visit','my-filter-lead','my-filter-month'].forEach(id => document.getElementById(id).addEventListener('change', loadMyCustomers));
-            document.getElementById('dashboard-filter-month').addEventListener('change', loadDashboardData); 
+            // Month filter event listener is removed as it uses custom dropdown triggers
             
             // Attach listener for Officer Performance Table Filters
             document.querySelectorAll('.table-filter-input').forEach(input => {
