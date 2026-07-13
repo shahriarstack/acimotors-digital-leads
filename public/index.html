@@ -941,6 +941,8 @@
         let currentUser = null, currentRole = null, currentBusiness = null;
         let allOfficers = [], businessList = [], businessIcons = {};
         let currentCustomersList = []; 
+        let customersCache = null;
+        let officersCache = null; 
         
         let currentSaleType = 'Resale', currentOfficerSaleType = 'Resale';
         let topOfficersChart = null, leadChart = null, confirmCallback = null;
@@ -975,25 +977,27 @@
         }
 
         function hideLoader() {
-             loaderTimeout = setTimeout(() => {
-                 if (activeLoaderType === 'blocking') {
-                     const overlay = document.getElementById('loading-overlay');
-                     overlay.classList.remove('active');
-                     setTimeout(() => {
-                         if (!overlay.classList.contains('active')) {
-                             overlay.style.display = 'none';
-                             overlay.classList.add('hidden');
-                         }
-                     }, 300);
-                 } else if (activeLoaderType === 'top') {
-                     const bar = document.getElementById('top-loading-bar');
-                     bar.classList.add('hidden');
-                 }
-                 activeLoaderType = null;
-             }, 400);
+             if (activeLoaderType === 'blocking') {
+                 const overlay = document.getElementById('loading-overlay');
+                 overlay.classList.remove('active');
+                 setTimeout(() => {
+                     if (!overlay.classList.contains('active')) {
+                         overlay.style.display = 'none';
+                         overlay.classList.add('hidden');
+                     }
+                 }, 300);
+             } else if (activeLoaderType === 'top') {
+                 const bar = document.getElementById('top-loading-bar');
+                 bar.classList.add('hidden');
+             }
+             activeLoaderType = null;
         }
 
         async function apiCall(endpoint, method = 'GET', body = null) {
+            if (method !== 'GET') {
+                customersCache = null;
+                officersCache = null;
+            }
             try {
                 const opts = { method, headers: { 'Content-Type': 'application/json' } };
                 if (body) opts.body = JSON.stringify(body);
@@ -1295,10 +1299,14 @@
             setupEventListeners();
         });
 
-        async function fetchOfficers() {
+        async function fetchOfficers(force = false) {
             try {
+                if (officersCache && !force) {
+                    return { data: officersCache };
+                }
                 const data = await apiCall('/officers');
                 allOfficers = data || [];
+                officersCache = allOfficers;
                 return { data: allOfficers };
             } catch (e) {
                 showToast('DB Error: ' + e.message, 'error');
@@ -1306,10 +1314,14 @@
             }
         }
         
-        async function fetchCustomers() {
+        async function fetchCustomers(force = false) {
             try {
+                if (customersCache && !force) {
+                    return { data: customersCache };
+                }
                 const data = await apiCall(`/customers?business=${encodeURIComponent(currentBusiness)}`);
                 currentCustomersList = data || [];
+                customersCache = currentCustomersList;
                 return { data: currentCustomersList };
             } catch (e) {
                 showToast('DB Error: ' + e.message, 'error');
@@ -1326,7 +1338,7 @@
             document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').style.display = 'none'; document.getElementById('landing-screen').style.display = 'flex';
         }
         
-        function selectBusiness(name) { currentBusiness = name; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
+        function selectBusiness(name) { currentBusiness = name; customersCache = null; officersCache = null; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
         function backToLanding() { document.getElementById('login-screen').style.display = 'none'; renderLandingPage(); }
         
         async function loadOfficersForLogin(business) {
