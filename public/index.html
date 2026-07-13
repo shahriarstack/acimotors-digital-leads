@@ -828,7 +828,7 @@
         </div>
     </div>
 
-    <div id="customer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Add Customer</h3><button class="modal-close" onclick="closeCustomerModal()">×</button></div><form id="customer-form"><input type="hidden" id="customer-id"><div class="form-group"><label>Customer Number *</label><input type="text" id="customer-no" class="form-control" placeholder="+XX... or 01..." maxlength="16" inputmode="tel" required></div><div class="form-group"><label>Name *</label><input type="text" id="customer-name" class="form-control" required></div><div class="form-group"><label>Date *</label><input type="date" id="customer-date" class="form-control" required></div><div class="form-group"><label>Address</label><input type="text" id="customer-address" class="form-control"></div><div class="form-group"><label>Model</label><input type="text" id="customer-model" class="form-control" required></div><div class="form-group"><label>Sale Type *</label><select id="customer-sale-type" class="form-select"><option value="Resale">Resale</option><option value="New">NEW</option></select></div><div class="form-group"><label>Officer</label><select id="customer-officer" class="form-select"></select></div><button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Save</button></form></div></div>
+    <div id="customer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title" id="customer-modal-title">Add Customer</h3><button class="modal-close" onclick="closeCustomerModal()">×</button></div><form id="customer-form"><input type="hidden" id="customer-id"><div class="form-group"><label>Customer Number *</label><input type="text" id="customer-no" class="form-control" placeholder="+XX... or 01..." maxlength="16" inputmode="tel" required></div><div class="form-group"><label>Name *</label><input type="text" id="customer-name" class="form-control" required></div><div class="form-group"><label>Date *</label><input type="date" id="customer-date" class="form-control" required></div><div class="form-group"><label>Address</label><input type="text" id="customer-address" class="form-control"></div><div class="form-group"><label>Model</label><input type="text" id="customer-model" class="form-control" required></div><div class="form-group"><label>Sale Type *</label><select id="customer-sale-type" class="form-select"><option value="Resale">Resale</option><option value="New">NEW</option></select></div><div class="form-group"><label>Officer</label><select id="customer-officer" class="form-select"></select></div><button type="submit" class="btn btn-primary" style="width:100%; margin-top:10px;">Save</button></form></div></div>
     <div id="visit-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Update Visit</h3><button class="modal-close" onclick="closeVisitModal()">×</button></div><form id="visit-form"><input type="hidden" id="visit-customer-id"><div class="form-group"><label>Completed?</label><select id="visit-completed" class="form-select"><option value="Yes">Yes</option><option value="No">No</option></select></div><div class="form-group"><label>Rating</label><select id="visit-rating" class="form-select"><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div><div class="form-group"><label>Existing Notes History</label><div id="visit-notes-history" style="background: #F9FAFB; padding: 10px; border-radius: 8px; border: 1px solid #E5E7EB; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; max-height: 150px; overflow-y: auto; white-space: pre-wrap;"></div><label>Add New Followup Remark</label><textarea id="visit-notes" class="form-control" placeholder="E.g., 2nd follow up: Customer wants to buy next week..."></textarea></div><button type="submit" class="btn btn-success" style="width:100%;">Update & Append Note</button></form></div></div>
     <div id="officer-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Create Officer</h3><button class="modal-close" onclick="closeOfficerModal()">×</button></div><form id="officer-form"><input type="hidden" id="officer-id"><div class="form-group"><label>Name *</label><input type="text" id="officer-name" class="form-control" required></div><div class="form-group"><label>Territory/Area</label><input type="text" id="officer-territory" class="form-control"></div><div class="form-group"><label>Employee ID (Password)</label><input type="text" id="officer-form-password" class="form-control" required></div><button type="submit" class="btn btn-primary" style="width:100%;">Save</button></form></div></div>
     <div id="bulk-import-modal" class="modal-overlay hidden"><div class="modal-box"><div class="modal-header"><h3 class="modal-title">Bulk Import Customers</h3><button class="modal-close" onclick="closeBulkImportModal()">×</button></div><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;"><p style="margin: 0; color: var(--text-muted); font-size: 0.9rem;">Select CSV file</p><a href="#" id="download-template-btn" style="font-size: 0.85rem; color: var(--primary); text-decoration: none; font-weight: 500;">Download Template</a></div><p style="margin-bottom: 16px; color: var(--text-muted); font-size: 0.8rem; background: #F9FAFB; padding: 8px; border-radius: 6px;">Columns: customer_no, name, date, address, model, sale_type (Resale/New), officer_id (employee_id)</p><input type="file" id="csv-file" accept=".csv" class="form-control" style="margin-bottom: 16px;"><div style="display: flex; gap: 12px;"><button id="process-csv-btn" class="btn btn-primary" style="flex: 1;">Import</button><button class="btn btn-secondary" onclick="closeBulkImportModal()">Cancel</button></div></div></div>
@@ -2994,7 +2994,31 @@
         function closeConfirmModal() { document.getElementById('confirm-modal').classList.add('hidden'); }
 
         // CRUD
-        function openCustomerModal(id) { document.getElementById('customer-modal').classList.remove('hidden'); document.getElementById('customer-form').reset(); document.getElementById('customer-id').value = id || ''; }
+        async function openCustomerModal(id) { 
+            document.getElementById('customer-modal').classList.remove('hidden'); 
+            document.getElementById('customer-form').reset(); 
+            document.getElementById('customer-id').value = id || ''; 
+            
+            // Ensure officers list is populated
+            await loadOfficersForDropdown();
+            
+            const titleEl = document.getElementById('customer-modal-title');
+            if (id) {
+                titleEl.textContent = 'Edit Customer';
+                const cust = currentCustomersList.find(c => c.id === id);
+                if (cust) {
+                    document.getElementById('customer-no').value = cust.customer_no || '';
+                    document.getElementById('customer-name').value = cust.name || '';
+                    document.getElementById('customer-date').value = cust.date || '';
+                    document.getElementById('customer-address').value = cust.address || '';
+                    document.getElementById('customer-model').value = cust.model || '';
+                    document.getElementById('customer-sale-type').value = cust.sale_type || 'Resale';
+                    document.getElementById('customer-officer').value = cust.officer_id || '';
+                }
+            } else {
+                titleEl.textContent = 'Add Customer';
+            }
+        }
         function closeCustomerModal() { document.getElementById('customer-modal').classList.add('hidden'); }
         async function handleSaveCustomer(e) {
             e.preventDefault(); 
@@ -3035,7 +3059,20 @@
             showLoader();
             try {
                 const id = document.getElementById('customer-id').value; const officerSelect = document.getElementById('customer-officer');
-                const data = { id: id || "cust-"+Date.now(), customer_no: phoneNo, name: document.getElementById('customer-name').value, date: document.getElementById('customer-date').value, address: document.getElementById('customer-address').value, model: document.getElementById('customer-model').value, sale_type: document.getElementById('customer-sale-type').value, officer_id: officerSelect.value, officer_name: officerSelect.options[officerSelect.selectedIndex]?.text || 'Unassigned', business: currentBusiness };
+                const existing = id ? currentCustomersList.find(c => c.id === id) : {};
+                const data = { 
+                    ...existing,
+                    id: id || "cust-"+Date.now(), 
+                    customer_no: phoneNo, 
+                    name: document.getElementById('customer-name').value, 
+                    date: document.getElementById('customer-date').value, 
+                    address: document.getElementById('customer-address').value, 
+                    model: document.getElementById('customer-model').value, 
+                    sale_type: document.getElementById('customer-sale-type').value, 
+                    officer_id: officerSelect.value, 
+                    officer_name: officerSelect.value ? (officerSelect.options[officerSelect.selectedIndex]?.text || 'Unassigned') : 'Unassigned', 
+                    business: currentBusiness 
+                };
                 
                 await apiCall('/customers', 'POST', data);
                 showToast('Saved', 'success'); 
