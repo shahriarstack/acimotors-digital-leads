@@ -2997,27 +2997,76 @@
             
             const c = currentCustomersList.find(x => x.id === cid);
             if(c) {
-                showLoader();
-                try {
-                    const offId = officer ? officer.id : null;
-                    const offName = officer ? officer.full_name : null;
-                    
-                    await apiCall('/customers', 'POST', { ...c, officer_id: offId, officer_name: offName });
-                    
-                    showToast('Officer Assigned', 'success');
-                    if(officer) {
-                        input.classList.remove('unassigned');
-                    } else {
-                        input.classList.add('unassigned');
-                    }
-                    
-                    // Refresh data
-                    loadCustomersData();
-                } catch(e) {
-                    showToast('DB Error: ' + e.message, 'error');
-                } finally {
-                    hideLoader();
+                const prevId = c.officer_id;
+                const prevName = c.officer_name;
+                
+                const offId = officer ? officer.id : null;
+                const offName = officer ? officer.full_name : null;
+                
+                // Optimistically update memory cache
+                c.officer_id = offId;
+                c.officer_name = offName;
+                
+                if(officer) {
+                    input.classList.remove('unassigned');
+                } else {
+                    input.classList.add('unassigned');
                 }
+                
+                // Visual feedback: Saving flash
+                input.style.transition = 'all 0.3s ease';
+                input.style.borderColor = '#10B981';
+                input.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.25)';
+                
+                showLoader(false); // top loading progress bar
+                apiCall('/customers', 'POST', { ...c, officer_id: offId, officer_name: offName })
+                    .then(() => {
+                        showToast('Officer Assigned successfully', 'success');
+                        
+                        // Check if we are currently filtering for Unassigned
+                        const filterVal = document.getElementById('filter-officer').value;
+                        if (filterVal === 'Unassigned' && offId) {
+                            const tr = input.closest('tr');
+                            if (tr) {
+                                tr.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                                tr.style.opacity = '0';
+                                tr.style.transform = 'translateX(-20px)';
+                                setTimeout(() => {
+                                    tr.remove();
+                                }, 600);
+                            }
+                        } else {
+                            setTimeout(() => {
+                                input.style.borderColor = '';
+                                input.style.boxShadow = '';
+                            }, 800);
+                        }
+                        
+                        // Update cache
+                        customersCache = currentCustomersList;
+                    })
+                    .catch(e => {
+                        // Rollback on fail
+                        c.officer_id = prevId;
+                        c.officer_name = prevName;
+                        if (prevId) {
+                            input.value = `${prevName} (${allOfficers.find(o => o.id === prevId)?.territory || ''})`;
+                            input.classList.remove('unassigned');
+                        } else {
+                            input.value = '';
+                            input.classList.add('unassigned');
+                        }
+                        input.style.borderColor = '#EF4444';
+                        input.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.25)';
+                        setTimeout(() => {
+                            input.style.borderColor = '';
+                            input.style.boxShadow = '';
+                        }, 2000);
+                        showToast('DB Error: ' + e.message, 'error');
+                    })
+                    .finally(() => {
+                        hideLoader();
+                    });
             }
         };
 
