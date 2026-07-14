@@ -1482,7 +1482,7 @@
                 let savedDashTab = localStorage.getItem('currentDashTab') || 'overview';
                 switchDashTab(savedDashTab);
             } 
-            if(id === 'data-entry') { loadCustomersData(); loadOfficersForDropdown(); } 
+            if(id === 'data-entry') { loadOfficersForDropdown().then(() => loadCustomersData()); } 
             if(id === 'user-panel') { 
                 loadMyCustomers();
                 let savedOfficerTab = localStorage.getItem('currentOfficerTab') || 'tasks';
@@ -2198,6 +2198,19 @@
         }
 
         window.toggleDashboardCustomerFilter = function(filterType) {
+            if (filterType === 'unassigned') {
+                // Set the officer filter on the Data Entry tab to "Unassigned"
+                document.getElementById('filter-officer').value = 'Unassigned';
+                // Reset other filters to default
+                document.getElementById('filter-sale-type').value = 'All Types';
+                document.getElementById('filter-visit').value = 'All Status';
+                document.getElementById('filter-lead-type').value = 'All Leads';
+                // Navigate to data entry tab
+                navigateTo('data-entry');
+                showToast('Showing unassigned customers list', 'info');
+                return;
+            }
+
             const panel = document.getElementById('dashboard-customer-list-panel');
             
             // Remove active-filter class from all stat cards
