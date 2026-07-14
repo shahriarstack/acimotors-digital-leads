@@ -966,13 +966,19 @@
 
         let loaderTimeout;
         let activeLoaderType = null; // 'blocking' or 'top'
+        let loaderStackDepth = 0;
 
         function showLoader(blocking = true) {
              clearTimeout(loaderTimeout);
+             loaderStackDepth++;
+             
+             if (activeLoaderType === 'blocking') {
+                 return; // Already in full-screen blocking mode, do not downgrade
+             }
+             
              if (blocking) {
                  const overlay = document.getElementById('loading-overlay');
                  overlay.style.display = 'flex';
-                 // Trigger reflow
                  overlay.offsetHeight;
                  overlay.classList.remove('hidden');
                  overlay.classList.add('active');
@@ -985,20 +991,26 @@
         }
 
         function hideLoader() {
-             if (activeLoaderType === 'blocking') {
-                 const overlay = document.getElementById('loading-overlay');
-                 overlay.classList.remove('active');
-                 setTimeout(() => {
-                     if (!overlay.classList.contains('active')) {
-                         overlay.style.display = 'none';
-                         overlay.classList.add('hidden');
-                     }
-                 }, 300);
-             } else if (activeLoaderType === 'top') {
-                 const bar = document.getElementById('top-loading-bar');
-                 bar.classList.add('hidden');
+             if (loaderStackDepth > 0) {
+                 loaderStackDepth--;
              }
-             activeLoaderType = null;
+             
+             if (loaderStackDepth === 0) {
+                 if (activeLoaderType === 'blocking') {
+                     const overlay = document.getElementById('loading-overlay');
+                     overlay.classList.remove('active');
+                     setTimeout(() => {
+                         if (loaderStackDepth === 0 && !overlay.classList.contains('active')) {
+                             overlay.style.display = 'none';
+                             overlay.classList.add('hidden');
+                         }
+                     }, 300);
+                 } else if (activeLoaderType === 'top') {
+                     const bar = document.getElementById('top-loading-bar');
+                     bar.classList.add('hidden');
+                 }
+                 activeLoaderType = null;
+             }
         }
 
         async function apiCall(endpoint, method = 'GET', body = null) {
@@ -1338,6 +1350,11 @@
         }
 
         function renderLandingPage() {
+            loaderStackDepth = 0;
+            activeLoaderType = null;
+            document.getElementById('loading-overlay').classList.add('hidden');
+            document.getElementById('loading-overlay').style.display = 'none';
+            document.getElementById('top-loading-bar').classList.add('hidden');
             if (businessList.length === 0) {
                  document.getElementById('business-grid').innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); padding: 40px;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i><p>Could not load portfolios. Check database connection.</p></div>`;
             } else {
