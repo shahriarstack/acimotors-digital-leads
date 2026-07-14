@@ -191,7 +191,7 @@
         .sa-pass-popover input:focus { outline: none; border-color: var(--primary); background: #4B5563; }
         /* [ADVANCED LOADING ANIMATION STYLES] */
         #loading-overlay { 
-            display: none; 
+            display: flex; 
             position: fixed; 
             inset: 0; 
             background: rgba(17, 24, 39, 0.4); 
@@ -201,11 +201,12 @@
             align-items: center; 
             justify-content: center; 
             opacity: 0;
+            pointer-events: none;
             transition: opacity 0.3s ease; 
         }
         #loading-overlay.active { 
-            display: flex; 
             opacity: 1;
+            pointer-events: auto;
         }
         .loader-card {
             background: rgba(255, 255, 255, 0.85);
@@ -978,8 +979,6 @@
              
              if (blocking) {
                  const overlay = document.getElementById('loading-overlay');
-                 overlay.style.display = 'flex';
-                 overlay.offsetHeight;
                  overlay.classList.remove('hidden');
                  overlay.classList.add('active');
                  activeLoaderType = 'blocking';
@@ -1001,7 +1000,6 @@
                      overlay.classList.remove('active');
                      setTimeout(() => {
                          if (loaderStackDepth === 0 && !overlay.classList.contains('active')) {
-                             overlay.style.display = 'none';
                              overlay.classList.add('hidden');
                          }
                      }, 300);
@@ -1353,7 +1351,6 @@
             loaderStackDepth = 0;
             activeLoaderType = null;
             document.getElementById('loading-overlay').classList.add('hidden');
-            document.getElementById('loading-overlay').style.display = 'none';
             document.getElementById('top-loading-bar').classList.add('hidden');
             if (businessList.length === 0) {
                  document.getElementById('business-grid').innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); padding: 40px;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i><p>Could not load portfolios. Check database connection.</p></div>`;
