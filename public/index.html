@@ -1145,21 +1145,33 @@
                 const opts = { method, headers: { 'Content-Type': 'application/json' } };
                 if (body) opts.body = JSON.stringify(body);
                 
-                let url = `${API_BASE}${endpoint}`;
-                // Prevent aggressive Cloudflare edge caching on GET requests
+                let cleanPath = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+                let routeName = cleanPath.split('?')[0];
+                let extraParams = cleanPath.includes('?') ? '&' + cleanPath.split('?')[1] : '';
+
+                let url = `/api/index.php?route=${routeName}${extraParams}`;
                 if (method === 'GET') {
                     url += (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
                 }
                 
-                // Try fetching from real API
-                const res = await fetch(url, opts).catch(err => {
-                    throw new Error("Network Error"); // Catch network errors (like no backend)
-                });
+                // AbortController to limit fetch wait time to 6 seconds max
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6000);
+                opts.signal = controller.signal;
                 
-                // Read text first to handle non-JSON responses (like 404/500 HTML pages) gracefully
+                let res;
+                try {
+                    res = await fetch(url, opts);
+                } catch (fetchErr) {
+                    let altUrl = `${API_BASE}${endpoint}`;
+                    if (method === 'GET') altUrl += (altUrl.includes('?') ? '&' : '?') + '_t=' + Date.now();
+                    res = await fetch(altUrl, opts);
+                } finally {
+                    clearTimeout(timeoutId);
+                }
+                
                 const text = await res.text();
                 
-                // If the response is HTML (often 404 pages from static hosts), treat as API missing
                 if (text.trim().startsWith('<')) {
                     throw new Error("API Endpoint Missing");
                 }
@@ -1177,7 +1189,6 @@
                 return data;
             } catch (e) {
                 console.warn(`[API Fail] ${endpoint}: ${e.message}. Switching to Preview Mock Data.`);
-                // Fallback to Mock Data for Preview/Canvas
                 return await mockApiHandler(endpoint, method, body);
             }
         }
@@ -1703,12 +1714,21 @@
             activeLoaderType = null;
             document.getElementById('loading-overlay').classList.add('hidden');
             document.getElementById('top-loading-bar').classList.add('hidden');
-            if (businessList.length === 0) {
-                 document.getElementById('business-grid').innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); padding: 40px;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i><p>Could not load portfolios. Check database connection.</p></div>`;
-            } else {
-                 document.getElementById('business-grid').innerHTML = businessList.map(b => `<div class="landing-card" onclick="selectBusiness('${b}')"><i class="fas ${businessIcons[b] || 'fa-briefcase'}"></i><h3>${b}</h3></div>`).join('');
+            
+            if (!businessList || businessList.length === 0) {
+                businessList = ['Commercial Vehicle', 'Tractor', 'Agricultural Machinery', 'Power Solution'];
+                businessIcons = { 
+                    'Commercial Vehicle': 'fa-truck-fast', 
+                    'Tractor': 'fa-tractor', 
+                    'Agricultural Machinery': 'fa-wheat-awn', 
+                    'Power Solution': 'fa-car-battery' 
+                };
             }
-            document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').style.display = 'none'; document.getElementById('landing-screen').style.display = 'flex';
+
+            document.getElementById('business-grid').innerHTML = businessList.map(b => `<div class="landing-card" onclick="selectBusiness('${b}')"><i class="fas ${businessIcons[b] || 'fa-briefcase'}"></i><h3>${b}</h3></div>`).join('');
+            document.getElementById('app-container').classList.add('hidden'); 
+            document.getElementById('login-screen').style.display = 'none'; 
+            document.getElementById('landing-screen').style.display = 'flex';
         }
         
         function selectBusiness(name) { currentBusiness = name; customersCache = null; officersCache = null; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
