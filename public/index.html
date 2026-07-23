@@ -1085,6 +1085,45 @@
             document.getElementById('admin-followup-modal').classList.add('hidden');
         };
 
+        window.adminMarkAsDelivery = function(id, btnElement) {
+            const cust = currentCustomersList.find(c => c.id == id);
+            if (!cust) return;
+
+            document.getElementById('confirm-title').textContent = '🚚 Mark as Delivered';
+            document.getElementById('confirm-msg').innerHTML = `Are you sure you want to mark <strong>${escapeHTML(cust.name)}</strong> as <strong>Delivered</strong>?`;
+
+            confirmCallback = async () => {
+                const c = currentCustomersList.find(x => x.id == id);
+                if (!c) return;
+
+                showLoader(false);
+                try {
+                    c.delivery_info = 'Delivered';
+                    customersCache = null;
+                    await apiCall('/customers', 'POST', { ...c, delivery_info: 'Delivered' });
+
+                    showToast(`🎉 ${c.name} successfully marked as Delivered!`, 'success');
+
+                    if (typeof activeDashFilter !== 'undefined' && activeDashFilter && typeof renderDashboardCustomers === 'function') {
+                        renderDashboardCustomers();
+                    }
+                    if (typeof loadCustomersData === 'function') {
+                        loadCustomersData();
+                    }
+                    if (typeof loadDashboardData === 'function') {
+                        loadDashboardData();
+                    }
+                } catch(e) {
+                    c.delivery_info = null;
+                    showToast('Failed to mark delivery: ' + e.message, 'error');
+                } finally {
+                    hideLoader();
+                }
+            };
+
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        };
+
         window.resolveAdminFollowup = async function(id) {
             const cust = currentCustomersList.find(c => c.id == id);
             if (!cust) return;
@@ -2370,12 +2409,16 @@
                     `<div onclick="if(this.style.whiteSpace==='nowrap'){this.style.whiteSpace='normal';this.style.backgroundColor='#F3F4F6';this.style.padding='8px';this.style.borderRadius='8px';}else{this.style.whiteSpace='nowrap';this.style.backgroundColor='transparent';this.style.padding='0';}" style="max-width:200px; font-size:0.85rem; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; transition:all 0.2s; color:var(--text-muted);" title="Click to toggle full text">${hasLongNote ? '<i class="fas fa-expand-alt" style="font-size:0.7rem; color:var(--primary); margin-right:4px;"></i>' : ''}"${escapeHTML(c.field_visit_notes)}"</div>` : 
                     '-';
                 
-                let adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button>`;
+                let adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button>`;
                 if (c.admin_followup && c.admin_followup.trim() !== '') {
-                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #EF4444, #DC2626); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); animation: pulse-red 2s infinite;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Request Pending</button>`;
+                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #EF4444, #DC2626); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); animation: pulse-red 2s infinite;" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Request Pending</button>`;
                 } else if (c.field_visit_notes && c.field_visit_notes.includes('Admin Followup Resolved:')) {
-                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #10B981, #059669); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
+                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #10B981, #059669); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
                 }
+
+                let deliveryBtnHtml = c.delivery_info ? 
+                    `<span class="badge" style="background:#F5F3FF; color:#8B5CF6; border:1px solid #DDD6FE; font-weight:700; padding:4px 10px; border-radius:20px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="fas fa-check-circle" style="color:#8B5CF6;"></i> Delivered</span>` : 
+                    `<button class="btn btn-sm btn-mark-delivery" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9); color: white; border: none; padding: 5px 11px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35); transition: all 0.2s ease; white-space:nowrap;" onmouseover="this.style.transform='translateY(-1px) scale(1.04)'; this.style.boxShadow='0 4px 14px rgba(139, 92, 246, 0.45)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(139, 92, 246, 0.35)';" onclick="event.stopPropagation(); adminMarkAsDelivery('${c.id}', this)" title="Mark this customer as Delivered"><i class="fas fa-truck"></i> Mark as Delivery</button>`;
                 
                 return `
                     <tr style="border-bottom: 1px solid #f1f5f9; background: white; transition: background 0.2s; cursor:pointer;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'">
@@ -2392,6 +2435,7 @@
                         <td>${closureStatus}</td>
                         <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
                             ${adminBtnHtml}
+                            ${deliveryBtnHtml}
                             <button class="btn-icon-circle btn-edit" title="Edit Customer Details" onclick="event.stopPropagation(); openCustomerModal('${c.id}')"><i class="fas fa-pen" style="font-size: 0.8rem;"></i></button>
                         </td>
                     </tr>
@@ -2603,7 +2647,36 @@
                     const assignedOfficer = officerMap[c.officer_id];
                     const inputValue = assignedOfficer ? escapeHTML(`${assignedOfficer.full_name} (${assignedOfficer.territory})`) : '';
                     const officerInput = `<input type="text" list="officer_datalist_global" class="officer-search-input ${!c.officer_id ? 'unassigned' : ''}" value="${inputValue}" placeholder="${!c.officer_id ? '⚠️ Assign' : 'Search...'}" onchange="handleOfficerAssignmentChange('${c.id}', this)">`;
-                    return `<tr><td><input type="checkbox" class="customer-checkbox" value="${c.id}" onchange="updateDeleteButtonState()"></td><td>${i+1}</td><td>${getPhonePill(c.customer_no)}</td><td><strong>${escapeHTML(c.name)}</strong></td><td>${formatDateDisplay(c.date)}</td><td>${escapeHTML(c.address || '')}</td><td>${escapeHTML(c.model)}</td><td>${officerInput}</td><td>${getSaleTypeBadge(c.sale_type)}</td><td>${getVisitBadge(c.visit_completed)}</td><td>${getLeadBadge(c.customer_type)}</td><td><button class="btn-icon-circle btn-edit" onclick="openCustomerModal('${c.id}')"><i class="fas fa-pen"></i></button></td></tr>`;
+                    
+                    let adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button>`;
+                    if (c.admin_followup && c.admin_followup.trim() !== '') {
+                        adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #EF4444, #DC2626); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); animation: pulse-red 2s infinite;" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Request Pending</button>`;
+                    } else if (c.field_visit_notes && c.field_visit_notes.includes('Admin Followup Resolved:')) {
+                        adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #10B981, #059669); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
+                    }
+
+                    let deliveryBtnHtml = c.delivery_info ? 
+                        `<span class="badge" style="background:#F5F3FF; color:#8B5CF6; border:1px solid #DDD6FE; font-weight:700; padding:4px 10px; border-radius:20px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="fas fa-check-circle" style="color:#8B5CF6;"></i> Delivered</span>` : 
+                        `<button class="btn btn-sm btn-mark-delivery" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9); color: white; border: none; padding: 5px 11px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35); transition: all 0.2s ease; white-space:nowrap;" onmouseover="this.style.transform='translateY(-1px) scale(1.04)'; this.style.boxShadow='0 4px 14px rgba(139, 92, 246, 0.45)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 2px 8px rgba(139, 92, 246, 0.35)';" onclick="event.stopPropagation(); adminMarkAsDelivery('${c.id}', this)" title="Mark this customer as Delivered"><i class="fas fa-truck"></i> Mark as Delivery</button>`;
+
+                    return `<tr>
+                        <td><input type="checkbox" class="customer-checkbox" value="${c.id}" onchange="updateDeleteButtonState()"></td>
+                        <td>${i+1}</td>
+                        <td>${getPhonePill(c.customer_no)}</td>
+                        <td><strong>${escapeHTML(c.name)}</strong></td>
+                        <td>${formatDateDisplay(c.date)}</td>
+                        <td>${escapeHTML(c.address || '')}</td>
+                        <td>${escapeHTML(c.model)}</td>
+                        <td>${officerInput}</td>
+                        <td>${getSaleTypeBadge(c.sale_type)}</td>
+                        <td>${getVisitBadge(c.visit_completed)}</td>
+                        <td>${getLeadBadge(c.customer_type)}</td>
+                        <td style="display:flex; gap:6px; align-items:center; justify-content:flex-end;">
+                            ${adminBtnHtml}
+                            ${deliveryBtnHtml}
+                            <button class="btn-icon-circle btn-edit" title="Edit Customer Details" onclick="openCustomerModal('${c.id}')"><i class="fas fa-pen"></i></button>
+                        </td>
+                    </tr>`;
                 }).join('');
 
                 updateDeleteButtonState();
