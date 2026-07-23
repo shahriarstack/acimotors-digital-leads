@@ -121,47 +121,54 @@
         .page-header { margin-bottom: 24px; }
         .card { background: white; border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-card); margin-bottom: 24px; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
         .card:hover { box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-bottom: 24px; }
-        .stat-card { background: white; padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03); display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
-        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.06); }
-        .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 8px; transition: var(--transition); }
-        .stat-card:hover .stat-icon { transform: scale(1.1); }
-        .stat-value { font-size: 1.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
-        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
-        /* [TOP-TIER ENTERPRISE TABLE DESIGN] */
-        .table-wrapper { overflow-x: auto; border-radius: 12px; background: white; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.82rem; }
-        th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #F1F5F9; vertical-align: middle; transition: background-color 0.15s ease; }
-        th { background: #F8FAFC; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; color: #64748B; letter-spacing: 0.05em; border-bottom: 1px solid #E2E8F0; }
+        /* [COMPACT DASHBOARD STAT CARDS] */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 8px; margin-bottom: 16px; }
+        .stat-card { background: white; padding: 7px 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; flex-direction: row; align-items: center; text-align: left; gap: 8px; border: 1px solid #E2E8F0; transition: all 0.15s ease; cursor: pointer; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-color: var(--primary); }
+        .stat-card.active-filter { border: 2px solid var(--primary) !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25) !important; transform: translateY(-2px); background: #F0FDF4 !important; }
+        .stat-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; margin-bottom: 0; flex-shrink: 0; }
+        .stat-info { display: flex; flex-direction: column; min-width: 0; }
+        .stat-value { font-size: 1.1rem; font-weight: 800; line-height: 1.1; margin-bottom: 0; color: #0F172A; }
+        .stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; font-weight: 700; line-height: 1.1; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* [ULTRA-COMPACT ENTERPRISE TABLE DESIGN] */
+        .table-wrapper { overflow-x: auto; border-radius: 10px; background: white; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.78rem; }
+        th, td { padding: 5px 8px; text-align: left; border-bottom: 1px solid #F1F5F9; vertical-align: middle; transition: background-color 0.12s ease; }
+        th { background: #F8FAFC; font-weight: 700; font-size: 0.68rem; text-transform: uppercase; color: #64748B; letter-spacing: 0.05em; border-bottom: 1px solid #E2E8F0; padding: 6px 8px; }
         tr:hover td { background-color: #F8FAFC !important; }
         .visited-row { background-color: #FAFAFA !important; }
         
         /* Phone Pill */
-        .phone-pill { display: inline-flex; align-items: center; padding: 3px 9px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; color: #059669; font-size: 0.78rem; font-weight: 600; gap: 5px; text-decoration: none; transition: all 0.15s ease; }
+        .phone-pill { display: inline-flex; align-items: center; padding: 2px 7px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 10px; color: #059669; font-size: 0.74rem; font-weight: 600; gap: 4px; text-decoration: none; transition: all 0.15s ease; }
         .phone-pill:hover { background: #D1FAE5; color: #047857; border-color: #34D399; }
         
         /* Notes Preview Pill */
-        .table-note-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; max-width: 200px; cursor: pointer; transition: all 0.15s ease; }
+        .table-note-pill { display: inline-flex; align-items: center; gap: 5px; padding: 2px 6px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 5px; max-width: 170px; cursor: pointer; transition: all 0.15s ease; }
         .table-note-pill:hover { background: #F0FDF4; border-color: #A7F3D0; color: #059669; }
-        .table-note-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.78rem; color: #475569; }
-        .note-count-tag { font-size: 0.65rem; font-weight: 700; background: #EEF2FF; color: #4F46E5; padding: 1px 5px; border-radius: 4px; }
+        .table-note-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.74rem; color: #475569; }
+        .note-count-tag { font-size: 0.62rem; font-weight: 700; background: #EEF2FF; color: #4F46E5; padding: 1px 4px; border-radius: 4px; }
         
         /* Closure Status Pills */
-        .closure-pill { border: none; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s ease; white-space: nowrap; }
+        .closure-pill { border: none; padding: 2px 7px; border-radius: 14px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; }
         .closure-pill:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
         .closure-process { background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; }
         .closure-booked { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
         .closure-delivered { background: #F5F3FF; color: #7C3AED; border: 1px solid #DDD6FE; }
         
         /* Action Buttons */
-        .action-btn { border: none; padding: 4px 9px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; }
+        .action-btn { border: none; padding: 2px 7px; border-radius: 5px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: all 0.15s ease; white-space: nowrap; }
         .action-btn:hover { transform: translateY(-1px); }
         .action-followup { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
         .action-pending { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border: none; animation: pulse-red 2s infinite; }
         .action-resolved { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
         
-        .action-btn-edit { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #E2E8F0; background: white; color: #64748B; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; font-size: 0.75rem; }
+        .action-btn-edit { width: 24px; height: 24px; border-radius: 5px; border: 1px solid #E2E8F0; background: white; color: #64748B; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; font-size: 0.7rem; }
         .action-btn-edit:hover { background: #F1F5F9; color: #0F172A; border-color: #CBD5E1; }
+
+        /* COMPACT ANALYTICS CARDS */
+        #analytics-report-content .card { padding: 14px 16px !important; border-radius: 12px !important; border: 1px solid #E5E7EB !important; box-shadow: 0 1px 3px rgba(0,0,0,0.03) !important; margin-bottom: 14px !important; }
+        #analytics-report-content h3 { font-size: 0.95rem !important; margin-top: 0 !important; margin-bottom: 10px !important; }
         
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.3s ease-out; }
@@ -2026,9 +2033,9 @@
                     </div>
 
                     <!-- Month-over-Month Trend -->
-                    <div class="card" style="padding: 24px; background: white; border-radius: 16px; border: 1px solid #E5E7EB; margin-top: 20px;">
-                        <h3 style="margin-top:0; font-size: 1.1rem; color: var(--text-main); display:flex; align-items:center; gap:8px;"><i class="fas fa-chart-line" style="color:#8B5CF6;"></i> Month-wise Trend (Last 6 Months)</h3>
-                        <div style="display:flex; height: 160px; align-items: flex-end; gap: 16px; margin-top: 24px; padding-bottom: 10px; border-bottom: 1px solid #E5E7EB;">
+                    <div class="card" style="padding: 14px 16px; background: white; border-radius: 12px; border: 1px solid #E5E7EB; margin-top: 14px;">
+                        <h3 style="margin-top:0; font-size: 0.95rem; color: var(--text-main); display:flex; align-items:center; gap:8px;"><i class="fas fa-chart-line" style="color:#8B5CF6;"></i> Month-wise Trend (Last 6 Months)</h3>
+                        <div style="display:flex; height: 95px; align-items: flex-end; gap: 16px; margin-top: 16px; padding-bottom: 8px; border-bottom: 1px solid #E5E7EB;">
                             ${trendMonths.length > 0 ? trendMonths.map(m => {
                                 const d = trendData[m];
                                 const leadH = (d.leads / maxTrendLeads) * 100;
@@ -2435,15 +2442,15 @@
                 const getActiveCls = (cat) => activeDashFilter === cat ? ' active-filter' : '';
                 
                 document.getElementById('dashboard-stats').innerHTML = `
-                    <div class="stat-card${getActiveCls('total')}" id="stat-card-total" onclick="toggleDashboardCustomerFilter('total')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E5F6FD;color:#3B82F6"><i class="fas fa-users"></i></div><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div>
-                    <div class="stat-card${getActiveCls('visited')}" id="stat-card-visited" onclick="toggleDashboardCustomerFilter('visited')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E8F8EE;color:#10B981"><i class="fas fa-check-circle"></i></div><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div>
-                    <div class="stat-card${getActiveCls('pending')}" id="stat-card-pending" onclick="toggleDashboardCustomerFilter('pending')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FFF4E5;color:#F59E0B"><i class="fas fa-hourglass-half"></i></div><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div>
-                    <div class="stat-card${getActiveCls('hot')}" id="stat-card-hot" onclick="toggleDashboardCustomerFilter('hot')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FFEBEA;color:#EF4444"><i class="fas fa-fire"></i></div><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div>
-                    <div class="stat-card${getActiveCls('warm')}" id="stat-card-warm" onclick="toggleDashboardCustomerFilter('warm')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FEF3C7;color:#D97706"><i class="fas fa-bolt"></i></div><div class="stat-value">${stats.warm}</div><div class="stat-label">Warm</div></div>
-                    <div class="stat-card${getActiveCls('cold')}" id="stat-card-cold" onclick="toggleDashboardCustomerFilter('cold')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E6FFFA;color:#0D9488"><i class="fas fa-snowflake"></i></div><div class="stat-value">${stats.cold}</div><div class="stat-label">Cold</div></div>
-                    <div class="stat-card${getActiveCls('booked')}" id="stat-card-booked" onclick="toggleDashboardCustomerFilter('booked')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#EFF6FF;color:#2563EB"><i class="fas fa-bookmark"></i></div><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div>
-                    <div class="stat-card${getActiveCls('delivered')}" id="stat-card-delivered" onclick="toggleDashboardCustomerFilter('delivered')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#F5F3FF;color:#8B5CF6"><i class="fas fa-truck"></i></div><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div>
-                    <div class="stat-card${getActiveCls('unassigned')}" id="stat-card-unassigned" onclick="toggleDashboardCustomerFilter('unassigned')" style="cursor: pointer; transition: var(--transition); ${stats.unassigned > 0 ? 'border: 1.5px dashed #EF4444; background:#FEF2F2;' : ''}"><div class="stat-icon" style="background:${stats.unassigned > 0 ? '#FFEBEA' : '#ECFDF5'};color:${stats.unassigned > 0 ? '#EF4444' : '#10B981'}"><i class="fas ${stats.unassigned > 0 ? 'fa-user-times' : 'fa-check'}"></i></div><div class="stat-value" style="color:${stats.unassigned > 0 ? '#EF4444' : ''}">${stats.unassigned}</div><div class="stat-label">Unassigned</div></div>
+                    <div class="stat-card${getActiveCls('total')}" id="stat-card-total" onclick="toggleDashboardCustomerFilter('total')"><div class="stat-icon" style="background:#E5F6FD;color:#3B82F6"><i class="fas fa-users"></i></div><div class="stat-info"><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div></div>
+                    <div class="stat-card${getActiveCls('visited')}" id="stat-card-visited" onclick="toggleDashboardCustomerFilter('visited')"><div class="stat-icon" style="background:#E8F8EE;color:#10B981"><i class="fas fa-check-circle"></i></div><div class="stat-info"><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div></div>
+                    <div class="stat-card${getActiveCls('pending')}" id="stat-card-pending" onclick="toggleDashboardCustomerFilter('pending')"><div class="stat-icon" style="background:#FFF4E5;color:#F59E0B"><i class="fas fa-hourglass-half"></i></div><div class="stat-info"><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div></div>
+                    <div class="stat-card${getActiveCls('hot')}" id="stat-card-hot" onclick="toggleDashboardCustomerFilter('hot')"><div class="stat-icon" style="background:#FFEBEA;color:#EF4444"><i class="fas fa-fire"></i></div><div class="stat-info"><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div></div>
+                    <div class="stat-card${getActiveCls('warm')}" id="stat-card-warm" onclick="toggleDashboardCustomerFilter('warm')"><div class="stat-icon" style="background:#FEF3C7;color:#D97706"><i class="fas fa-bolt"></i></div><div class="stat-info"><div class="stat-value">${stats.warm}</div><div class="stat-label">Warm</div></div></div>
+                    <div class="stat-card${getActiveCls('cold')}" id="stat-card-cold" onclick="toggleDashboardCustomerFilter('cold')"><div class="stat-icon" style="background:#E6FFFA;color:#0D9488"><i class="fas fa-snowflake"></i></div><div class="stat-info"><div class="stat-value">${stats.cold}</div><div class="stat-label">Cold</div></div></div>
+                    <div class="stat-card${getActiveCls('booked')}" id="stat-card-booked" onclick="toggleDashboardCustomerFilter('booked')"><div class="stat-icon" style="background:#EFF6FF;color:#2563EB"><i class="fas fa-bookmark"></i></div><div class="stat-info"><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div></div>
+                    <div class="stat-card${getActiveCls('delivered')}" id="stat-card-delivered" onclick="toggleDashboardCustomerFilter('delivered')"><div class="stat-icon" style="background:#F5F3FF;color:#8B5CF6"><i class="fas fa-truck"></i></div><div class="stat-info"><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div></div>
+                    <div class="stat-card${getActiveCls('unassigned')}" id="stat-card-unassigned" onclick="toggleDashboardCustomerFilter('unassigned')" style="${stats.unassigned > 0 ? 'border: 1.5px dashed #EF4444; background:#FEF2F2;' : ''}"><div class="stat-icon" style="background:${stats.unassigned > 0 ? '#FFEBEA' : '#ECFDF5'};color:${stats.unassigned > 0 ? '#EF4444' : '#10B981'}"><i class="fas ${stats.unassigned > 0 ? 'fa-user-times' : 'fa-check'}"></i></div><div class="stat-info"><div class="stat-value" style="color:${stats.unassigned > 0 ? '#EF4444' : ''}">${stats.unassigned}</div><div class="stat-label">Unassigned</div></div></div>
                 `;
                 
                 const { data: officers } = await fetchOfficers(); 
