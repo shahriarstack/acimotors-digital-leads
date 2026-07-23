@@ -669,7 +669,7 @@
                         <div class="form-group"><label>Visit Status</label><select id="filter-visit" class="form-select"><option value="">All Status</option><option value="Yes">Completed</option><option value="No">Pending</option></select></div>
                         <div class="form-group"><label>Lead Type</label><select id="filter-lead-type" class="form-select"><option value="">All Leads</option><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
                     </div>
-                    <div class="table-wrapper"><table id="customers-table"><thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleSelectAll(this)"></th><th>S.L.</th><th>Contact</th><th>Name</th><th>Date</th><th>Address</th><th>Model</th><th>Officer</th><th>Sale Type</th><th>Visited</th><th>Rating</th><th>Visit Notes</th><th>Closure Status</th><th>Actions</th></tr></thead><tbody id="customers-body"></tbody></table></div>
+                    <div class="table-wrapper"><table id="customers-table"><thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleSelectAll(this)"></th><th>S.L.</th><th>Contact</th><th>Name</th><th>Date</th><th>Address</th><th>Model</th><th>Officer</th><th>Sale Type</th><th>Visited</th><th>Rating</th><th>Closure</th><th>Actions</th></tr></thead><tbody id="customers-body"></tbody></table></div>
                 </div>
             </div>
             <div id="user-panel" class="page-content hidden">
@@ -861,129 +861,73 @@
             </div>
         </div>
     </div>
-    <!-- CLOSURE STATUS MODAL -->
-    <div id="closure-status-modal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width: 480px; border-radius: 20px; overflow: hidden; padding: 0;">
-            <div style="background: linear-gradient(135deg, #4F46E5, #3730A3); padding: 20px 24px; color: white; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: white;"><i class="fas fa-tasks" style="margin-right: 8px;"></i> Change Closure Status</h3>
-                    <div id="closure-modal-cust-name" style="font-size: 0.85rem; opacity: 0.9; margin-top: 2px;"></div>
-                </div>
-                <button class="modal-close" onclick="closeClosureStatusModal()" style="color: white; opacity: 0.8; font-size: 1.5rem; background: none; border: none; cursor: pointer;">&times;</button>
+    <div id="confirm-modal" class="modal-overlay hidden"><div class="modal-box" style="max-width: 400px; text-align: center;"><div class="modal-header" style="justify-content:center;"><i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--warning); margin-bottom: 16px; display: block;"></i></div><h3 class="modal-title" id="confirm-title" style="margin-bottom: 8px;">Are you sure?</h3><p id="confirm-msg" style="color: var(--text-muted); margin-bottom: 20px;"></p><div style="display: flex; gap: 12px; justify-content: center;"><button id="confirm-yes-btn" class="btn btn-primary">Yes, Proceed</button><button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button></div></div></div>
+    
+    <!-- CLOSURE STATUS SELECTION MODAL -->
+    <div id="closure-menu-modal" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-tasks" style="color: var(--primary); margin-right: 8px;"></i>Change Closure Status</h3>
+                <button class="modal-close" onclick="closeClosureModal()">&times;</button>
             </div>
-            <div style="padding: 24px;">
-                <input type="hidden" id="closure-modal-cust-id">
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; font-weight: 500;">Select the new closure status for this customer lead:</p>
-                
-                <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-                    <!-- Option 1: In Process -->
-                    <div id="closure-opt-process" onclick="selectClosureOption('process')" style="border: 2px solid #E5E7EB; border-radius: 14px; padding: 14px 18px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: #FAFAFA;">
-                        <div style="display: flex; align-items: center; gap: 14px;">
-                            <div style="width: 42px; height: 42px; border-radius: 10px; background: #F3F4F6; color: #6B7280; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;"><i class="fas fa-hourglass-half"></i></div>
-                            <div>
-                                <div style="font-weight: 700; color: var(--text-main); font-size: 0.95rem;">In Process</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted);">Lead is active, visit in progress</div>
-                            </div>
-                        </div>
-                        <i class="fas fa-check-circle closure-check-icon" style="font-size: 1.2rem; color: #10B981; display: none;"></i>
-                    </div>
-
-                    <!-- Option 2: Booked -->
-                    <div id="closure-opt-booked" onclick="selectClosureOption('booked')" style="border: 2px solid #E5E7EB; border-radius: 14px; padding: 14px 18px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: #FAFAFA;">
-                        <div style="display: flex; align-items: center; gap: 14px;">
-                            <div style="width: 42px; height: 42px; border-radius: 10px; background: #EFF6FF; color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;"><i class="fas fa-bookmark"></i></div>
-                            <div>
-                                <div style="font-weight: 700; color: #1E40AF; font-size: 0.95rem;">Booked</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted);">Booking advance / deal confirmed</div>
-                            </div>
-                        </div>
-                        <i class="fas fa-check-circle closure-check-icon" style="font-size: 1.2rem; color: #2563EB; display: none;"></i>
-                    </div>
-
-                    <!-- Option 3: Delivered -->
-                    <div id="closure-opt-delivered" onclick="selectClosureOption('delivered')" style="border: 2px solid #E5E7EB; border-radius: 14px; padding: 14px 18px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; background: #FAFAFA;">
-                        <div style="display: flex; align-items: center; gap: 14px;">
-                            <div style="width: 42px; height: 42px; border-radius: 10px; background: #F5F3FF; color: #8B5CF6; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;"><i class="fas fa-truck"></i></div>
-                            <div>
-                                <div style="font-weight: 700; color: #6D28D9; font-size: 0.95rem;">Delivered</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted);">Vehicle/product delivered to client</div>
-                            </div>
-                        </div>
-                        <i class="fas fa-check-circle closure-check-icon" style="font-size: 1.2rem; color: #8B5CF6; display: none;"></i>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
+                Update closure status for <strong id="closure-modal-cust-name" style="color:var(--text-main);">Customer</strong>:
+            </p>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
+                <div class="closure-opt-card" data-status="In Process" onclick="selectClosureStatus('In Process')" style="padding:14px; border:2px solid #E5E7EB; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div style="width:40px; height:40px; border-radius:10px; background:#F3F4F6; color:var(--text-muted); display:flex; align-items:center; justify-content:center; font-size:1.2rem;"><i class="fas fa-spinner"></i></div>
+                    <div>
+                        <strong style="font-size:0.95rem; color:var(--text-main); display:block;">In Process</strong>
+                        <span style="font-size:0.8rem; color:var(--text-muted);">Customer lead is active and in progress</span>
                     </div>
                 </div>
-
-                <div style="display: flex; gap: 12px;">
-                    <button class="btn btn-primary" style="flex: 1; padding: 12px; font-weight: 700; font-size: 0.95rem; border-radius: 12px; background: linear-gradient(135deg, #4F46E5, #3730A3);" onclick="saveClosureStatus()"><i class="fas fa-check"></i> Update Status</button>
-                    <button class="btn btn-secondary" style="padding: 12px 18px; border-radius: 12px;" onclick="closeClosureStatusModal()">Cancel</button>
+                <div class="closure-opt-card" data-status="Booked" onclick="selectClosureStatus('Booked')" style="padding:14px; border:2px solid #E5E7EB; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div style="width:40px; height:40px; border-radius:10px; background:#EFF6FF; color:var(--info); display:flex; align-items:center; justify-content:center; font-size:1.2rem;"><i class="fas fa-bookmark"></i></div>
+                    <div>
+                        <strong style="font-size:0.95rem; color:var(--info); display:block;">Booked</strong>
+                        <span style="font-size:0.8rem; color:var(--text-muted);">Vehicle/Machine booking confirmed</span>
+                    </div>
+                </div>
+                <div class="closure-opt-card" data-status="Delivered" onclick="selectClosureStatus('Delivered')" style="padding:14px; border:2px solid #E5E7EB; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
+                    <div style="width:40px; height:40px; border-radius:10px; background:#F5F3FF; color:var(--accent); display:flex; align-items:center; justify-content:center; font-size:1.2rem;"><i class="fas fa-truck"></i></div>
+                    <div>
+                        <strong style="font-size:0.95rem; color:var(--accent); display:block;">Delivered</strong>
+                        <span style="font-size:0.8rem; color:var(--text-muted);">Product successfully delivered to customer</span>
+                    </div>
                 </div>
             </div>
+            <button class="btn btn-secondary" style="width:100%;" onclick="closeClosureModal()">Cancel</button>
         </div>
     </div>
 
-    <!-- VISIT INTELLIGENCE & HISTORY MODAL -->
-    <div id="visit-info-modal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width: 650px; border-radius: 20px; overflow: hidden; padding: 0;">
-            <div style="background: linear-gradient(135deg, #1E1B4B, #312E81); padding: 22px 26px; color: white; display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="background: rgba(255,255,255,0.15); padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; color: #A5B4FC;"><i class="fas fa-brain"></i> Visit Intelligence</span>
-                        <span id="vi-modal-sale-type" class="badge" style="background: rgba(255,255,255,0.2); color: white;"></span>
-                    </div>
-                    <h3 id="vi-modal-name" style="margin: 0; font-size: 1.3rem; font-weight: 800; color: white;"></h3>
-                    <div style="font-size: 0.85rem; color: #C7D2FE; margin-top: 4px; display: flex; gap: 16px; flex-wrap: wrap;">
-                        <span><i class="fas fa-phone-alt" style="margin-right:4px;"></i><span id="vi-modal-phone"></span></span>
-                        <span><i class="fas fa-car" style="margin-right:4px;"></i><span id="vi-modal-model"></span></span>
-                        <span><i class="fas fa-map-marker-alt" style="margin-right:4px;"></i><span id="vi-modal-address"></span></span>
-                    </div>
-                </div>
-                <button class="modal-close" onclick="closeVisitInfoModal()" style="color: white; opacity: 0.8; font-size: 1.6rem; background: none; border: none; cursor: pointer;">&times;</button>
+    <!-- VISIT HISTORY & ALL VISIT INFO MODAL -->
+    <div id="visit-history-modal" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width: 550px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-clipboard-list" style="color: var(--primary); margin-right: 8px;"></i>Customer Visit Information</h3>
+                <button class="modal-close" onclick="closeVisitHistoryModal()">&times;</button>
             </div>
-            
-            <div style="padding: 24px; max-height: 75vh; overflow-y: auto;">
-                <!-- Overview Stats Row -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;">
-                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Officer</div>
-                        <div id="vi-modal-officer" style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
-                    </div>
-                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Rating</div>
-                        <div id="vi-modal-rating" style="margin-top: 4px;"></div>
-                    </div>
-                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Visited</div>
-                        <div id="vi-modal-visit-status" style="margin-top: 4px;"></div>
-                    </div>
-                    <div style="background: #F8FAFC; border: 1px solid #E2E8F0; padding: 10px; border-radius: 12px; text-align: center;">
-                        <div style="font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Closure</div>
-                        <div id="vi-modal-closure" style="margin-top: 4px;"></div>
-                    </div>
+            <div style="background:#F9FAFB; padding:14px; border-radius:12px; margin-bottom:16px; border:1px solid #F3F4F6;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <strong id="vh-cust-name" style="font-size:1.1rem; color:var(--text-main);">Customer Name</strong>
+                    <span id="vh-cust-visit"></span>
                 </div>
-
-                <!-- Admin Active Request Alert (if any) -->
-                <div id="vi-modal-admin-alert" style="display: none; margin-bottom: 20px; padding: 14px; background: #FEF2F2; border-left: 4px solid #EF4444; border-radius: 10px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="color: #DC2626; font-size: 0.9rem;"><i class="fas fa-exclamation-circle"></i> Active Admin Follow-up Pending</strong>
-                    </div>
-                    <div id="vi-modal-admin-text" style="font-size: 0.85rem; color: #7F1D1D; margin-top: 6px; font-style: italic;"></div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.85rem; color:var(--text-muted);">
+                    <div><i class="fas fa-phone-alt" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-phone">-</span></div>
+                    <div><i class="fas fa-cube" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-model">-</span></div>
+                    <div><i class="fas fa-user-tie" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-officer">-</span></div>
+                    <div><i class="far fa-calendar-alt" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-date">-</span></div>
                 </div>
-
-                <!-- Timeline Header -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                    <h4 style="margin: 0; font-size: 1rem; color: var(--text-main); font-weight: 700; display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-stream" style="color: #4F46E5;"></i> Field Visit & Follow-up Timeline
-                    </h4>
-                    <span id="vi-modal-touch-count" style="font-size: 0.75rem; font-weight: 700; background: #EEF2FF; color: #4F46E5; padding: 4px 10px; border-radius: 12px;"></span>
-                </div>
-
-                <!-- Timeline Entries Container -->
-                <div id="vi-modal-timeline-body" style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
+                    <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Lead Rating:</span>
+                    <span id="vh-cust-rating"></span>
                 </div>
             </div>
-            <div style="background: #F8FAFC; padding: 14px 24px; border-top: 1px solid #E2E8F0; text-align: right;">
-                <button class="btn btn-secondary" onclick="closeVisitInfoModal()" style="border-radius: 10px; padding: 8px 18px;">Close</button>
-            </div>
+            <h4 style="font-size:0.95rem; margin-bottom:10px; color:var(--text-main); display:flex; align-items:center; gap:6px;">
+                <i class="fas fa-history" style="color:var(--primary);"></i> All Field Visit Notes & Remarks
+            </h4>
+            <div id="vh-notes-history" style="max-height: 250px; overflow-y: auto; padding-right: 4px;"></div>
+            <button class="btn btn-primary" style="width:100%; margin-top:16px;" onclick="closeVisitHistoryModal()">Close</button>
         </div>
     </div>
 
@@ -1145,33 +1089,21 @@
                 const opts = { method, headers: { 'Content-Type': 'application/json' } };
                 if (body) opts.body = JSON.stringify(body);
                 
-                let cleanPath = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-                let routeName = cleanPath.split('?')[0];
-                let extraParams = cleanPath.includes('?') ? '&' + cleanPath.split('?')[1] : '';
-
-                let url = `/api/index.php?route=${routeName}${extraParams}`;
+                let url = `${API_BASE}${endpoint}`;
+                // Prevent aggressive Cloudflare edge caching on GET requests
                 if (method === 'GET') {
                     url += (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
                 }
                 
-                // AbortController to limit fetch wait time to 6 seconds max
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 6000);
-                opts.signal = controller.signal;
+                // Try fetching from real API
+                const res = await fetch(url, opts).catch(err => {
+                    throw new Error("Network Error"); // Catch network errors (like no backend)
+                });
                 
-                let res;
-                try {
-                    res = await fetch(url, opts);
-                } catch (fetchErr) {
-                    let altUrl = `${API_BASE}${endpoint}`;
-                    if (method === 'GET') altUrl += (altUrl.includes('?') ? '&' : '?') + '_t=' + Date.now();
-                    res = await fetch(altUrl, opts);
-                } finally {
-                    clearTimeout(timeoutId);
-                }
-                
+                // Read text first to handle non-JSON responses (like 404/500 HTML pages) gracefully
                 const text = await res.text();
                 
+                // If the response is HTML (often 404 pages from static hosts), treat as API missing
                 if (text.trim().startsWith('<')) {
                     throw new Error("API Endpoint Missing");
                 }
@@ -1189,6 +1121,7 @@
                 return data;
             } catch (e) {
                 console.warn(`[API Fail] ${endpoint}: ${e.message}. Switching to Preview Mock Data.`);
+                // Fallback to Mock Data for Preview/Canvas
                 return await mockApiHandler(endpoint, method, body);
             }
         }
@@ -1221,111 +1154,58 @@
             document.getElementById('admin-followup-modal').classList.add('hidden');
         };
 
-        window.adminMarkAsDelivery = function(id, btnElement) {
-            const cust = currentCustomersList.find(c => c.id == id);
-            if (!cust) return;
+        // --- INTERACTIVE CLOSURE STATUS MENU ---
+        let selectedClosureCustomerId = null;
 
-            document.getElementById('confirm-title').textContent = '🚚 Mark as Delivered';
-            document.getElementById('confirm-msg').innerHTML = `Are you sure you want to mark <strong>${escapeHTML(cust.name)}</strong> as <strong>Delivered</strong>?`;
-
-            confirmCallback = async () => {
-                const c = currentCustomersList.find(x => x.id == id);
-                if (!c) return;
-
-                showLoader(false);
-                try {
-                    c.delivery_info = 'Delivered';
-                    customersCache = null;
-                    await apiCall('/customers', 'POST', { ...c, delivery_info: 'Delivered' });
-
-                    showToast(`🎉 ${c.name} successfully marked as Delivered!`, 'success');
-
-                    if (typeof activeDashFilter !== 'undefined' && activeDashFilter && typeof renderDashboardCustomers === 'function') {
-                        renderDashboardCustomers();
-                    }
-                    if (typeof loadCustomersData === 'function') {
-                        loadCustomersData();
-                    }
-                    if (typeof loadDashboardData === 'function') {
-                        loadDashboardData();
-                    }
-                } catch(e) {
-                    c.delivery_info = null;
-                    showToast('Failed to mark delivery: ' + e.message, 'error');
-                } finally {
-                    hideLoader();
-                }
-            };
-
-        // --- INTERACTIVE CLOSURE STATUS & VISIT INTELLIGENCE HANDLERS ---
-        let selectedClosureStatus = 'process';
-
-        window.openClosureStatusModal = function(id) {
-            const cust = currentCustomersList.find(c => c.id == id);
-            if (!cust) return;
-
-            document.getElementById('closure-modal-cust-id').value = id;
-            document.getElementById('closure-modal-cust-name').textContent = `Customer: ${cust.name} (${cust.customer_no})`;
-
-            let currentOpt = 'process';
-            if (cust.delivery_info) {
-                currentOpt = 'delivered';
-            } else if (cust.booking_info) {
-                currentOpt = 'booked';
-            }
-
-            selectClosureOption(currentOpt);
-            document.getElementById('closure-status-modal').classList.remove('hidden');
-        };
-
-        window.closeClosureStatusModal = function() {
-            document.getElementById('closure-status-modal').classList.add('hidden');
-        };
-
-        window.selectClosureOption = function(opt) {
-            selectedClosureStatus = opt;
-            const opts = ['process', 'booked', 'delivered'];
-            opts.forEach(o => {
-                const el = document.getElementById(`closure-opt-${o}`);
-                const check = el.querySelector('.closure-check-icon');
-                if (o === opt) {
-                    el.style.border = o === 'delivered' ? '2px solid #8B5CF6' : o === 'booked' ? '2px solid #2563EB' : '2px solid #4F46E5';
-                    el.style.background = o === 'delivered' ? '#F5F3FF' : o === 'booked' ? '#EFF6FF' : '#EEF2FF';
-                    if (check) check.style.display = 'block';
+        window.openClosureMenu = function(id) {
+            const c = currentCustomersList.find(x => x.id == id);
+            if (!c) return;
+            
+            selectedClosureCustomerId = id;
+            document.getElementById('closure-modal-cust-name').textContent = c.name || 'Customer';
+            
+            const currentStatus = c.delivery_info ? 'Delivered' : c.booking_info ? 'Booked' : 'In Process';
+            document.querySelectorAll('.closure-opt-card').forEach(card => {
+                if (card.dataset.status === currentStatus) {
+                    card.style.borderColor = 'var(--primary)';
+                    card.style.background = '#ECFDF5';
                 } else {
-                    el.style.border = '2px solid #E5E7EB';
-                    el.style.background = '#FAFAFA';
-                    if (check) check.style.display = 'none';
+                    card.style.borderColor = '#E5E7EB';
+                    card.style.background = '#FFFFFF';
                 }
             });
+            
+            document.getElementById('closure-menu-modal').classList.remove('hidden');
         };
 
-        window.saveClosureStatus = async function() {
-            const id = document.getElementById('closure-modal-cust-id').value;
-            const cust = currentCustomersList.find(c => c.id == id);
-            if (!cust) return;
+        window.closeClosureModal = function() {
+            document.getElementById('closure-menu-modal').classList.add('hidden');
+        };
+
+        window.selectClosureStatus = async function(status) {
+            if (!selectedClosureCustomerId) return;
+            const c = currentCustomersList.find(x => x.id == selectedClosureCustomerId);
+            if (!c) return;
 
             showLoader(false);
             try {
-                if (selectedClosureStatus === 'delivered') {
-                    cust.booking_info = 'Booked';
-                    cust.delivery_info = 'Delivered';
-                } else if (selectedClosureStatus === 'booked') {
-                    cust.booking_info = 'Booked';
-                    cust.delivery_info = null;
+                if (status === 'Delivered') {
+                    c.booking_info = 'Booked';
+                    c.delivery_info = 'Delivered';
+                } else if (status === 'Booked') {
+                    c.booking_info = 'Booked';
+                    c.delivery_info = null;
                 } else {
-                    cust.booking_info = null;
-                    cust.delivery_info = null;
+                    c.booking_info = null;
+                    c.delivery_info = null;
                 }
-
+                
                 customersCache = null;
-                await apiCall('/customers', 'POST', cust);
-
-                const statusLabel = selectedClosureStatus === 'delivered' ? 'Delivered' : selectedClosureStatus === 'booked' ? 'Booked' : 'In Process';
-                showToast(`🎉 Closure status updated to "${statusLabel}"`, 'success');
-
-                closeClosureStatusModal();
-
+                await apiCall('/customers', 'POST', c);
+                
+                closeClosureModal();
+                showToast(`Closure status changed to "${status}"`, 'success');
+                
                 if (typeof activeDashFilter !== 'undefined' && activeDashFilter && typeof renderDashboardCustomers === 'function') {
                     renderDashboardCustomers();
                 }
@@ -1335,116 +1215,71 @@
                 if (typeof loadDashboardData === 'function') {
                     loadDashboardData();
                 }
-                if (typeof loadMyCustomers === 'function') {
-                    loadMyCustomers();
-                }
-            } catch (e) {
-                showToast('Error updating status: ' + e.message, 'error');
+            } catch(e) {
+                showToast('Error updating closure status: ' + e.message, 'error');
             } finally {
                 hideLoader();
             }
         };
 
-        // --- SMART VISIT INTELLIGENCE & HISTORY MODAL ---
-        window.openVisitInfoModal = function(id) {
-            const cust = currentCustomersList.find(c => c.id == id);
-            if (!cust) return;
+        // --- VISIT HISTORY & ALL VISIT INFO MODAL ---
+        window.openVisitHistoryModal = function(id) {
+            const c = currentCustomersList.find(x => x.id == id);
+            if (!c) return;
+            
+            document.getElementById('vh-cust-name').textContent = c.name || 'Customer';
+            document.getElementById('vh-cust-phone').textContent = c.customer_no || '-';
+            document.getElementById('vh-cust-model').textContent = c.model || '-';
+            document.getElementById('vh-cust-officer').textContent = c.officer_name || 'Unassigned';
+            
+            const formatDateDisplay = (dateStr) => {
+                if (!dateStr) return '-';
+                let date;
+                if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
+                    date = new Date((dateStr - 25569) * 86400 * 1000);
+                } else {
+                    const str = String(dateStr);
+                    date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                }
+                if (isNaN(date.getTime())) return dateStr; 
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = date.toLocaleString('default', { month: 'short' });
+                const year = date.getFullYear().toString().slice(-2);
+                return `${day}-${month}-${year}`;
+            };
 
-            document.getElementById('vi-modal-name').textContent = cust.name || 'Unnamed Customer';
-            document.getElementById('vi-modal-phone').textContent = cust.customer_no || '-';
-            document.getElementById('vi-modal-model').textContent = cust.model || '-';
-            document.getElementById('vi-modal-address').textContent = cust.address || '-';
-            document.getElementById('vi-modal-sale-type').textContent = cust.sale_type || 'Resale';
+            document.getElementById('vh-cust-date').textContent = formatDateDisplay(c.date);
+            document.getElementById('vh-cust-visit').innerHTML = getVisitBadge(c.visit_completed);
+            document.getElementById('vh-cust-rating').innerHTML = getLeadBadge(c.customer_type);
 
-            const officerName = cust.officer_name ? cust.officer_name : 'Unassigned';
-            document.getElementById('vi-modal-officer').textContent = officerName;
-
-            document.getElementById('vi-modal-rating').innerHTML = getLeadBadge(cust.customer_type);
-            document.getElementById('vi-modal-visit-status').innerHTML = getVisitBadge(cust.visit_completed);
-
-            let closureHtml = '<span class="badge" style="background:#F3F4F6;color:var(--text-muted);">In Process</span>';
-            if (cust.delivery_info) {
-                closureHtml = '<span class="badge badge-purple" style="background:#F5F3FF;color:var(--accent);"><i class="fas fa-truck"></i> Delivered</span>';
-            } else if (cust.booking_info) {
-                closureHtml = '<span class="badge badge-yes" style="background:#EFF6FF;color:var(--info);"><i class="fas fa-bookmark"></i> Booked</span>';
-            }
-            document.getElementById('vi-modal-closure').innerHTML = closureHtml;
-
-            // Admin alert check
-            const adminAlertEl = document.getElementById('vi-modal-admin-alert');
-            if (cust.admin_followup && cust.admin_followup.trim() !== '') {
-                adminAlertEl.style.display = 'block';
-                document.getElementById('vi-modal-admin-text').textContent = `"${cust.admin_followup}"`;
-            } else {
-                adminAlertEl.style.display = 'none';
-            }
-
-            // Build timeline entries from field_visit_notes
-            const timelineBody = document.getElementById('vi-modal-timeline-body');
-            const rawNotes = cust.field_visit_notes ? cust.field_visit_notes.trim() : '';
-
-            if (!rawNotes) {
-                timelineBody.innerHTML = `
-                    <div style="text-align: center; padding: 24px; background: #F9FAFB; border-radius: 14px; border: 1px dashed #E5E7EB; color: var(--text-muted);">
-                        <i class="fas fa-sticky-note" style="font-size: 2rem; color: #D1D5DB; margin-bottom: 8px;"></i>
-                        <p style="margin: 0; font-size: 0.9rem; font-weight: 600;">No visit notes recorded yet</p>
-                        <p style="margin: 4px 0 0 0; font-size: 0.8rem;">Field notes added by officers will appear here in chronological order.</p>
-                    </div>
-                `;
-                document.getElementById('vi-modal-touch-count').textContent = '0 Touchpoints';
-            } else {
-                const blocks = rawNotes.split(/---/g).map(b => b.trim()).filter(b => b.length > 0);
-                document.getElementById('vi-modal-touch-count').textContent = `${blocks.length} Touchpoint${blocks.length > 1 ? 's' : ''}`;
-
-                timelineBody.innerHTML = blocks.map((block, idx) => {
-                    const isResolved = block.includes('Admin Followup Resolved:');
-                    const isDelivery = block.toLowerCase().includes('deliver');
-                    const isBooking = block.toLowerCase().includes('book');
-
-                    let cardBg = '#F8FAFC';
-                    let cardBorder = '#E2E8F0';
-                    let iconClass = 'fa-comment-alt';
-                    let iconColor = '#4F46E5';
-                    let badgeTitle = `Touchpoint #${idx + 1}`;
-
-                    if (isResolved) {
-                        cardBg = '#ECFDF5';
-                        cardBorder = '#A7F3D0';
-                        iconClass = 'fa-check-circle';
-                        iconColor = '#10B981';
-                        badgeTitle = `Resolution #${idx + 1}`;
-                    } else if (isDelivery) {
-                        cardBg = '#F5F3FF';
-                        cardBorder = '#DDD6FE';
-                        iconClass = 'fa-truck';
-                        iconColor = '#8B5CF6';
-                        badgeTitle = `Delivery Remark`;
-                    } else if (isBooking) {
-                        cardBg = '#EFF6FF';
-                        cardBorder = '#BFDBFE';
-                        iconClass = 'fa-bookmark';
-                        iconColor = '#2563EB';
-                        badgeTitle = `Booking Remark`;
-                    }
-
+            const historyContainer = document.getElementById('vh-notes-history');
+            if (c.field_visit_notes && c.field_visit_notes.trim() !== '') {
+                const rawEntries = c.field_visit_notes.split(/\n?---\n?/);
+                historyContainer.innerHTML = rawEntries.map((note, index) => {
+                    if (!note.trim()) return '';
                     return `
-                        <div style="background: ${cardBg}; border: 1px solid ${cardBorder}; border-radius: 14px; padding: 14px 16px; position: relative;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="font-size: 0.75rem; font-weight: 700; color: ${iconColor}; display: inline-flex; align-items: center; gap: 5px;">
-                                    <i class="fas ${iconClass}"></i> ${badgeTitle}
-                                </span>
+                        <div style="background: #F9FAFB; border-left: 4px solid var(--primary); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-top: 1px solid #F3F4F6; border-right: 1px solid #F3F4F6; border-bottom: 1px solid #F3F4F6;">
+                            <div style="font-weight: 700; font-size: 0.75rem; color: var(--primary); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
+                                <span><i class="fas fa-comment-dots"></i> Touchpoint #${rawEntries.length - index}</span>
                             </div>
-                            <div style="font-size: 0.88rem; color: var(--text-main); line-height: 1.5; white-space: pre-wrap;">${escapeHTML(block)}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-main); line-height: 1.5; white-space: pre-wrap;">${escapeHTML(note.trim())}</div>
                         </div>
                     `;
                 }).join('');
+            } else {
+                historyContainer.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 24px; font-style: italic;">
+                        <i class="far fa-clipboard" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5; display: block;"></i>
+                        No field visit notes recorded yet for this customer.
+                    </div>
+                `;
             }
 
-            document.getElementById('visit-info-modal').classList.remove('hidden');
+            document.getElementById('visit-history-modal').classList.remove('hidden');
         };
 
-        window.closeVisitInfoModal = function() {
-            document.getElementById('visit-info-modal').classList.add('hidden');
+        window.closeVisitHistoryModal = function() {
+            document.getElementById('visit-history-modal').classList.add('hidden');
         };
 
         window.resolveAdminFollowup = async function(id) {
@@ -1714,21 +1549,12 @@
             activeLoaderType = null;
             document.getElementById('loading-overlay').classList.add('hidden');
             document.getElementById('top-loading-bar').classList.add('hidden');
-            
-            if (!businessList || businessList.length === 0) {
-                businessList = ['Commercial Vehicle', 'Tractor', 'Agricultural Machinery', 'Power Solution'];
-                businessIcons = { 
-                    'Commercial Vehicle': 'fa-truck-fast', 
-                    'Tractor': 'fa-tractor', 
-                    'Agricultural Machinery': 'fa-wheat-awn', 
-                    'Power Solution': 'fa-car-battery' 
-                };
+            if (businessList.length === 0) {
+                 document.getElementById('business-grid').innerHTML = `<div style="grid-column: 1 / -1; text-align: center; color: var(--danger); padding: 40px;"><i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 10px;"></i><p>Could not load portfolios. Check database connection.</p></div>`;
+            } else {
+                 document.getElementById('business-grid').innerHTML = businessList.map(b => `<div class="landing-card" onclick="selectBusiness('${b}')"><i class="fas ${businessIcons[b] || 'fa-briefcase'}"></i><h3>${b}</h3></div>`).join('');
             }
-
-            document.getElementById('business-grid').innerHTML = businessList.map(b => `<div class="landing-card" onclick="selectBusiness('${b}')"><i class="fas ${businessIcons[b] || 'fa-briefcase'}"></i><h3>${b}</h3></div>`).join('');
-            document.getElementById('app-container').classList.add('hidden'); 
-            document.getElementById('login-screen').style.display = 'none'; 
-            document.getElementById('landing-screen').style.display = 'flex';
+            document.getElementById('app-container').classList.add('hidden'); document.getElementById('login-screen').style.display = 'none'; document.getElementById('landing-screen').style.display = 'flex';
         }
         
         function selectBusiness(name) { currentBusiness = name; customersCache = null; officersCache = null; document.getElementById('landing-screen').style.display = 'none'; document.getElementById('login-screen').style.display = 'flex'; document.getElementById('login-context-badge').textContent = name; loadOfficersForLogin(name); }
@@ -2729,24 +2555,22 @@
                 }
                 const phonePill = getPhonePill(c.customer_no);
                 
-                let closureStatus = `<span class="badge" onclick="event.stopPropagation(); openClosureStatusModal('${c.id}')" title="Click to change closure status" style="background:#F3F4F6; color:var(--text-muted); border:1px solid #E5E7EB; cursor:pointer; padding:5px 12px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease;"><i class="fas fa-spinner fa-spin" style="font-size:0.75rem; color:#9CA3AF;"></i> In Process <i class="fas fa-chevron-down" style="font-size:0.65rem; opacity:0.6; margin-left:2px;"></i></span>`;
+                let closureStatus = `<button type="button" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" style="background:#F3F4F6; color:var(--text-muted); border:1.5px solid #E5E7EB; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='none';" title="Click to change Closure Status"><i class="fas fa-spinner"></i> In Process <i class="fas fa-caret-down" style="opacity:0.6; font-size:0.65rem;"></i></button>`;
                 if (c.delivery_info) {
-                    closureStatus = `<span class="badge badge-purple" onclick="event.stopPropagation(); openClosureStatusModal('${c.id}')" title="Click to change closure status" style="background:#F5F3FF; color:var(--accent); border:1px solid #DDD6FE; cursor:pointer; padding:5px 12px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease; box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15);"><i class="fas fa-truck"></i> Delivered <i class="fas fa-chevron-down" style="font-size:0.65rem; opacity:0.6; margin-left:2px;"></i></span>`;
+                    closureStatus = `<button type="button" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" style="background:#F5F3FF; color:var(--accent); border:1.5px solid #DDD6FE; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='none';" title="Click to change Closure Status"><i class="fas fa-truck"></i> Delivered <i class="fas fa-caret-down" style="opacity:0.6; font-size:0.65rem;"></i></button>`;
                 } else if (c.booking_info) {
-                    closureStatus = `<span class="badge badge-yes" onclick="event.stopPropagation(); openClosureStatusModal('${c.id}')" title="Click to change closure status" style="background:#EFF6FF; color:var(--info); border:1px solid #BFDBFE; cursor:pointer; padding:5px 12px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);"><i class="fas fa-bookmark"></i> Booked <i class="fas fa-chevron-down" style="font-size:0.65rem; opacity:0.6; margin-left:2px;"></i></span>`;
+                    closureStatus = `<button type="button" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" style="background:#EFF6FF; color:var(--info); border:1.5px solid #BFDBFE; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='none';" title="Click to change Closure Status"><i class="fas fa-bookmark"></i> Booked <i class="fas fa-caret-down" style="opacity:0.6; font-size:0.65rem;"></i></button>`;
                 }
                 
-                let touchCount = 0;
-                if (c.field_visit_notes) {
-                    touchCount = (c.field_visit_notes.split(/---/g).map(b => b.trim()).filter(b => b.length > 0)).length;
-                }
-                let noteExcerpt = c.field_visit_notes ? c.field_visit_notes.replace(/---/g, ' | ').trim() : '';
-                if (noteExcerpt.length > 30) noteExcerpt = noteExcerpt.substring(0, 30) + '...';
-
                 const notesHtml = `
-                    <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
-                        ${noteExcerpt ? `<div style="font-size:0.8rem; color:var(--text-muted); font-style:italic; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">"${escapeHTML(noteExcerpt)}"</div>` : ''}
-                        <button class="btn-visit-info-tag" onclick="event.stopPropagation(); openVisitInfoModal('${c.id}')" style="background: linear-gradient(135deg, #EEF2FF, #E0E7FF); color: #4F46E5; border: 1px solid #C7D2FE; border-radius: 12px; padding: 3px 10px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; box-shadow: 0 1px 4px rgba(79, 70, 229, 0.12);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='none'" title="Click to view full visit history & intelligence"><i class="fas fa-brain"></i> Visit Intelligence (${touchCount})</button>
+                    <div onclick="event.stopPropagation(); openVisitHistoryModal('${c.id}')" style="max-width:210px; font-size:0.8rem; background:#F9FAFB; border:1px solid #E5E7EB; padding:6px 10px; border-radius:8px; cursor:pointer; transition:all 0.2s; color:var(--text-main);" onmouseover="this.style.borderColor='var(--primary)'; this.style.background='#F0FDF4';" onmouseout="this.style.borderColor='#E5E7EB'; this.style.background='#F9FAFB';" title="Click to see all visit info & history">
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:var(--primary); font-weight:700; margin-bottom:2px;">
+                            <span><i class="fas fa-sticky-note"></i> Visit Notes</span>
+                            <span style="font-size:0.65rem; background:rgba(16,185,129,0.12); color:var(--primary); padding:1px 6px; border-radius:4px;"><i class="fas fa-expand-alt"></i> All Info</span>
+                        </div>
+                        <div style="font-style:italic; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.3;">
+                            ${c.field_visit_notes ? escapeHTML(c.field_visit_notes) : '<span style="color:#A1A1AA; font-style:normal;">No notes recorded</span>'}
+                        </div>
                     </div>
                 `;
                 
@@ -2756,7 +2580,7 @@
                 } else if (c.field_visit_notes && c.field_visit_notes.includes('Admin Followup Resolved:')) {
                     adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #10B981, #059669); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
                 }
-
+                
                 return `
                     <tr style="border-bottom: 1px solid #f1f5f9; background: white; transition: background 0.2s; cursor:pointer;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'">
                         <td style="font-weight: 600; color: var(--text-muted); text-align: center;">${i + 1}</td>
@@ -2991,26 +2815,12 @@
                         adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #10B981, #059669); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
                     }
 
-                    let closureStatus = `<span class="badge" onclick="event.stopPropagation(); openClosureStatusModal('${c.id}')" title="Click to change closure status" style="background:#F3F4F6; color:var(--text-muted); border:1px solid #E5E7EB; cursor:pointer; padding:5px 12px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease;"><i class="fas fa-spinner fa-spin" style="font-size:0.75rem; color:#9CA3AF;"></i> In Process <i class="fas fa-chevron-down" style="font-size:0.65rem; opacity:0.6; margin-left:2px;"></i></span>`;
+                    let closureStatus = `<button type="button" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" style="background:#F3F4F6; color:var(--text-muted); border:1.5px solid #E5E7EB; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='none';" title="Click to change Closure Status"><i class="fas fa-spinner"></i> In Process <i class="fas fa-caret-down" style="opacity:0.6; font-size:0.65rem;"></i></button>`;
                     if (c.delivery_info) {
-                        closureStatus = `<span class="badge badge-purple" onclick="event.stopPropagation(); openClosureStatusModal('${c.id}')" title="Click to change closure status" style="background:#F5F3FF; color:var(--accent); border:1px solid #DDD6FE; cursor:pointer; padding:5px 12px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease; box-shadow: 0 2px 6px rgba(139, 92, 246, 0.15);"><i class="fas fa-truck"></i> Delivered <i class="fas fa-chevron-down" style="font-size:0.65rem; opacity:0.6; margin-left:2px;"></i></span>`;
+                        closureStatus = `<button type="button" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" style="background:#F5F3FF; color:var(--accent); border:1.5px solid #DDD6FE; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='none';" title="Click to change Closure Status"><i class="fas fa-truck"></i> Delivered <i class="fas fa-caret-down" style="opacity:0.6; font-size:0.65rem;"></i></button>`;
                     } else if (c.booking_info) {
-                        closureStatus = `<span class="badge badge-yes" onclick="event.stopPropagation(); openClosureStatusModal('${c.id}')" title="Click to change closure status" style="background:#EFF6FF; color:var(--info); border:1px solid #BFDBFE; cursor:pointer; padding:5px 12px; border-radius:20px; font-weight:700; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s ease; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.15);"><i class="fas fa-bookmark"></i> Booked <i class="fas fa-chevron-down" style="font-size:0.65rem; opacity:0.6; margin-left:2px;"></i></span>`;
+                        closureStatus = `<button type="button" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" style="background:#EFF6FF; color:var(--info); border:1.5px solid #BFDBFE; padding:4px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='none';" title="Click to change Closure Status"><i class="fas fa-bookmark"></i> Booked <i class="fas fa-caret-down" style="opacity:0.6; font-size:0.65rem;"></i></button>`;
                     }
-                    
-                    let touchCount = 0;
-                    if (c.field_visit_notes) {
-                        touchCount = (c.field_visit_notes.split(/---/g).map(b => b.trim()).filter(b => b.length > 0)).length;
-                    }
-                    let noteExcerpt = c.field_visit_notes ? c.field_visit_notes.replace(/---/g, ' | ').trim() : '';
-                    if (noteExcerpt.length > 30) noteExcerpt = noteExcerpt.substring(0, 30) + '...';
-
-                    const notesHtml = `
-                        <div style="display:flex; flex-direction:column; gap:4px; align-items:flex-start;">
-                            ${noteExcerpt ? `<div style="font-size:0.8rem; color:var(--text-muted); font-style:italic; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">"${escapeHTML(noteExcerpt)}"</div>` : ''}
-                            <button class="btn-visit-info-tag" onclick="event.stopPropagation(); openVisitInfoModal('${c.id}')" style="background: linear-gradient(135deg, #EEF2FF, #E0E7FF); color: #4F46E5; border: 1px solid #C7D2FE; border-radius: 12px; padding: 3px 10px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s; box-shadow: 0 1px 4px rgba(79, 70, 229, 0.12);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='none'" title="Click to view full visit history & intelligence"><i class="fas fa-brain"></i> Visit Intelligence (${touchCount})</button>
-                        </div>
-                    `;
 
                     return `<tr>
                         <td><input type="checkbox" class="customer-checkbox" value="${c.id}" onchange="updateDeleteButtonState()"></td>
@@ -3024,7 +2834,6 @@
                         <td>${getSaleTypeBadge(c.sale_type)}</td>
                         <td>${getVisitBadge(c.visit_completed)}</td>
                         <td>${getLeadBadge(c.customer_type)}</td>
-                        <td>${notesHtml}</td>
                         <td>${closureStatus}</td>
                         <td style="display:flex; gap:6px; align-items:center; justify-content:flex-end;">
                             ${adminBtnHtml}
