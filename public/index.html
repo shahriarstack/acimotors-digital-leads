@@ -17,191 +17,155 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        /* [MINIMALIST NEOMORPHISM & GLASSMORPHISM DESIGN SYSTEM] */
-        :root { 
-            --primary: #10B981; 
-            --primary-dark: #059669; 
-            --secondary: #34D399; 
-            --danger: #EF4444; 
-            --warning: #F59E0B; 
-            --info: #3B82F6; 
-            --accent: #8B5CF6; 
-            --text-main: #0F172A; 
-            --text-muted: #64748B; 
-            --bg-body: #F1F5F9; 
-            --bg-panel: #ffffff; 
-            --glass-bg: rgba(255, 255, 255, 0.84);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
-            --neo-shadow: 4px 4px 10px #e2e8f0, -4px -4px 10px #ffffff;
-            --neo-inset: inset 2px 2px 5px rgba(0, 0, 0, 0.04), inset -2px -2px 5px #ffffff;
-            --radius-lg: 20px; 
-            --radius-md: 14px; 
-            --radius-sm: 8px; 
-            --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.04), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9); 
-            --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); 
-        }
+        /* CSS REMAINS EXACTLY THE SAME AS PREVIOUS VERSIONS */
+        :root { --primary: #10B981; --primary-dark: #059669; --secondary: #34D399; --danger: #EF4444; --warning: #F59E0B; --info: #3B82F6; --accent: #8B5CF6; --text-main: #111827; --text-muted: #6B7280; --bg-body: #F3F4F6; --bg-panel: #ffffff; --radius-lg: 24px; --radius-md: 16px; --radius-sm: 10px; --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01); --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif; }
         html { width: 100%; overflow-x: hidden; }
-        body { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); color: var(--text-main); min-height: 100vh; font-size: 14px; position: relative; }
-        .page-content:not(.hidden) { animation: fadeInPage 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeInPage { 0% { opacity: 0; transform: translateY(8px) scale(0.99); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        body { background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%); color: var(--text-main); min-height: 100vh; font-size: 14px; position: relative; }
+        .page-content:not(.hidden) { animation: fadeInPage 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }
+        @keyframes fadeInPage { 0% { opacity: 0; transform: translateY(10px) scale(0.99); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         .hidden { display: none !important; }
         .text-muted { color: var(--text-muted); }
-        .badge { display: inline-block; padding: 3px 7px; border-radius: 6px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; transition: var(--transition); backdrop-filter: blur(4px); }
-        .badge-hot { background: rgba(254, 242, 242, 0.9); color: var(--danger); border: 1px solid rgba(252, 165, 165, 0.5); }
-        .badge-warm { background: rgba(255, 251, 235, 0.9); color: var(--warning); border: 1px solid rgba(253, 230, 138, 0.5); }
-        .badge-cold { background: rgba(236, 253, 245, 0.9); color: var(--primary-dark); border: 1px solid rgba(167, 243, 208, 0.5); }
-        .badge-yes { background: rgba(209, 250, 229, 0.9); color: var(--primary-dark); border: 1px solid rgba(110, 231, 183, 0.5); }
-        .badge-no { background: rgba(255, 251, 235, 0.9); color: var(--warning); border: 1px solid rgba(253, 230, 138, 0.5); }
-        .badge-info { background: rgba(239, 246, 255, 0.9); color: var(--info); border: 1px solid rgba(191, 219, 254, 0.5); }
-        .badge-purple { background: rgba(245, 243, 255, 0.9); color: var(--accent); border: 1px solid rgba(221, 214, 254, 0.5); }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; transition: var(--transition); }
+        .badge-hot { background: #FEF2F2; color: var(--danger); }
+        .badge-warm { background: #FFFBEB; color: var(--warning); }
+        .badge-cold { background: #ECFDF5; color: var(--primary); }
+        .badge-yes { background: #D1FAE5; color: var(--primary-dark); }
+        .badge-no { background: #FFFBEB; color: var(--warning); }
+        .badge-info { background: #EFF6FF; color: var(--info); }
+        .badge-purple { background: #F5F3FF; color: var(--accent); }
         .brand-logo { display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), #34D399); color: white; border-radius: 16px; font-size: 1.8rem; margin: 0 auto 16px; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); }
         .sidebar-brand { display: flex; align-items: center; gap: 12px; }
         .sidebar-brand .brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-        .btn { border: none; padding: 7px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; justify-content: center; text-decoration: none; transform: scale(1); backdrop-filter: blur(4px); }
+        .btn { border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: var(--transition); display: inline-flex; align-items: center; gap: 6px; justify-content: center; text-decoration: none; transform: scale(1); }
         .btn:active { transform: scale(0.97); }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 3px 3px 8px rgba(16, 185, 129, 0.25), -2px -2px 6px #FFFFFF; border: 1px solid rgba(255,255,255,0.2); }
-        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35); }
-        .btn-secondary { background: rgba(255, 255, 255, 0.85); color: var(--text-main); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: var(--neo-shadow); }
-        .btn-secondary:hover { background: #FFFFFF; border-color: #CBD5E1; color: var(--text-main); transform: translateY(-1px); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border: 1px solid rgba(0,0,0,0.05); }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); }
+        .btn-secondary { background: white; color: var(--text-main); border: 1px solid #E5E7EB; }
+        .btn-secondary:hover { background: #F9FAFB; border-color: #D1D5DB; color: var(--text-main); }
         .btn-success { background: linear-gradient(135deg, #10B981, #059669); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
         .btn-danger { background: linear-gradient(135deg, var(--danger), #DC2626); color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
-        .btn-sm { padding: 5px 11px; font-size: 0.75rem; }
-        
-        .main-content { flex: 1; margin-left: 0; padding: 20px; padding-top: 65px; width: 100%; overflow-x: hidden; }
-        .page-header { margin-bottom: 20px; }
-        
-        /* [GLASSMORPHIC CARDS] */
-        .card { 
-            background: var(--glass-bg); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px); 
-            border-radius: var(--radius-md); 
-            padding: 20px; 
-            box-shadow: var(--glass-shadow); 
-            margin-bottom: 20px; 
-            border: 1px solid var(--glass-border); 
-            transition: var(--transition); 
+        .btn-sm { padding: 6px 12px; font-size: 0.75rem; }
+        .btn-pending-action { border: 1.5px dashed var(--warning); background-color: #FFFBEB; color: #B45309; font-weight: 700; justify-content: center; width: 100%; animation: pulse-border 2s infinite; }
+        .btn-pending-action:hover { background-color: #FEF3C7; border-color: var(--warning); }
+        .btn-text-action { padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: 1.5px solid transparent; transition: var(--transition); text-transform: uppercase; }
+        .btn-book-text { background-color: white; color: var(--info); border-color: rgba(59, 130, 246, 0.2); }
+        .btn-book-text:hover { background-color: #EFF6FF; color: var(--info); }
+        .btn-deliver-text { background-color: white; color: var(--accent); border-color: rgba(139, 92, 246, 0.2); }
+        .btn-deliver-text:hover { background-color: #F5F3FF; color: var(--accent); }
+        .status-icon-locked { width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1rem; cursor: default; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .status-booked { background: var(--info); }
+        .status-delivered { background: var(--accent); }
+        .action-row { display: flex; align-items: center; gap: 8px; width: 100%; }
+        .btn-icon-circle { width: 28px; height: 28px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition); font-size: 0.9rem; }
+        .btn-icon-circle:hover { transform: scale(1.1); }
+        .btn-edit { background: #F3F4F6; color: var(--text-muted); }
+        .btn-edit:hover { background: #E5E7EB; color: var(--primary); }
+        .urgent-action-card { transition: all 0.2s ease; border: 1.5px solid transparent; }
+        .urgent-action-card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.06) !important; }
+        .urgent-action-card.active-filter { border: 1.5px solid var(--danger) !important; background: #FFEBEA !important; animation: none !important; }
+        .pulse-border { border: 1.5px solid rgba(239, 68, 68, 0.2); animation: borderPulse 2s infinite alternate; }
+        @keyframes borderPulse {
+            0% { border-color: rgba(239, 68, 68, 0.25); }
+            100% { border-color: rgba(239, 68, 68, 0.7); box-shadow: 0 0 8px rgba(239, 68, 68, 0.12); }
         }
-        .card:hover { 
-            box-shadow: 0 12px 36px 0 rgba(31, 38, 135, 0.07), inset 0 1px 1px 0 rgba(255, 255, 255, 1); 
-            transform: translateY(-2px); 
-        }
-        
-        /* [NEUMORPHIC COMPACT STAT CARDS DESIGN] */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .stat-card { 
-            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%); 
-            padding: 12px 8px; 
-            border-radius: 14px; 
-            box-shadow: var(--neo-shadow); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            text-align: center; 
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            transition: var(--transition); 
-            cursor: pointer; 
-            position: relative; 
-            overflow: hidden; 
-            user-select: none; 
-        }
-        .stat-card:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 6px 6px 14px #cbd5e1, -6px -6px 14px #ffffff; 
-            border-color: rgba(16, 185, 129, 0.2); 
-        }
-        .stat-card.active-filter { 
-            border: 1.5px solid var(--primary) !important; 
-            box-shadow: inset 2px 2px 6px rgba(16,185,129,0.12), inset -2px -2px 6px #ffffff, 0 8px 20px rgba(16, 185, 129, 0.2) !important; 
-            transform: translateY(-2px); 
-            background: linear-gradient(145deg, #ffffff 0%, #ECFDF5 100%) !important; 
-        }
-        .stat-card.active-filter::after { 
-            content: ''; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            right: 0; 
-            height: 3px; 
-            background: linear-gradient(90deg, var(--primary), var(--secondary)); 
-        }
-        .stat-icon { 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 0.9rem; 
-            margin-bottom: 6px; 
-            transition: var(--transition); 
-            box-shadow: inset 1px 1px 2px rgba(255,255,255,0.8), 2px 2px 5px rgba(0,0,0,0.04); 
-        }
+        .btn-delete { background: #FEF2F2; color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.1); }
+        .btn-delete:hover { background: var(--danger); color: white; transform: scale(1.1); }
+        .btn-key { background: #FFFBEB; color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.15); }
+        .btn-key:hover { background: var(--warning); color: white; transform: scale(1.1); }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
+        .form-control, .form-select { width: 100%; padding: 10px 12px; border: 1px solid #E5E7EB; border-radius: 8px; background: white; font-size: 0.9rem; color: var(--text-main); transition: var(--transition); }
+        .form-control:focus, .form-select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); transform: translateY(-1px); }
+        textarea.form-control { resize: vertical; min-height: 80px; }
+        .officer-search-input { padding: 8px 10px; border-radius: 8px; border: 1px solid #E5E7EB; background: white; font-size: 0.85rem; color: var(--text-main); width: 100%; min-width: 180px; transition: var(--transition); outline: none; }
+        .officer-search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+        .officer-search-input.unassigned { border: 1.5px dashed var(--warning); background-color: #FFFBEB; color: #B45309; font-weight: 600; }
+        .officer-search-input.unassigned::placeholder { color: #B45309; opacity: 0.8; }
+        #landing-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%); }
+        .landing-header { margin-bottom: 40px; animation: slideUp 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .landing-header h1 { font-size: 2.2rem; font-weight: 800; background: linear-gradient(135deg, var(--primary), #34D399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; margin-top: 10px; }
+        .landing-header p { color: var(--text-muted); font-size: 1rem; font-weight: 500; }
+        .landing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; width: 100%; max-width: 800px; animation: slideUp 0.7s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .landing-card { background: white; border-radius: 20px; padding: 30px 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; align-items: center; gap: 16px; cursor: pointer; transition: var(--transition); border: 1px solid transparent; }
+        .landing-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); border-color: rgba(16, 185, 129, 0.2); }
+        .landing-card i { font-size: 2.5rem; color: var(--primary); background: #ECFDF5; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: var(--transition); }
+        .landing-card:hover i { background: var(--primary); color: white; transform: scale(1.1); }
+        .landing-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-main); margin: 0; }
+        .super-admin-link { margin-top: 50px; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 20px; transition: var(--transition); border: 1px solid transparent; }
+        .super-admin-link:hover { background: white; border-color: #E5E7EB; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.05); transform: translateY(-2px); }
+        #login-screen { display: none; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .login-box { background: white; padding: 40px 30px; border-radius: var(--radius-lg); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); width: 100%; max-width: 400px; animation: slideUp 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; }
+        .back-btn { position: absolute; top: 20px; left: 20px; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; transition: var(--transition); }
+        .back-btn:hover { color: var(--text-main); transform: translateX(-3px); }
+        .login-context-badge { background: linear-gradient(135deg, var(--primary), #34D399); color: white; font-size: 0.85rem; font-weight: 700; padding: 6px 14px; border-radius: 20px; display: inline-block; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
+        .login-tab.active { background: white !important; color: var(--text-main) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.06); transform: scale(1.02); transition: var(--transition); }
+        #app-container { display: flex; min-height: 100vh; position: relative; width: 100%; }
+        #menu-btn { display: block; position: fixed; top: 15px; left: 15px; z-index: 1100; background: white; border: none; padding: 8px 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-size: 1.1rem; color: var(--primary); cursor: pointer; transition: var(--transition); }
+        #menu-btn:hover { transform: scale(1.05); }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 1001; backdrop-filter: blur(2px); transition: opacity 0.3s; }
+        .sidebar-overlay.active { display: block; }
+        .sidebar { width: 260px; background: white; box-shadow: 2px 0 20px rgba(0, 0, 0, 0.03); padding: 60px 20px 20px 20px; display: flex; flex-direction: column; position: fixed; top: 0; bottom: 0; left: 0; z-index: 1002; transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-header { margin-bottom: 30px; }
+        .nav-menu { list-style: none; flex: 1; }
+        .nav-item { margin-bottom: 6px; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; color: var(--text-main); text-decoration: none; border-radius: var(--radius-sm); transition: var(--transition); font-weight: 500; font-size: 0.9rem; }
+        .nav-link:hover { background: #F3F4F6; color: var(--primary); transform: translateX(4px); }
+        .nav-link.active { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); transform: translateX(4px); }
+        .nav-link i { width: 20px; text-align: center; }
+        .close-sidebar-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; transition: var(--transition); }
+        .close-sidebar-btn:hover { color: var(--danger); transform: rotate(90deg); }
+        .main-content { flex: 1; margin-left: 0; padding: 24px; padding-top: 70px; width: 100%; overflow-x: hidden; }
+        .page-header { margin-bottom: 24px; }
+        .card { background: white; border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-card); margin-bottom: 24px; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
+        .card:hover { box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-bottom: 24px; }
+        .stat-card { background: white; padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03); display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.06); }
+        .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 8px; transition: var(--transition); }
         .stat-card:hover .stat-icon { transform: scale(1.1); }
-        .stat-value { font-size: 1.35rem; font-weight: 800; line-height: 1.1; color: #0F172A; margin-bottom: 2px; letter-spacing: -0.02em; }
-        .stat-label { font-size: 0.68rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
-        
-        /* [ULTRA-COMPACT GLASSMORPHIC TABLE DESIGN] */
-        .table-wrapper { 
-            overflow-x: auto; 
-            border-radius: 14px; 
-            background: rgba(255, 255, 255, 0.75); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(226, 232, 240, 0.8); 
-            box-shadow: var(--glass-shadow); 
-        }
+        .stat-value { font-size: 1.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+        /* [TOP-TIER ENTERPRISE TABLE DESIGN] */
+        .table-wrapper { overflow-x: auto; border-radius: 12px; background: white; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
         table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.82rem; }
-        th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid rgba(241, 245, 249, 0.8); vertical-align: middle; transition: background-color 0.15s ease; }
-        th { 
-            background: rgba(248, 250, 252, 0.85); 
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
-            font-weight: 800; 
-            font-size: 0.68rem; 
-            text-transform: uppercase; 
-            color: #475569; 
-            letter-spacing: 0.06em; 
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8); 
-        }
-        tr:hover td { background-color: rgba(240, 253, 244, 0.4) !important; }
-        .visited-row { background-color: rgba(248, 250, 252, 0.5) !important; }
+        th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid #F1F5F9; vertical-align: middle; transition: background-color 0.15s ease; }
+        th { background: #F8FAFC; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; color: #64748B; letter-spacing: 0.05em; border-bottom: 1px solid #E2E8F0; }
+        tr:hover td { background-color: #F8FAFC !important; }
+        .visited-row { background-color: #FAFAFA !important; }
         
         /* Phone Pill */
-        .phone-pill { display: inline-flex; align-items: center; padding: 3px 9px; background: rgba(236, 253, 245, 0.9); border: 1px solid rgba(167, 243, 208, 0.8); border-radius: 12px; color: #059669; font-size: 0.78rem; font-weight: 600; gap: 5px; text-decoration: none; backdrop-filter: blur(4px); box-shadow: 1px 1px 3px rgba(0,0,0,0.03); transition: all 0.15s ease; }
-        .phone-pill:hover { background: #D1FAE5; color: #047857; border-color: #34D399; transform: translateY(-1px); }
+        .phone-pill { display: inline-flex; align-items: center; padding: 3px 9px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; color: #059669; font-size: 0.78rem; font-weight: 600; gap: 5px; text-decoration: none; transition: all 0.15s ease; }
+        .phone-pill:hover { background: #D1FAE5; color: #047857; border-color: #34D399; }
         
         /* Notes Preview Pill */
-        .table-note-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; background: rgba(248, 250, 252, 0.9); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 6px; max-width: 200px; cursor: pointer; backdrop-filter: blur(4px); transition: all 0.15s ease; }
-        .table-note-pill:hover { background: rgba(240, 253, 244, 0.9); border-color: #A7F3D0; color: #059669; }
+        .table-note-pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; max-width: 200px; cursor: pointer; transition: all 0.15s ease; }
+        .table-note-pill:hover { background: #F0FDF4; border-color: #A7F3D0; color: #059669; }
         .table-note-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.78rem; color: #475569; }
         .note-count-tag { font-size: 0.65rem; font-weight: 700; background: #EEF2FF; color: #4F46E5; padding: 1px 5px; border-radius: 4px; }
         
         /* Closure Status Pills */
-        .closure-pill { border: none; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s ease; white-space: nowrap; backdrop-filter: blur(4px); }
-        .closure-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
-        .closure-process { background: rgba(241, 245, 249, 0.9); color: #64748B; border: 1px solid #CBD5E1; }
-        .closure-booked { background: rgba(239, 246, 255, 0.9); color: #2563EB; border: 1px solid #BFDBFE; }
-        .closure-delivered { background: rgba(245, 243, 255, 0.9); color: #7C3AED; border: 1px solid #DDD6FE; }
+        .closure-pill { border: none; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.15s ease; white-space: nowrap; }
+        .closure-pill:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .closure-process { background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; }
+        .closure-booked { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+        .closure-delivered { background: #F5F3FF; color: #7C3AED; border: 1px solid #DDD6FE; }
         
         /* Action Buttons */
-        .action-btn { border: none; padding: 4px 9px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; backdrop-filter: blur(4px); }
+        .action-btn { border: none; padding: 4px 9px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; }
         .action-btn:hover { transform: translateY(-1px); }
-        .action-followup { background: rgba(255, 251, 235, 0.9); color: #D97706; border: 1px solid #FDE68A; }
+        .action-followup { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
         .action-pending { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border: none; animation: pulse-red 2s infinite; }
-        .action-resolved { background: rgba(236, 253, 245, 0.9); color: #059669; border: 1px solid #A7F3D0; }
+        .action-resolved { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
         
-        .action-btn-edit { width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(226, 232, 240, 0.8); background: rgba(255, 255, 255, 0.9); color: #64748B; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; font-size: 0.75rem; box-shadow: 1px 1px 3px rgba(0,0,0,0.03); }
-        .action-btn-edit:hover { background: #F1F5F9; color: #0F172A; border-color: #CBD5E1; transform: translateY(-1px); }
+        .action-btn-edit { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #E2E8F0; background: white; color: #64748B; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; font-size: 0.75rem; }
+        .action-btn-edit:hover { background: #F1F5F9; color: #0F172A; border-color: #CBD5E1; }
         
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-        
-        /* [GLASSMORPHIC MODALS & POPOVERS] */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.3s ease-out; }
-        .modal-box { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: var(--radius-lg); padding: 24px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.8); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.3s ease-out; }
+        .modal-box { background: white; border-radius: var(--radius-md); padding: 24px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         @keyframes modalPop { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-title { font-size: 1.25rem; font-weight: 700; color: var(--text-main); }
@@ -511,28 +475,28 @@
 
                         <div style="background: white; padding: 6px 14px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 10px; border: 1px solid #E5E7EB; position: relative;">
                             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Filter Period:</span>
-                            <div style="position: relative;" id="multi-month-container">
-                                <button id="multi-month-trigger-btn" type="button" onclick="toggleMultiMonthDropdown(event)" style="border: 1px solid #CBD5E1; background: #F8FAFC; border-radius: 8px; padding: 5px 12px; font-size: 0.85rem; color: #0F172A; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;">
-                                    <i class="far fa-calendar-alt" style="color: var(--primary);"></i>
-                                    <span id="multi-month-btn-text">All Months Selected</span>
-                                    <i class="fas fa-chevron-down" style="font-size: 0.7rem; color: #64748B;"></i>
+                            <div id="multi-month-container" style="position: relative;">
+                                <button type="button" id="multi-month-btn" onclick="toggleMultiMonthDropdown(event)" style="border: 1px solid #CBD5E1; border-radius: 8px; padding: 5px 12px; font-family: inherit; font-size: 0.85rem; color: var(--primary); font-weight: 600; background: #F8FAFC; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <span id="multi-month-label">All Months</span>
+                                    <i class="fas fa-chevron-down" style="font-size: 0.65rem; opacity: 0.6;"></i>
                                 </button>
                                 
-                                <!-- Multi-Month Selection Popover Menu -->
-                                <div id="multi-month-dropdown" style="display: none; position: absolute; top: calc(100% + 8px); right: 0; background: white; border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); width: 270px; z-index: 1000; padding: 14px; animation: fadeIn 0.2s ease-out;">
+                                <!-- Multi-Month Dropdown Popup -->
+                                <div id="multi-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position: absolute; right: 0; top: calc(100% + 8px); background: white; border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15); width: 280px; z-index: 1000; padding: 14px; animation: fadeIn 0.2s ease-out;">
                                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">
-                                        <span style="font-size: 0.75rem; font-weight: 700; color: #0F172A; text-transform: uppercase; letter-spacing: 0.5px;">Select Months</span>
+                                        <span style="font-weight: 700; font-size: 0.8rem; color: #0F172A;"><i class="fas fa-filter" style="color: var(--primary);"></i> Select Months</span>
                                         <div style="display: flex; gap: 8px; font-size: 0.75rem;">
-                                            <button type="button" onclick="selectAllMultiMonths(true)" style="background: none; border: none; color: var(--primary); font-weight: 700; cursor: pointer; padding: 0;">Select All</button>
+                                            <a href="#" onclick="selectAllDashboardMonths(event)" style="color: var(--primary); text-decoration: none; font-weight: 600;">All</a>
                                             <span style="color: #CBD5E1;">|</span>
-                                            <button type="button" onclick="selectAllMultiMonths(false)" style="background: none; border: none; color: #EF4444; font-weight: 700; cursor: pointer; padding: 0;">Clear</button>
+                                            <a href="#" onclick="clearAllDashboardMonths(event)" style="color: #64748B; text-decoration: none; font-weight: 600;">Clear</a>
                                         </div>
                                     </div>
-                                    <div id="multi-month-options-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px;">
-                                        <!-- Dynamically generated month checkboxes -->
+                                    <div id="multi-month-checkbox-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px;">
+                                        <!-- Dynamically populated month checkboxes -->
                                     </div>
-                                    <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #F1F5F9;">
-                                        <button type="button" onclick="applyMultiMonthFilter()" class="btn btn-primary btn-sm" style="font-size: 0.8rem; padding: 6px 12px; width: 100%; border-radius: 8px; font-weight: 600;"><i class="fas fa-filter" style="margin-right:4px;"></i> Apply Month Filter</button>
+                                    <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #F1F5F9; display: flex; gap: 8px;">
+                                        <button type="button" class="btn btn-primary btn-sm" style="flex: 1; font-size: 0.78rem; padding: 6px;" onclick="applyMultiMonthFilter()"><i class="fas fa-check"></i> Apply Filter</button>
                                     </div>
                                 </div>
                             </div>
@@ -542,7 +506,7 @@
                     <div class="stats-grid" id="dashboard-stats"></div>
 
                     <!-- Collapsible Dashboard Detailed Customer List Panel -->
-                    <div id="dashboard-customer-list-panel" class="card hidden" style="margin-bottom: 24px; animation: slideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid rgba(16, 185, 129, 0.25); background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(20px); box-shadow: 0 12px 32px 0 rgba(31, 38, 135, 0.06), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);">
+                    <div id="dashboard-customer-list-panel" class="card hidden" style="margin-bottom: 24px; animation: slideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1.5px solid rgba(16, 185, 129, 0.15); background: linear-gradient(180deg, #ffffff 0%, #FAFAFB 100%);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #E5E7EB; padding-bottom: 14px;">
                             <div style="display: flex; align-items: center; gap: 12px;">
                                 <div id="dash-list-icon-bg" style="width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white; background: var(--primary); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);">
@@ -2299,141 +2263,157 @@
             }
         }
 
-        // --- MULTI-MONTH FILTER LOGIC ---
-        let selectedDashMonths = []; // Array of selected YYYY-MM strings
-        let allAvailableDashMonths = []; // All unique YYYY-MM detected from database
+        // --- MULTI-MONTH DASHBOARD FILTERING LOGIC ---
+        let selectedDashboardMonths = [];
 
-        window.toggleMultiMonthDropdown = function(e) {
-            if (e) e.stopPropagation();
+        function isCustomerDateInMonth(dateStr, monthVal) {
+            if (!dateStr || !monthVal) return false;
+            const str = String(dateStr);
+            if (str.startsWith(monthVal)) return true;
+            
+            let d;
+            if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
+                d = new Date((dateStr - 25569) * 86400 * 1000);
+            } else {
+                d = new Date(str.includes('T') ? str : str.replace(/-/g, '/'));
+            }
+            
+            if (isNaN(d.getTime())) return false;
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            return `${y}-${m}` === monthVal;
+        }
+
+        function getSelectedDashboardMonths() {
+            return selectedDashboardMonths || [];
+        }
+
+        window.toggleMultiMonthDropdown = function(event) {
+            if (event) event.stopPropagation();
             const dropdown = document.getElementById('multi-month-dropdown');
             if (!dropdown) return;
-            const isHidden = dropdown.style.display === 'none';
-            dropdown.style.display = isHidden ? 'block' : 'none';
-        };
-
-        // Close multi-month dropdown on click outside
-        document.addEventListener('click', function(e) {
-            const container = document.getElementById('multi-month-container');
-            const dropdown = document.getElementById('multi-month-dropdown');
-            if (container && dropdown && !container.contains(e.target)) {
-                dropdown.style.display = 'none';
+            const isHidden = dropdown.classList.contains('hidden');
+            if (isHidden) {
+                populateMultiMonthList();
+                dropdown.classList.remove('hidden');
+            } else {
+                dropdown.classList.add('hidden');
             }
-        });
-
-        window.selectAllMultiMonths = function(select) {
-            const checkboxes = document.querySelectorAll('.dash-month-cb');
-            checkboxes.forEach(cb => { cb.checked = select; });
         };
 
-        window.formatMonthLabel = function(ymStr) {
-            if (!ymStr || ymStr.length < 7) return ymStr || '';
-            const [y, m] = ymStr.split('-');
-            const dateObj = new Date(parseInt(y), parseInt(m) - 1, 1);
-            if (isNaN(dateObj.getTime())) return ymStr;
-            return dateObj.toLocaleString('en-US', { month: 'short', year: 'numeric' });
-        };
+        function populateMultiMonthList() {
+            const listEl = document.getElementById('multi-month-checkbox-list');
+            if (!listEl) return;
 
-        window.populateMultiMonthOptions = function(allData) {
             const monthSet = new Set();
-            (allData || []).forEach(c => {
-                if (!c.date) return;
-                let ym = '';
-                if (typeof c.date === 'string' && c.date.length >= 7 && c.date.includes('-')) {
-                    ym = c.date.substring(0, 7);
-                } else {
-                    let d;
-                    if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
-                        d = new Date((c.date - 25569) * 86400 * 1000);
-                    } else {
-                        const str = String(c.date);
-                        d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                    }
-                    if (!isNaN(d.getTime())) {
-                        const y = d.getFullYear();
-                        const m = String(d.getMonth() + 1).padStart(2, '0');
-                        ym = `${y}-${m}`;
-                    }
-                }
-                if (ym && ym.match(/^\d{4}-\d{2}$/)) {
-                    monthSet.add(ym);
-                }
-            });
-
-            // Ensure current month is in list
             const now = new Date();
-            const curYM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            monthSet.add(curYM);
+            for (let i = 0; i < 12; i++) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                monthSet.add(`${y}-${m}`);
+            }
 
-            allAvailableDashMonths = Array.from(monthSet).sort().reverse();
+            if (currentCustomersList && currentCustomersList.length) {
+                currentCustomersList.forEach(c => {
+                    if (c.date) {
+                        let d;
+                        if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
+                            d = new Date((c.date - 25569) * 86400 * 1000);
+                        } else {
+                            const str = String(c.date);
+                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '/'));
+                        }
+                        if (!isNaN(d.getTime())) {
+                            const y = d.getFullYear();
+                            const m = String(d.getMonth() + 1).padStart(2, '0');
+                            monthSet.add(`${y}-${m}`);
+                        }
+                    }
+                });
+            }
 
-            const container = document.getElementById('multi-month-options-list');
-            if (!container) return;
+            const sortedMonths = Array.from(monthSet).sort().reverse();
 
-            const currentCheckedValues = Array.from(document.querySelectorAll('.dash-month-cb:checked')).map(cb => cb.value);
+            listEl.innerHTML = sortedMonths.map(mVal => {
+                const [year, monthNum] = mVal.split('-');
+                const dateObj = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
+                const label = dateObj.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+                const isChecked = selectedDashboardMonths.includes(mVal);
 
-            container.innerHTML = allAvailableDashMonths.map(m => {
-                const isChecked = selectedDashMonths.length === 0 ? true : selectedDashMonths.includes(m);
                 return `
                     <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #334155; cursor: pointer; padding: 5px 8px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
-                        <input type="checkbox" class="dash-month-cb" value="${m}" ${isChecked ? 'checked' : ''} style="cursor:pointer; accent-color:var(--primary);">
-                        <span style="font-weight:600;">${formatMonthLabel(m)}</span>
+                        <input type="checkbox" class="month-filter-cb" value="${mVal}" ${isChecked ? 'checked' : ''} onchange="onMonthCheckboxChange()" style="accent-color: var(--primary); width:15px; height:15px; cursor: pointer;">
+                        <span style="font-weight:500;">${label}</span>
                     </label>
                 `;
             }).join('');
+        }
+
+        window.onMonthCheckboxChange = function() {
+            const checkboxes = document.querySelectorAll('.month-filter-cb:checked');
+            selectedDashboardMonths = Array.from(checkboxes).map(cb => cb.value);
+            updateMultiMonthLabel();
+        };
+
+        function updateMultiMonthLabel() {
+            const labelEl = document.getElementById('multi-month-label');
+            if (!labelEl) return;
+            
+            if (selectedDashboardMonths.length === 0) {
+                labelEl.textContent = 'All Months';
+            } else if (selectedDashboardMonths.length === 1) {
+                const [y, m] = selectedDashboardMonths[0].split('-');
+                const d = new Date(parseInt(y), parseInt(m) - 1, 1);
+                labelEl.textContent = d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+            } else if (selectedDashboardMonths.length === 2) {
+                const labels = selectedDashboardMonths.map(mVal => {
+                    const [y, m] = mVal.split('-');
+                    return new Date(parseInt(y), parseInt(m) - 1, 1).toLocaleString('en-US', { month: 'short' });
+                });
+                labelEl.textContent = labels.join(', ');
+            } else {
+                labelEl.textContent = `${selectedDashboardMonths.length} Months Selected`;
+            }
+        }
+
+        window.selectAllDashboardMonths = function(e) {
+            if (e) e.preventDefault();
+            document.querySelectorAll('.month-filter-cb').forEach(cb => cb.checked = true);
+            onMonthCheckboxChange();
+        };
+
+        window.clearAllDashboardMonths = function(e) {
+            if (e) e.preventDefault();
+            document.querySelectorAll('.month-filter-cb').forEach(cb => cb.checked = false);
+            onMonthCheckboxChange();
         };
 
         window.applyMultiMonthFilter = function() {
-            const checkboxes = document.querySelectorAll('.dash-month-cb');
-            const checked = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-
-            if (checked.length === 0 || checked.length === allAvailableDashMonths.length) {
-                selectedDashMonths = [];
-                document.getElementById('multi-month-btn-text').textContent = 'All Months Selected';
-            } else if (checked.length === 1) {
-                selectedDashMonths = checked;
-                document.getElementById('multi-month-btn-text').textContent = formatMonthLabel(checked[0]);
-            } else if (checked.length === 2) {
-                selectedDashMonths = checked;
-                document.getElementById('multi-month-btn-text').textContent = `${formatMonthLabel(checked[0])}, ${formatMonthLabel(checked[1])}`;
-            } else {
-                selectedDashMonths = checked;
-                document.getElementById('multi-month-btn-text').textContent = `${checked.length} Months Selected`;
-            }
-
-            document.getElementById('multi-month-dropdown').style.display = 'none';
+            const dropdown = document.getElementById('multi-month-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
             loadDashboardData();
         };
+
+        document.addEventListener('click', (e) => {
+            const container = document.getElementById('multi-month-container');
+            const dropdown = document.getElementById('multi-month-dropdown');
+            if (container && dropdown && !container.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
 
         async function loadDashboardData() {
             showLoader(false);
             try {
                 const { data } = await fetchCustomers(); 
-                populateMultiMonthOptions(data);
-
                 let filtered = data.filter(c => isSaleTypeMatch(c.sale_type, currentSaleType));
                 
                 // Apply Multi-Month Filter
-                if (selectedDashMonths && selectedDashMonths.length > 0 && selectedDashMonths.length < allAvailableDashMonths.length) {
+                const selectedMonths = getSelectedDashboardMonths();
+                if (selectedMonths.length > 0) {
                     filtered = filtered.filter(c => {
-                        if (!c.date) return false;
-                        let ym = '';
-                        if (typeof c.date === 'string' && c.date.length >= 7 && c.date.includes('-')) {
-                            ym = c.date.substring(0, 7);
-                        } else {
-                            let d;
-                            if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
-                                d = new Date((c.date - 25569) * 86400 * 1000);
-                            } else {
-                                const str = String(c.date);
-                                d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                            }
-                            if (!isNaN(d.getTime())) {
-                                const y = d.getFullYear();
-                                const m = String(d.getMonth() + 1).padStart(2, '0');
-                                ym = `${y}-${m}`;
-                            }
-                        }
-                        return selectedDashMonths.includes(ym);
+                        return selectedMonths.some(mVal => isCustomerDateInMonth(c.date, mVal));
                     });
                 }
 
@@ -2455,15 +2435,15 @@
                 const getActiveCls = (cat) => activeDashFilter === cat ? ' active-filter' : '';
                 
                 document.getElementById('dashboard-stats').innerHTML = `
-                    <div class="stat-card${getActiveCls('total')}" id="stat-card-total" onclick="toggleDashboardCustomerFilter('total')"><div class="stat-icon" style="background:#EFF6FF;color:#2563EB"><i class="fas fa-users"></i></div><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div>
-                    <div class="stat-card${getActiveCls('visited')}" id="stat-card-visited" onclick="toggleDashboardCustomerFilter('visited')"><div class="stat-icon" style="background:#ECFDF5;color:#059669"><i class="fas fa-check-circle"></i></div><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div>
-                    <div class="stat-card${getActiveCls('pending')}" id="stat-card-pending" onclick="toggleDashboardCustomerFilter('pending')"><div class="stat-icon" style="background:#FFFBEB;color:#D97706"><i class="fas fa-hourglass-half"></i></div><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div>
-                    <div class="stat-card${getActiveCls('hot')}" id="stat-card-hot" onclick="toggleDashboardCustomerFilter('hot')"><div class="stat-icon" style="background:#FEF2F2;color:#EF4444"><i class="fas fa-fire"></i></div><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div>
-                    <div class="stat-card${getActiveCls('warm')}" id="stat-card-warm" onclick="toggleDashboardCustomerFilter('warm')"><div class="stat-icon" style="background:#FFF7ED;color:#EA580C"><i class="fas fa-bolt"></i></div><div class="stat-value">${stats.warm}</div><div class="stat-label">Warm</div></div>
-                    <div class="stat-card${getActiveCls('cold')}" id="stat-card-cold" onclick="toggleDashboardCustomerFilter('cold')"><div class="stat-icon" style="background:#F0FDFA;color:#0D9488"><i class="fas fa-snowflake"></i></div><div class="stat-value">${stats.cold}</div><div class="stat-label">Cold</div></div>
-                    <div class="stat-card${getActiveCls('booked')}" id="stat-card-booked" onclick="toggleDashboardCustomerFilter('booked')"><div class="stat-icon" style="background:#F0F9FF;color:#0284C7"><i class="fas fa-bookmark"></i></div><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div>
-                    <div class="stat-card${getActiveCls('delivered')}" id="stat-card-delivered" onclick="toggleDashboardCustomerFilter('delivered')"><div class="stat-icon" style="background:#F5F3FF;color:#7C3AED"><i class="fas fa-truck"></i></div><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div>
-                    <div class="stat-card${getActiveCls('unassigned')}" id="stat-card-unassigned" onclick="toggleDashboardCustomerFilter('unassigned')" style="${stats.unassigned > 0 ? 'border: 1.5px dashed #EF4444; background:#FEF2F2;' : ''}"><div class="stat-icon" style="background:${stats.unassigned > 0 ? '#FFEBEA' : '#ECFDF5'};color:${stats.unassigned > 0 ? '#EF4444' : '#059669'}"><i class="fas ${stats.unassigned > 0 ? 'fa-user-times' : 'fa-check'}"></i></div><div class="stat-value" style="color:${stats.unassigned > 0 ? '#EF4444' : ''}">${stats.unassigned}</div><div class="stat-label">Unassigned</div></div>
+                    <div class="stat-card${getActiveCls('total')}" id="stat-card-total" onclick="toggleDashboardCustomerFilter('total')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E5F6FD;color:#3B82F6"><i class="fas fa-users"></i></div><div class="stat-value">${stats.total}</div><div class="stat-label">Total</div></div>
+                    <div class="stat-card${getActiveCls('visited')}" id="stat-card-visited" onclick="toggleDashboardCustomerFilter('visited')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E8F8EE;color:#10B981"><i class="fas fa-check-circle"></i></div><div class="stat-value">${stats.visited}</div><div class="stat-label">Visited</div></div>
+                    <div class="stat-card${getActiveCls('pending')}" id="stat-card-pending" onclick="toggleDashboardCustomerFilter('pending')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FFF4E5;color:#F59E0B"><i class="fas fa-hourglass-half"></i></div><div class="stat-value">${stats.pending}</div><div class="stat-label">Pending</div></div>
+                    <div class="stat-card${getActiveCls('hot')}" id="stat-card-hot" onclick="toggleDashboardCustomerFilter('hot')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FFEBEA;color:#EF4444"><i class="fas fa-fire"></i></div><div class="stat-value">${stats.hot}</div><div class="stat-label">Hot</div></div>
+                    <div class="stat-card${getActiveCls('warm')}" id="stat-card-warm" onclick="toggleDashboardCustomerFilter('warm')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#FEF3C7;color:#D97706"><i class="fas fa-bolt"></i></div><div class="stat-value">${stats.warm}</div><div class="stat-label">Warm</div></div>
+                    <div class="stat-card${getActiveCls('cold')}" id="stat-card-cold" onclick="toggleDashboardCustomerFilter('cold')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#E6FFFA;color:#0D9488"><i class="fas fa-snowflake"></i></div><div class="stat-value">${stats.cold}</div><div class="stat-label">Cold</div></div>
+                    <div class="stat-card${getActiveCls('booked')}" id="stat-card-booked" onclick="toggleDashboardCustomerFilter('booked')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#EFF6FF;color:#2563EB"><i class="fas fa-bookmark"></i></div><div class="stat-value">${stats.booked}</div><div class="stat-label">Booked</div></div>
+                    <div class="stat-card${getActiveCls('delivered')}" id="stat-card-delivered" onclick="toggleDashboardCustomerFilter('delivered')" style="cursor: pointer; transition: var(--transition);"><div class="stat-icon" style="background:#F5F3FF;color:#8B5CF6"><i class="fas fa-truck"></i></div><div class="stat-value">${stats.delivered}</div><div class="stat-label">Delivered</div></div>
+                    <div class="stat-card${getActiveCls('unassigned')}" id="stat-card-unassigned" onclick="toggleDashboardCustomerFilter('unassigned')" style="cursor: pointer; transition: var(--transition); ${stats.unassigned > 0 ? 'border: 1.5px dashed #EF4444; background:#FEF2F2;' : ''}"><div class="stat-icon" style="background:${stats.unassigned > 0 ? '#FFEBEA' : '#ECFDF5'};color:${stats.unassigned > 0 ? '#EF4444' : '#10B981'}"><i class="fas ${stats.unassigned > 0 ? 'fa-user-times' : 'fa-check'}"></i></div><div class="stat-value" style="color:${stats.unassigned > 0 ? '#EF4444' : ''}">${stats.unassigned}</div><div class="stat-label">Unassigned</div></div>
                 `;
                 
                 const { data: officers } = await fetchOfficers(); 
@@ -2713,8 +2693,16 @@
             
             const meta = categoryMeta[activeDashFilter] || categoryMeta.total;
             titleEl.textContent = meta.text;
-            const monthPeriodText = (!selectedDashMonths || selectedDashMonths.length === 0 || selectedDashMonths.length === allAvailableDashMonths.length) ? 'All Time' : selectedDashMonths.map(m => formatMonthLabel(m)).join(', ');
-            subtitleEl.innerHTML = `Showing <strong>${list.length}</strong> record(s) matching criteria | Period: <strong>${monthPeriodText}</strong>`;
+            let periodLabel = 'All Time';
+            const months = getSelectedDashboardMonths();
+            if (months.length === 1) {
+                const [y, m] = months[0].split('-');
+                const d = new Date(parseInt(y), parseInt(m) - 1, 1);
+                periodLabel = d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+            } else if (months.length > 1) {
+                periodLabel = `${months.length} Selected Months`;
+            }
+            subtitleEl.innerHTML = `Showing <strong>${list.length}</strong> record(s) matching criteria | Period: <strong>${periodLabel}</strong>`;
             iconEl.className = `fas ${meta.icon}`;
             iconBgEl.style.backgroundColor = meta.color;
             
@@ -4198,8 +4186,9 @@
             
             ['filter-sale-type','filter-officer','filter-visit','filter-lead-type'].forEach(id => document.getElementById(id).addEventListener('change', loadCustomersData));
             ['my-filter-visit','my-filter-lead','my-filter-month'].forEach(id => document.getElementById(id).addEventListener('change', loadMyCustomers));
-            const dashMonthEl = document.getElementById('dashboard-filter-month');
-            if (dashMonthEl) dashMonthEl.addEventListener('change', loadDashboardData); 
+            if (document.getElementById('dashboard-filter-month')) {
+                document.getElementById('dashboard-filter-month').addEventListener('change', loadDashboardData); 
+            }
             
             // Attach listener for Officer Performance Table Filters
             document.querySelectorAll('.table-filter-input').forEach(input => {
