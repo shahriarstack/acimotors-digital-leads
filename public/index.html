@@ -117,91 +117,26 @@
         .nav-link i { width: 20px; text-align: center; }
         .close-sidebar-btn { position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; transition: var(--transition); }
         .close-sidebar-btn:hover { color: var(--danger); transform: rotate(90deg); }
-        .main-content { flex: 1; margin-left: 0; padding: 16px 20px 24px 20px; padding-top: 52px; width: 100%; overflow-x: hidden; }
-        .page-header { margin-bottom: 12px; }
-        .card { background: white; border-radius: var(--radius-md); padding: 18px 20px; box-shadow: var(--shadow-card); margin-bottom: 16px; border: 1px solid rgba(0,0,0,0.03); transition: var(--transition); }
-        .card:hover { box-shadow: 0 12px 24px -5px rgba(0, 0, 0, 0.06); transform: translateY(-1px); }
-        
-        /* [LIQUID GLASS STAT CARDS DESIGN] */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-bottom: 14px; }
-        .stat-card { 
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 250, 252, 0.65) 100%); 
-            backdrop-filter: blur(12px) saturate(160%); 
-            -webkit-backdrop-filter: blur(12px) saturate(160%); 
-            padding: 10px 8px 8px 8px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.03), inset 0 1px 0 0 rgba(255, 255, 255, 0.9); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            text-align: center; 
-            border: 1px solid rgba(226, 232, 240, 0.8); 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-card:hover { 
-            transform: translateY(-3px) scale(1.02); 
-            box-shadow: 0 12px 24px -4px rgba(16, 185, 129, 0.12), inset 0 1px 0 0 #FFFFFF; 
-            background: rgba(255, 255, 255, 0.95);
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-        .stat-icon { 
-            width: 30px; 
-            height: 30px; 
-            border-radius: 8px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 0.95rem; 
-            margin-bottom: 4px; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-            transition: transform 0.2s ease; 
-        }
+        .main-content { flex: 1; margin-left: 0; padding: 24px; padding-top: 70px; width: 100%; overflow-x: hidden; }
+        .page-header { margin-bottom: 24px; }
+        .card { background: white; border-radius: var(--radius-md); padding: 24px; box-shadow: var(--shadow-card); margin-bottom: 24px; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
+        .card:hover { box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.08); transform: translateY(-2px); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-bottom: 24px; }
+        .stat-card { background: white; padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03); display: flex; flex-direction: column; align-items: center; text-align: center; border: 1px solid rgba(0,0,0,0.02); transition: var(--transition); }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.06); }
+        .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 8px; transition: var(--transition); }
         .stat-card:hover .stat-icon { transform: scale(1.1); }
-        .stat-value { font-size: 1.25rem; font-weight: 800; line-height: 1.1; margin-bottom: 2px; color: #0F172A; letter-spacing: -0.02em; }
-        .stat-label { font-size: 0.65rem; color: #64748B; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 700; }
-        
-        /* [COMPACT CHART CONTAINERS] */
-        .chart-container { position: relative; height: 180px; width: 100%; }
-
-        /* [TOP-TIER ENTERPRISE HIGH-DENSITY TABLE DESIGN] */
-        .table-wrapper { overflow-x: auto; border-radius: 10px; background: white; border: 1px solid #E2E8F0; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.8rem; }
-        th, td { padding: 6px 10px; text-align: left; border-bottom: 1px solid #F1F5F9; vertical-align: middle; transition: background-color 0.15s ease; height: 34px; }
-        th { background: #F8FAFC; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; color: #64748B; letter-spacing: 0.05em; border-bottom: 1px solid #E2E8F0; padding: 7px 10px; }
-        tr:hover td { background-color: #F8FAFC !important; }
-        .visited-row { background-color: #FAFAFA !important; }
-        
-        /* Phone Pill */
-        .phone-pill { display: inline-flex; align-items: center; padding: 2px 8px; background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; color: #059669; font-size: 0.75rem; font-weight: 600; gap: 4px; text-decoration: none; transition: all 0.15s ease; }
-        .phone-pill:hover { background: #D1FAE5; color: #047857; border-color: #34D399; }
-        
-        /* Notes Preview Pill */
-        .table-note-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 7px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 6px; max-width: 190px; cursor: pointer; transition: all 0.15s ease; }
-        .table-note-pill:hover { background: #F0FDF4; border-color: #A7F3D0; color: #059669; }
-        .table-note-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.75rem; color: #475569; }
-        .note-count-tag { font-size: 0.62rem; font-weight: 700; background: #EEF2FF; color: #4F46E5; padding: 1px 4px; border-radius: 4px; }
-        
-        /* Closure Status Pills */
-        .closure-pill { border: none; padding: 3px 8px; border-radius: 16px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; }
-        .closure-pill:hover { transform: translateY(-1px); box-shadow: 0 2px 5px rgba(0,0,0,0.06); }
-        .closure-process { background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; }
-        .closure-booked { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
-        .closure-delivered { background: #F5F3FF; color: #7C3AED; border: 1px solid #DDD6FE; }
-        
-        /* Action Buttons */
-        .action-btn { border: none; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; }
-        .action-btn:hover { transform: translateY(-1px); }
-        .action-followup { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
-        .action-pending { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border: none; animation: pulse-red 2s infinite; }
-        .action-resolved { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
-        
-        .action-btn-edit { width: 24px; height: 24px; border-radius: 6px; border: 1px solid #E2E8F0; background: white; color: #64748B; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s ease; font-size: 0.7rem; }
-        .action-btn-edit:hover { background: #F1F5F9; color: #0F172A; border-color: #CBD5E1; }
-        
-        .empty-state { text-align: center; padding: 30px 20px; color: var(--text-muted); }
+        .stat-value { font-size: 1.4rem; font-weight: 800; line-height: 1.2; margin-bottom: 2px; }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+        .table-wrapper { overflow-x: auto; border-radius: 12px; background: white; border: 1px solid #F3F4F6; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; font-size: 0.85rem; }
+        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #F3F4F6; vertical-align: middle; transition: background-color 0.2s; }
+        th { background: #F9FAFB; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px; }
+        tr:hover td { background-color: #FAFAFA; }
+        .visited-row { background-color: #F9FAFB !important; color: #4B5563; }
+        .phone-pill { display: inline-flex; align-items: center; padding: 6px 14px; background: linear-gradient(135deg, #34D399, #10B981); border-radius: 20px; color: white; font-size: 0.8rem; font-weight: 600; gap: 8px; text-decoration: none; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3); transition: var(--transition); }
+        .phone-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4); }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
         .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 2000; animation: fadeIn 0.3s ease-out; }
         .modal-box { background: white; border-radius: var(--radius-md); padding: 24px; max-width: 500px; width: 90%; max-height: 85vh; overflow-y: auto; animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
         @keyframes modalPop { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
@@ -511,33 +446,9 @@
                             <button class="sale-type-btn" data-type="New"><i class="fas fa-plus-circle"></i> New Sale</button>
                         </div>
 
-                        <div style="background: white; padding: 6px 14px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 10px; border: 1px solid #E5E7EB; position: relative;">
+                        <div style="background: white; padding: 6px 14px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 10px; border: 1px solid #E5E7EB;">
                             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Filter Period:</span>
-                            <div id="multi-month-container" style="position: relative;">
-                                <button type="button" id="multi-month-btn" onclick="toggleMultiMonthDropdown(event)" style="border: 1px solid #CBD5E1; border-radius: 8px; padding: 5px 12px; font-family: inherit; font-size: 0.85rem; color: var(--primary); font-weight: 600; background: #F8FAFC; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span id="multi-month-label">All Months</span>
-                                    <i class="fas fa-chevron-down" style="font-size: 0.65rem; opacity: 0.6;"></i>
-                                </button>
-                                
-                                <!-- Multi-Month Dropdown Popup -->
-                                <div id="multi-month-dropdown" class="hidden" onclick="event.stopPropagation()" style="position: absolute; right: 0; top: calc(100% + 8px); background: white; border: 1px solid #E2E8F0; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15); width: 280px; z-index: 1000; padding: 14px; animation: fadeIn 0.2s ease-out;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;">
-                                        <span style="font-weight: 700; font-size: 0.8rem; color: #0F172A;"><i class="fas fa-filter" style="color: var(--primary);"></i> Select Months</span>
-                                        <div style="display: flex; gap: 8px; font-size: 0.75rem;">
-                                            <a href="#" onclick="selectAllDashboardMonths(event)" style="color: var(--primary); text-decoration: none; font-weight: 600;">All</a>
-                                            <span style="color: #CBD5E1;">|</span>
-                                            <a href="#" onclick="clearAllDashboardMonths(event)" style="color: #64748B; text-decoration: none; font-weight: 600;">Clear</a>
-                                        </div>
-                                    </div>
-                                    <div id="multi-month-checkbox-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 4px;">
-                                        <!-- Dynamically populated month checkboxes -->
-                                    </div>
-                                    <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #F1F5F9; display: flex; gap: 8px;">
-                                        <button type="button" class="btn btn-primary btn-sm" style="flex: 1; font-size: 0.78rem; padding: 6px;" onclick="applyMultiMonthFilter()"><i class="fas fa-check"></i> Apply Filter</button>
-                                    </div>
-                                </div>
-                            </div>
+                            <input type="month" id="dashboard-filter-month" style="border: none; outline: none; font-family: inherit; font-size: 0.9rem; color: var(--primary); font-weight: 600; background: transparent; cursor: pointer;">
                         </div>
                     </div>
 
@@ -758,7 +669,7 @@
                         <div class="form-group"><label>Visit Status</label><select id="filter-visit" class="form-select"><option value="">All Status</option><option value="Yes">Completed</option><option value="No">Pending</option></select></div>
                         <div class="form-group"><label>Lead Type</label><select id="filter-lead-type" class="form-select"><option value="">All Leads</option><option value="Hot">Hot</option><option value="Warm">Warm</option><option value="Cold">Cold</option></select></div>
                     </div>
-                    <div class="table-wrapper"><table id="customers-table"><thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleSelectAll(this)"></th><th>S.L.</th><th>Contact</th><th>Name</th><th>Date</th><th>Address</th><th>Model</th><th>Officer</th><th>Sale Type</th><th>Visited</th><th>Rating</th><th>Closure</th><th>Actions</th></tr></thead><tbody id="customers-body"></tbody></table></div>
+                    <div class="table-wrapper"><table id="customers-table"><thead><tr><th style="width: 40px;"><input type="checkbox" onchange="toggleSelectAll(this)"></th><th>S.L.</th><th>Contact</th><th>Name</th><th>Date</th><th>Address</th><th>Model</th><th>Officer</th><th>Sale Type</th><th>Visited</th><th>Rating</th><th>Actions</th></tr></thead><tbody id="customers-body"></tbody></table></div>
                 </div>
             </div>
             <div id="user-panel" class="page-content hidden">
@@ -951,75 +862,6 @@
         </div>
     </div>
     <div id="confirm-modal" class="modal-overlay hidden"><div class="modal-box" style="max-width: 400px; text-align: center;"><div class="modal-header" style="justify-content:center;"><i class="fas fa-exclamation-circle" style="font-size: 3rem; color: var(--warning); margin-bottom: 16px; display: block;"></i></div><h3 class="modal-title" id="confirm-title" style="margin-bottom: 8px;">Are you sure?</h3><p id="confirm-msg" style="color: var(--text-muted); margin-bottom: 20px;"></p><div style="display: flex; gap: 12px; justify-content: center;"><button id="confirm-yes-btn" class="btn btn-primary">Yes, Proceed</button><button class="btn btn-secondary" onclick="closeConfirmModal()">Cancel</button></div></div></div>
-    
-    <!-- CLOSURE STATUS SELECTION MODAL -->
-    <div id="closure-menu-modal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width: 440px;">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-tasks" style="color: var(--primary); margin-right: 8px;"></i>Change Closure Status</h3>
-                <button class="modal-close" onclick="closeClosureModal()">&times;</button>
-            </div>
-            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">
-                Update closure status for <strong id="closure-modal-cust-name" style="color:var(--text-main);">Customer</strong>:
-            </p>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;">
-                <div class="closure-opt-card" data-status="In Process" onclick="selectClosureStatus('In Process')" style="padding:14px; border:2px solid #E5E7EB; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
-                    <div style="width:40px; height:40px; border-radius:10px; background:#F3F4F6; color:var(--text-muted); display:flex; align-items:center; justify-content:center; font-size:1.2rem;"><i class="fas fa-spinner"></i></div>
-                    <div>
-                        <strong style="font-size:0.95rem; color:var(--text-main); display:block;">In Process</strong>
-                        <span style="font-size:0.8rem; color:var(--text-muted);">Customer lead is active and in progress</span>
-                    </div>
-                </div>
-                <div class="closure-opt-card" data-status="Booked" onclick="selectClosureStatus('Booked')" style="padding:14px; border:2px solid #E5E7EB; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
-                    <div style="width:40px; height:40px; border-radius:10px; background:#EFF6FF; color:var(--info); display:flex; align-items:center; justify-content:center; font-size:1.2rem;"><i class="fas fa-bookmark"></i></div>
-                    <div>
-                        <strong style="font-size:0.95rem; color:var(--info); display:block;">Booked</strong>
-                        <span style="font-size:0.8rem; color:var(--text-muted);">Vehicle/Machine booking confirmed</span>
-                    </div>
-                </div>
-                <div class="closure-opt-card" data-status="Delivered" onclick="selectClosureStatus('Delivered')" style="padding:14px; border:2px solid #E5E7EB; border-radius:12px; cursor:pointer; display:flex; align-items:center; gap:14px; transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';" onmouseout="this.style.transform='none';">
-                    <div style="width:40px; height:40px; border-radius:10px; background:#F5F3FF; color:var(--accent); display:flex; align-items:center; justify-content:center; font-size:1.2rem;"><i class="fas fa-truck"></i></div>
-                    <div>
-                        <strong style="font-size:0.95rem; color:var(--accent); display:block;">Delivered</strong>
-                        <span style="font-size:0.8rem; color:var(--text-muted);">Product successfully delivered to customer</span>
-                    </div>
-                </div>
-            </div>
-            <button class="btn btn-secondary" style="width:100%;" onclick="closeClosureModal()">Cancel</button>
-        </div>
-    </div>
-
-    <!-- VISIT HISTORY & ALL VISIT INFO MODAL -->
-    <div id="visit-history-modal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width: 550px;">
-            <div class="modal-header">
-                <h3 class="modal-title"><i class="fas fa-clipboard-list" style="color: var(--primary); margin-right: 8px;"></i>Customer Visit Information</h3>
-                <button class="modal-close" onclick="closeVisitHistoryModal()">&times;</button>
-            </div>
-            <div style="background:#F9FAFB; padding:14px; border-radius:12px; margin-bottom:16px; border:1px solid #F3F4F6;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <strong id="vh-cust-name" style="font-size:1.1rem; color:var(--text-main);">Customer Name</strong>
-                    <span id="vh-cust-visit"></span>
-                </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.85rem; color:var(--text-muted);">
-                    <div><i class="fas fa-phone-alt" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-phone">-</span></div>
-                    <div><i class="fas fa-cube" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-model">-</span></div>
-                    <div><i class="fas fa-user-tie" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-officer">-</span></div>
-                    <div><i class="far fa-calendar-alt" style="margin-right:4px; color:var(--primary);"></i> <span id="vh-cust-date">-</span></div>
-                </div>
-                <div style="margin-top:8px; display:flex; gap:8px; align-items:center;">
-                    <span style="font-size:0.8rem; font-weight:600; color:var(--text-muted);">Lead Rating:</span>
-                    <span id="vh-cust-rating"></span>
-                </div>
-            </div>
-            <h4 style="font-size:0.95rem; margin-bottom:10px; color:var(--text-main); display:flex; align-items:center; gap:6px;">
-                <i class="fas fa-history" style="color:var(--primary);"></i> All Field Visit Notes & Remarks
-            </h4>
-            <div id="vh-notes-history" style="max-height: 250px; overflow-y: auto; padding-right: 4px;"></div>
-            <button class="btn btn-primary" style="width:100%; margin-top:16px;" onclick="closeVisitHistoryModal()">Close</button>
-        </div>
-    </div>
-
     <div id="toast" class="toast"><i class="fas fa-info-circle"></i><span id="toast-msg"></span></div>
 
     <script>
@@ -1241,117 +1083,6 @@
 
         window.closeAdminFollowupModal = function() {
             document.getElementById('admin-followup-modal').classList.add('hidden');
-        };
-
-        // --- INTERACTIVE CLOSURE STATUS MENU ---
-        let selectedClosureCustomerId = null;
-
-        window.openClosureMenu = function(id) {
-            const c = currentCustomersList.find(x => x.id == id);
-            if (!c) return;
-            
-            selectedClosureCustomerId = id;
-            document.getElementById('closure-modal-cust-name').textContent = c.name || 'Customer';
-            
-            const currentStatus = c.delivery_info ? 'Delivered' : c.booking_info ? 'Booked' : 'In Process';
-            document.querySelectorAll('.closure-opt-card').forEach(card => {
-                if (card.dataset.status === currentStatus) {
-                    card.style.borderColor = 'var(--primary)';
-                    card.style.background = '#ECFDF5';
-                } else {
-                    card.style.borderColor = '#E5E7EB';
-                    card.style.background = '#FFFFFF';
-                }
-            });
-            
-            document.getElementById('closure-menu-modal').classList.remove('hidden');
-        };
-
-        window.closeClosureModal = function() {
-            document.getElementById('closure-menu-modal').classList.add('hidden');
-        };
-
-        window.selectClosureStatus = async function(status) {
-            if (!selectedClosureCustomerId) return;
-            const c = currentCustomersList.find(x => x.id == selectedClosureCustomerId);
-            if (!c) return;
-
-            showLoader(false);
-            try {
-                if (status === 'Delivered') {
-                    c.booking_info = 'Booked';
-                    c.delivery_info = 'Delivered';
-                } else if (status === 'Booked') {
-                    c.booking_info = 'Booked';
-                    c.delivery_info = null;
-                } else {
-                    c.booking_info = null;
-                    c.delivery_info = null;
-                }
-                
-                customersCache = null;
-                await apiCall('/customers', 'POST', c);
-                
-                closeClosureModal();
-                showToast(`Closure status changed to "${status}"`, 'success');
-                
-                if (typeof activeDashFilter !== 'undefined' && activeDashFilter && typeof renderDashboardCustomers === 'function') {
-                    renderDashboardCustomers();
-                }
-                if (typeof loadCustomersData === 'function') {
-                    loadCustomersData();
-                }
-                if (typeof loadDashboardData === 'function') {
-                    loadDashboardData();
-                }
-            } catch(e) {
-                showToast('Error updating closure status: ' + e.message, 'error');
-            } finally {
-                hideLoader();
-            }
-        };
-
-        // --- VISIT HISTORY & ALL VISIT INFO MODAL ---
-        window.openVisitHistoryModal = function(id) {
-            const c = currentCustomersList.find(x => x.id == id);
-            if (!c) return;
-            
-            document.getElementById('vh-cust-name').textContent = c.name || 'Customer';
-            document.getElementById('vh-cust-phone').textContent = c.customer_no || '-';
-            document.getElementById('vh-cust-model').textContent = c.model || '-';
-            document.getElementById('vh-cust-officer').textContent = c.officer_name || 'Unassigned';
-            document.getElementById('vh-cust-date').textContent = formatDateDisplay(c.date);
-            document.getElementById('vh-cust-visit').innerHTML = getVisitBadge(c.visit_completed);
-            document.getElementById('vh-cust-rating').innerHTML = getLeadBadge(c.customer_type);
-
-            const historyContainer = document.getElementById('vh-notes-history');
-            if (c.field_visit_notes && c.field_visit_notes.trim() !== '') {
-                const rawEntries = c.field_visit_notes.split(/\n?---\n?/);
-                historyContainer.innerHTML = rawEntries.map((note, index) => {
-                    if (!note.trim()) return '';
-                    return `
-                        <div style="background: #F9FAFB; border-left: 4px solid var(--primary); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-top: 1px solid #F3F4F6; border-right: 1px solid #F3F4F6; border-bottom: 1px solid #F3F4F6;">
-                            <div style="font-weight: 700; font-size: 0.75rem; color: var(--primary); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
-                                <span><i class="fas fa-comment-dots"></i> Touchpoint #${rawEntries.length - index}</span>
-                            </div>
-                            <div style="font-size: 0.85rem; color: var(--text-main); line-height: 1.5; white-space: pre-wrap;">${escapeHTML(note.trim())}</div>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                historyContainer.innerHTML = `
-                    <div style="text-align: center; color: var(--text-muted); padding: 24px; font-style: italic;">
-                        <i class="far fa-clipboard" style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5; display: block;"></i>
-                        No field visit notes recorded yet for this customer.
-                    </div>
-                `;
-            }
-
-            document.getElementById('visit-history-modal').classList.remove('hidden');
-        };
-
-        window.closeVisitHistoryModal = function() {
-            document.getElementById('visit-history-modal').classList.add('hidden');
         };
 
         window.resolveAdminFollowup = async function(id) {
@@ -2216,6 +1947,22 @@
                 }
 
                 // Render Table
+                const formatDateDisplay = (dateStr) => {
+                    if (!dateStr) return '-';
+                    let date;
+                    if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
+                        date = new Date((dateStr - 25569) * 86400 * 1000);
+                    } else {
+                        const str = String(dateStr);
+                        date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                    }
+                    if (isNaN(date.getTime())) return dateStr;
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = date.toLocaleString('default', { month: 'short' });
+                    const year = date.getFullYear().toString().slice(-2);
+                    return `${day}-${month}-${year}`;
+                };
+
                 document.getElementById('visited-report-body').innerHTML = data.length ? data.map(c => {
                     // Date & Aging Calculation Logic
                     let dObj = new Date();
@@ -2268,194 +2015,33 @@
             }
         }
 
-        // --- UNIVERSAL FLEXIBLE DATE PARSER ---
-        function parseFlexibleDate(dateStr) {
-            if (!dateStr) return null;
-            if (!isNaN(dateStr) && Number(dateStr) > 25569 && Number(dateStr) < 2958465) {
-                const d = new Date((Number(dateStr) - 25569) * 86400 * 1000);
-                return isNaN(d.getTime()) ? null : d;
-            }
-            const str = String(dateStr).trim();
-            if (!str) return null;
-
-            let d = new Date(str);
-            if (!isNaN(d.getTime())) return d;
-
-            const dmyMatch = str.match(/^(\d{1,2})[-/\.](\d{1,2})[-/\.](\d{4})/);
-            if (dmyMatch) {
-                const day = parseInt(dmyMatch[1], 10);
-                const month = parseInt(dmyMatch[2], 10) - 1;
-                const year = parseInt(dmyMatch[3], 10);
-                d = new Date(year, month, day);
-                if (!isNaN(d.getTime())) return d;
-            }
-
-            const ymdMatch = str.match(/^(\d{4})[-/\.](\d{1,2})[-/\.](\d{1,2})/);
-            if (ymdMatch) {
-                const year = parseInt(ymdMatch[1], 10);
-                const month = parseInt(ymdMatch[2], 10) - 1;
-                const day = parseInt(ymdMatch[3], 10);
-                d = new Date(year, month, day);
-                if (!isNaN(d.getTime())) return d;
-            }
-
-            d = new Date(str.replace(/-/g, '/'));
-            if (!isNaN(d.getTime())) return d;
-
-            return null;
-        }
-
-        function formatDateDisplay(dateStr) {
-            if (!dateStr) return '-';
-            const date = parseFlexibleDate(dateStr);
-            if (!date) return String(dateStr); 
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = date.toLocaleString('default', { month: 'short' });
-            const year = date.getFullYear().toString().slice(-2);
-            return `${day}-${month}-${year}`;
-        }
-
-        // --- MULTI-MONTH DASHBOARD FILTERING LOGIC ---
-        let selectedDashboardMonths = [];
-
-        function isCustomerDateInMonth(dateStr, monthVal) {
-            if (!dateStr || !monthVal) return false;
-            const str = String(dateStr);
-            if (str.startsWith(monthVal)) return true;
-            
-            const d = parseFlexibleDate(dateStr);
-            if (!d) return false;
-            
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            return `${y}-${m}` === monthVal;
-        }
-
-        function getSelectedDashboardMonths() {
-            return selectedDashboardMonths || [];
-        }
-
-        window.toggleMultiMonthDropdown = function(event) {
-            if (event) event.stopPropagation();
-            const dropdown = document.getElementById('multi-month-dropdown');
-            if (!dropdown) return;
-            const isHidden = dropdown.classList.contains('hidden');
-            if (isHidden) {
-                populateMultiMonthList();
-                dropdown.classList.remove('hidden');
-            } else {
-                dropdown.classList.add('hidden');
-            }
-        };
-
-        function populateMultiMonthList() {
-            const listEl = document.getElementById('multi-month-checkbox-list');
-            if (!listEl) return;
-
-            const monthSet = new Set();
-            
-            if (currentCustomersList && currentCustomersList.length) {
-                currentCustomersList.forEach(c => {
-                    if (c.date) {
-                        const d = parseFlexibleDate(c.date);
-                        if (d) {
-                            const y = d.getFullYear();
-                            const m = String(d.getMonth() + 1).padStart(2, '0');
-                            monthSet.add(`${y}-${m}`);
-                        }
-                    }
-                });
-            }
-
-            const now = new Date();
-            for (let i = 0; i < 12; i++) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const y = d.getFullYear();
-                const m = String(d.getMonth() + 1).padStart(2, '0');
-                monthSet.add(`${y}-${m}`);
-            }
-
-            const sortedMonths = Array.from(monthSet).sort().reverse();
-
-            listEl.innerHTML = sortedMonths.map(mVal => {
-                const [year, monthNum] = mVal.split('-');
-                const dateObj = new Date(parseInt(year), parseInt(monthNum) - 1, 1);
-                const label = dateObj.toLocaleString('en-US', { month: 'short', year: 'numeric' });
-                const isChecked = selectedDashboardMonths.includes(mVal);
-
-                return `
-                    <label style="display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: #334155; cursor: pointer; padding: 5px 8px; border-radius: 6px; transition: background 0.15s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">
-                        <input type="checkbox" class="month-filter-cb" value="${mVal}" ${isChecked ? 'checked' : ''} onchange="onMonthCheckboxChange()" style="accent-color: var(--primary); width:15px; height:15px; cursor: pointer;">
-                        <span style="font-weight:500;">${label}</span>
-                    </label>
-                `;
-            }).join('');
-        }
-
-        window.onMonthCheckboxChange = function() {
-            const checkboxes = document.querySelectorAll('.month-filter-cb:checked');
-            selectedDashboardMonths = Array.from(checkboxes).map(cb => cb.value);
-            updateMultiMonthLabel();
-        };
-
-        function updateMultiMonthLabel() {
-            const labelEl = document.getElementById('multi-month-label');
-            if (!labelEl) return;
-            
-            if (selectedDashboardMonths.length === 0) {
-                labelEl.textContent = 'All Months';
-            } else if (selectedDashboardMonths.length === 1) {
-                const [y, m] = selectedDashboardMonths[0].split('-');
-                const d = new Date(parseInt(y), parseInt(m) - 1, 1);
-                labelEl.textContent = d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
-            } else if (selectedDashboardMonths.length === 2) {
-                const labels = selectedDashboardMonths.map(mVal => {
-                    const [y, m] = mVal.split('-');
-                    return new Date(parseInt(y), parseInt(m) - 1, 1).toLocaleString('en-US', { month: 'short' });
-                });
-                labelEl.textContent = labels.join(', ');
-            } else {
-                labelEl.textContent = `${selectedDashboardMonths.length} Months Selected`;
-            }
-        }
-
-        window.selectAllDashboardMonths = function(e) {
-            if (e) e.preventDefault();
-            document.querySelectorAll('.month-filter-cb').forEach(cb => cb.checked = true);
-            onMonthCheckboxChange();
-        };
-
-        window.clearAllDashboardMonths = function(e) {
-            if (e) e.preventDefault();
-            document.querySelectorAll('.month-filter-cb').forEach(cb => cb.checked = false);
-            onMonthCheckboxChange();
-        };
-
-        window.applyMultiMonthFilter = function() {
-            const dropdown = document.getElementById('multi-month-dropdown');
-            if (dropdown) dropdown.classList.add('hidden');
-            loadDashboardData();
-        };
-
-        document.addEventListener('click', (e) => {
-            const container = document.getElementById('multi-month-container');
-            const dropdown = document.getElementById('multi-month-dropdown');
-            if (container && dropdown && !container.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
-
         async function loadDashboardData() {
             showLoader(false);
             try {
                 const { data } = await fetchCustomers(); 
                 let filtered = data.filter(c => isSaleTypeMatch(c.sale_type, currentSaleType));
                 
-                // Apply Multi-Month Filter
-                const selectedMonths = getSelectedDashboardMonths();
-                if (selectedMonths.length > 0) {
+                // Apply Month Filter
+                const monthVal = document.getElementById('dashboard-filter-month').value;
+                if (monthVal) {
                     filtered = filtered.filter(c => {
-                        return selectedMonths.some(mVal => isCustomerDateInMonth(c.date, mVal));
+                        if (!c.date) return false;
+                        // Standard string match
+                        if (String(c.date).startsWith(monthVal)) return true;
+                        
+                        // Fallback: Parse date
+                        let d;
+                        if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
+                            d = new Date((c.date - 25569) * 86400 * 1000);
+                        } else {
+                            const str = String(c.date);
+                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                        }
+                        
+                        if (isNaN(d.getTime())) return false;
+                        const y = d.getFullYear();
+                        const m = String(d.getMonth() + 1).padStart(2, '0');
+                        return `${y}-${m}` === monthVal;
                     });
                 }
 
@@ -2557,36 +2143,17 @@
                 leadChart = new Chart(document.getElementById('leadChart'), { 
                     type:'doughnut', 
                     data: {
-                        labels:['Hot Leads','Warm Leads','Cold Leads'], 
+                        labels:['Hot','Warm','Cold'], 
                         datasets:[{
                             data:[
                                 filtered.filter(c=>c.customer_type==='Hot').length, 
                                 filtered.filter(c=>c.customer_type==='Warm').length, 
                                 filtered.filter(c=>c.customer_type==='Cold').length
                             ], 
-                            backgroundColor:['#EF4444','#F59E0B','#10B981'],
-                            borderWidth: 2,
-                            borderColor: '#FFFFFF',
-                            hoverOffset: 4
+                            backgroundColor:['#FF453A','#FF9F0A','#00A86B']
                         }]
                     }, 
-                    options:{
-                        maintainAspectRatio:false,
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'right',
-                                labels: {
-                                    boxWidth: 10,
-                                    padding: 10,
-                                    font: { size: 11, weight: '600', family: 'Inter, system-ui, sans-serif' },
-                                    usePointStyle: true,
-                                    pointStyle: 'circle'
-                                }
-                            }
-                        },
-                        cutout: '72%'
-                    } 
+                    options:{maintainAspectRatio:false} 
                 });
                 
                 // Apply active filters on re-render
@@ -2754,18 +2321,25 @@
             
             const meta = categoryMeta[activeDashFilter] || categoryMeta.total;
             titleEl.textContent = meta.text;
-            let periodLabel = 'All Time';
-            const months = getSelectedDashboardMonths();
-            if (months.length === 1) {
-                const [y, m] = months[0].split('-');
-                const d = new Date(parseInt(y), parseInt(m) - 1, 1);
-                periodLabel = d.toLocaleString('en-US', { month: 'short', year: 'numeric' });
-            } else if (months.length > 1) {
-                periodLabel = `${months.length} Selected Months`;
-            }
-            subtitleEl.innerHTML = `Showing <strong>${list.length}</strong> record(s) matching criteria | Period: <strong>${periodLabel}</strong>`;
+            subtitleEl.innerHTML = `Showing <strong>${list.length}</strong> record(s) matching criteria | Period: <strong>${document.getElementById('dashboard-filter-month').value || 'All Time'}</strong>`;
             iconEl.className = `fas ${meta.icon}`;
             iconBgEl.style.backgroundColor = meta.color;
+            
+            const formatDateDisplay = (dateStr) => {
+                if (!dateStr) return '-';
+                let date;
+                if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
+                    date = new Date((dateStr - 25569) * 86400 * 1000);
+                } else {
+                    const str = String(dateStr);
+                    date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                }
+                if (isNaN(date.getTime())) return dateStr;
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = date.toLocaleString('default', { month: 'short' });
+                const year = date.getFullYear().toString().slice(-2);
+                return `${day}-${month}-${year}`;
+            };
             
             const bodyEl = document.getElementById('dash-detailed-customers-body');
             bodyEl.innerHTML = list.length ? list.map((c, i) => {
@@ -2784,47 +2358,41 @@
                 }
                 const phonePill = getPhonePill(c.customer_no);
                 
-                let closureStatus = `<button type="button" class="closure-pill closure-process" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" title="Click to change Closure Status"><i class="fas fa-spinner"></i> In Process <i class="fas fa-chevron-down" style="opacity:0.5; font-size:0.65rem;"></i></button>`;
+                let closureStatus = '<span class="badge" style="background:#F3F4F6;color:var(--text-muted);">In Process</span>';
                 if (c.delivery_info) {
-                    closureStatus = `<button type="button" class="closure-pill closure-delivered" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" title="Click to change Closure Status"><i class="fas fa-truck"></i> Delivered <i class="fas fa-chevron-down" style="opacity:0.5; font-size:0.65rem;"></i></button>`;
+                    closureStatus = '<span class="badge badge-purple" style="background:#F5F3FF;color:var(--accent);"><i class="fas fa-truck" style="margin-right:4px;"></i>Delivered</span>';
                 } else if (c.booking_info) {
-                    closureStatus = `<button type="button" class="closure-pill closure-booked" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" title="Click to change Closure Status"><i class="fas fa-bookmark"></i> Booked <i class="fas fa-chevron-down" style="opacity:0.5; font-size:0.65rem;"></i></button>`;
+                    closureStatus = '<span class="badge badge-yes" style="background:#EFF6FF;color:var(--info);"><i class="fas fa-bookmark" style="margin-right:4px;"></i>Booked</span>';
                 }
                 
-                const touchpointCount = c.field_visit_notes ? (c.field_visit_notes.match(/---/g) || []).length + 1 : 0;
-                const notesHtml = c.field_visit_notes ? `
-                    <div onclick="event.stopPropagation(); openVisitHistoryModal('${c.id}')" class="table-note-pill" title="Click to see all visit info & full history">
-                        <i class="fas fa-comment-alt" style="color:var(--primary); font-size:0.75rem;"></i>
-                        <span class="table-note-text">${escapeHTML(c.field_visit_notes)}</span>
-                        ${touchpointCount > 1 ? `<span class="note-count-tag">${touchpointCount}</span>` : ''}
-                    </div>
-                ` : `<span onclick="event.stopPropagation(); openVisitHistoryModal('${c.id}')" style="font-size:0.78rem; color:#94A3B8; cursor:pointer; font-style:italic;" title="Click to view info"><i class="far fa-comment" style="opacity:0.6; margin-right:3px;"></i> No notes</span>`;
+                const hasLongNote = c.field_visit_notes && c.field_visit_notes.length > 25;
+                const notesHtml = c.field_visit_notes ? 
+                    `<div onclick="if(this.style.whiteSpace==='nowrap'){this.style.whiteSpace='normal';this.style.backgroundColor='#F3F4F6';this.style.padding='8px';this.style.borderRadius='8px';}else{this.style.whiteSpace='nowrap';this.style.backgroundColor='transparent';this.style.padding='0';}" style="max-width:200px; font-size:0.85rem; font-style:italic; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; cursor:pointer; transition:all 0.2s; color:var(--text-muted);" title="Click to toggle full text">${hasLongNote ? '<i class="fas fa-expand-alt" style="font-size:0.7rem; color:var(--primary); margin-right:4px;"></i>' : ''}"${escapeHTML(c.field_visit_notes)}"</div>` : 
+                    '-';
                 
-                let adminBtnHtml = `<button class="action-btn action-followup" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Follow-up</button>`;
+                let adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:#FFFBEB; color:#D97706; border-color:#FDE68A; padding: 4px 8px;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Add Follow-up</button>`;
                 if (c.admin_followup && c.admin_followup.trim() !== '') {
-                    adminBtnHtml = `<button class="action-btn action-pending" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Pending</button>`;
+                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #EF4444, #DC2626); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4); animation: pulse-red 2s infinite;" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Request Pending</button>`;
                 } else if (c.field_visit_notes && c.field_visit_notes.includes('Admin Followup Resolved:')) {
-                    adminBtnHtml = `<button class="action-btn action-resolved" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
+                    adminBtnHtml = `<button class="btn btn-secondary btn-sm" style="background:linear-gradient(135deg, #10B981, #059669); color:white; border:none; padding: 4px 8px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);" onclick="openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
                 }
                 
                 return `
-                    <tr>
-                        <td style="font-weight: 600; color: #94A3B8; text-align: center;">${i + 1}</td>
+                    <tr style="border-bottom: 1px solid #f1f5f9; background: white; transition: background 0.2s; cursor:pointer;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='white'">
+                        <td style="font-weight: 600; color: var(--text-muted); text-align: center;">${i + 1}</td>
                         <td>${phonePill}</td>
-                        <td style="font-weight: 700; color: #0F172A; white-space: nowrap;">${escapeHTML(c.name)}</td>
-                        <td style="white-space: nowrap; color: #64748B; font-size: 0.8rem;">${formatDateDisplay(c.date)}</td>
-                        <td style="font-size: 0.8rem; color: #64748B; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHTML(c.address || '')}">${escapeHTML(c.address || '-')}</td>
-                        <td><span class="badge" style="background:#F1F5F9; color:#475569; font-weight:600; padding:3px 8px; border-radius:6px; font-size:0.75rem;">${escapeHTML(c.model)}</span></td>
-                        <td><strong>${c.officer_name ? escapeHTML(c.officer_name) : '<span style="color:#EF4444; font-weight:600;">Unassigned</span>'}</strong></td>
+                        <td><strong>${escapeHTML(c.name)}</strong></td>
+                        <td>${formatDateDisplay(c.date)}</td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);"><i class="fas fa-map-marker-alt" style="margin-right:4px; opacity:0.6; color:var(--primary);"></i>${escapeHTML(c.address || '-')}</td>
+                        <td><span class="badge" style="background:#F3F4F6;">${escapeHTML(c.model)}</span></td>
+                        <td><strong>${c.officer_name ? escapeHTML(c.officer_name) : '<span class="text-muted" style="font-weight:400;">Unassigned</span>'}</strong></td>
                         <td>${ratingBadge}</td>
                         <td>${visitBadge}</td>
                         <td>${notesHtml}</td>
                         <td>${closureStatus}</td>
-                        <td style="text-align: right;">
-                            <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end;">
-                                ${adminBtnHtml}
-                                <button class="action-btn-edit" title="Edit Customer Details" onclick="event.stopPropagation(); openCustomerModal('${c.id}')"><i class="fas fa-pen"></i></button>
-                            </div>
+                        <td style="text-align: right; display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                            ${adminBtnHtml}
+                            <button class="btn-icon-circle btn-edit" title="Edit Customer Details" onclick="event.stopPropagation(); openCustomerModal('${c.id}')"><i class="fas fa-pen" style="font-size: 0.8rem;"></i></button>
                         </td>
                     </tr>
                 `;
@@ -2996,11 +2564,34 @@
                     data = data.filter(c => c.customer_type === lead);
                 }
                 
+                const formatDateDisplay = (dateStr) => {
+                    if (!dateStr) return '-';
+                    let date;
+                    if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
+                        date = new Date((dateStr - 25569) * 86400 * 1000);
+                    } else {
+                        const str = String(dateStr);
+                        date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                    }
+                    if (isNaN(date.getTime())) return dateStr; 
+
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = date.toLocaleString('default', { month: 'short' });
+                    const year = date.getFullYear().toString().slice(-2);
+                    return `${day}-${month}-${year}`;
+                };
+                
                 data.sort((a, b) => {
                     const getTimestamp = (dStr) => {
                         if (!dStr) return 0;
-                        const d = parseFlexibleDate(dStr);
-                        return d ? d.getTime() : 0;
+                        let d;
+                        if (!isNaN(dStr) && dStr > 25569 && dStr < 2958465) {
+                            d = new Date((dStr - 25569) * 86400 * 1000);
+                        } else {
+                            const str = String(dStr);
+                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                        }
+                        return isNaN(d.getTime()) ? 0 : d.getTime();
                     };
                     return getTimestamp(b.date) - getTimestamp(a.date);
                 });
@@ -3012,41 +2603,7 @@
                     const assignedOfficer = officerMap[c.officer_id];
                     const inputValue = assignedOfficer ? escapeHTML(`${assignedOfficer.full_name} (${assignedOfficer.territory})`) : '';
                     const officerInput = `<input type="text" list="officer_datalist_global" class="officer-search-input ${!c.officer_id ? 'unassigned' : ''}" value="${inputValue}" placeholder="${!c.officer_id ? '⚠️ Assign' : 'Search...'}" onchange="handleOfficerAssignmentChange('${c.id}', this)">`;
-                    
-                    let adminBtnHtml = `<button class="action-btn action-followup" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-headset"></i> Follow-up</button>`;
-                    if (c.admin_followup && c.admin_followup.trim() !== '') {
-                        adminBtnHtml = `<button class="action-btn action-pending" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-clock"></i> Pending</button>`;
-                    } else if (c.field_visit_notes && c.field_visit_notes.includes('Admin Followup Resolved:')) {
-                        adminBtnHtml = `<button class="action-btn action-resolved" onclick="event.stopPropagation(); openAdminFollowupModal('${c.id}')"><i class="fas fa-check-circle"></i> Resolved</button>`;
-                    }
-
-                    let closureStatus = `<button type="button" class="closure-pill closure-process" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" title="Click to change Closure Status"><i class="fas fa-spinner"></i> In Process <i class="fas fa-chevron-down" style="opacity:0.5; font-size:0.65rem;"></i></button>`;
-                    if (c.delivery_info) {
-                        closureStatus = `<button type="button" class="closure-pill closure-delivered" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" title="Click to change Closure Status"><i class="fas fa-truck"></i> Delivered <i class="fas fa-chevron-down" style="opacity:0.5; font-size:0.65rem;"></i></button>`;
-                    } else if (c.booking_info) {
-                        closureStatus = `<button type="button" class="closure-pill closure-booked" onclick="event.stopPropagation(); openClosureMenu('${c.id}')" title="Click to change Closure Status"><i class="fas fa-bookmark"></i> Booked <i class="fas fa-chevron-down" style="opacity:0.5; font-size:0.65rem;"></i></button>`;
-                    }
-
-                    return `<tr>
-                        <td><input type="checkbox" class="customer-checkbox" value="${c.id}" onchange="updateDeleteButtonState()"></td>
-                        <td style="font-weight: 600; color: #94A3B8; text-align: center;">${i+1}</td>
-                        <td>${getPhonePill(c.customer_no)}</td>
-                        <td style="font-weight: 700; color: #0F172A; white-space: nowrap;">${escapeHTML(c.name)}</td>
-                        <td style="white-space: nowrap; color: #64748B; font-size: 0.8rem;">${formatDateDisplay(c.date)}</td>
-                        <td style="font-size: 0.8rem; color: #64748B; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHTML(c.address || '')}">${escapeHTML(c.address || '-')}</td>
-                        <td><span class="badge" style="background:#F1F5F9; color:#475569; font-weight:600; padding:3px 8px; border-radius:6px; font-size:0.75rem;">${escapeHTML(c.model)}</span></td>
-                        <td>${officerInput}</td>
-                        <td>${getSaleTypeBadge(c.sale_type)}</td>
-                        <td>${getVisitBadge(c.visit_completed)}</td>
-                        <td>${getLeadBadge(c.customer_type)}</td>
-                        <td>${closureStatus}</td>
-                        <td style="text-align: right;">
-                            <div style="display: inline-flex; gap: 6px; align-items: center; justify-content: flex-end;">
-                                ${adminBtnHtml}
-                                <button class="action-btn-edit" title="Edit Customer Details" onclick="openCustomerModal('${c.id}')"><i class="fas fa-pen"></i></button>
-                            </div>
-                        </td>
-                    </tr>`;
+                    return `<tr><td><input type="checkbox" class="customer-checkbox" value="${c.id}" onchange="updateDeleteButtonState()"></td><td>${i+1}</td><td>${getPhonePill(c.customer_no)}</td><td><strong>${escapeHTML(c.name)}</strong></td><td>${formatDateDisplay(c.date)}</td><td>${escapeHTML(c.address || '')}</td><td>${escapeHTML(c.model)}</td><td>${officerInput}</td><td>${getSaleTypeBadge(c.sale_type)}</td><td>${getVisitBadge(c.visit_completed)}</td><td>${getLeadBadge(c.customer_type)}</td><td><button class="btn-icon-circle btn-edit" onclick="openCustomerModal('${c.id}')"><i class="fas fa-pen"></i></button></td></tr>`;
                 }).join('');
 
                 updateDeleteButtonState();
@@ -3090,11 +2647,33 @@
                     });
                 }
 
+                const formatDateDisplay = (dateStr) => {
+                    if (!dateStr) return '-';
+                    let date;
+                    if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
+                        date = new Date((dateStr - 25569) * 86400 * 1000);
+                    } else {
+                        const str = String(dateStr);
+                        date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                    }
+                    if (isNaN(date.getTime())) return dateStr;
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const month = date.toLocaleString('default', { month: 'short' });
+                    const year = date.getFullYear().toString().slice(-2);
+                    return `${day}-${month}-${year}`;
+                };
+                
                 myData.sort((a, b) => {
                     const getTimestamp = (dStr) => {
                         if (!dStr) return 0;
-                        const d = parseFlexibleDate(dStr);
-                        return d ? d.getTime() : 0;
+                        let d;
+                        if (!isNaN(dStr) && dStr > 25569 && dStr < 2958465) {
+                            d = new Date((dStr - 25569) * 86400 * 1000);
+                        } else {
+                            const str = String(dStr);
+                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
+                        }
+                        return isNaN(d.getTime()) ? 0 : d.getTime();
                     };
                     return getTimestamp(b.date) - getTimestamp(a.date);
                 });
@@ -4186,9 +3765,7 @@
             
             ['filter-sale-type','filter-officer','filter-visit','filter-lead-type'].forEach(id => document.getElementById(id).addEventListener('change', loadCustomersData));
             ['my-filter-visit','my-filter-lead','my-filter-month'].forEach(id => document.getElementById(id).addEventListener('change', loadMyCustomers));
-            if (document.getElementById('dashboard-filter-month')) {
-                document.getElementById('dashboard-filter-month').addEventListener('change', loadDashboardData); 
-            }
+            document.getElementById('dashboard-filter-month').addEventListener('change', loadDashboardData); 
             
             // Attach listener for Officer Performance Table Filters
             document.querySelectorAll('.table-filter-input').forEach(input => {
