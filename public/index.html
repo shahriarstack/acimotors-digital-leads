@@ -2301,6 +2301,43 @@
             }
         }
 
+        // --- UNIVERSAL FLEXIBLE DATE PARSER ---
+        function parseFlexibleDate(dateStr) {
+            if (!dateStr) return null;
+            if (!isNaN(dateStr) && Number(dateStr) > 25569 && Number(dateStr) < 2958465) {
+                const d = new Date((Number(dateStr) - 25569) * 86400 * 1000);
+                return isNaN(d.getTime()) ? null : d;
+            }
+            const str = String(dateStr).trim();
+            if (!str) return null;
+
+            let d = new Date(str);
+            if (!isNaN(d.getTime())) return d;
+
+            const dmyMatch = str.match(/^(\d{1,2})[-/\.](\d{1,2})[-/\.](\d{4})/);
+            if (dmyMatch) {
+                const day = parseInt(dmyMatch[1], 10);
+                const month = parseInt(dmyMatch[2], 10) - 1;
+                const year = parseInt(dmyMatch[3], 10);
+                d = new Date(year, month, day);
+                if (!isNaN(d.getTime())) return d;
+            }
+
+            const ymdMatch = str.match(/^(\d{4})[-/\.](\d{1,2})[-/\.](\d{1,2})/);
+            if (ymdMatch) {
+                const year = parseInt(ymdMatch[1], 10);
+                const month = parseInt(ymdMatch[2], 10) - 1;
+                const day = parseInt(ymdMatch[3], 10);
+                d = new Date(year, month, day);
+                if (!isNaN(d.getTime())) return d;
+            }
+
+            d = new Date(str.replace(/-/g, '/'));
+            if (!isNaN(d.getTime())) return d;
+
+            return null;
+        }
+
         // --- MULTI-MONTH DASHBOARD FILTERING LOGIC ---
         let selectedDashboardMonths = [];
 
@@ -2309,14 +2346,9 @@
             const str = String(dateStr);
             if (str.startsWith(monthVal)) return true;
             
-            let d;
-            if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
-                d = new Date((dateStr - 25569) * 86400 * 1000);
-            } else {
-                d = new Date(str.includes('T') ? str : str.replace(/-/g, '/'));
-            }
+            const d = parseFlexibleDate(dateStr);
+            if (!d) return false;
             
-            if (isNaN(d.getTime())) return false;
             const y = d.getFullYear();
             const m = String(d.getMonth() + 1).padStart(2, '0');
             return `${y}-${m}` === monthVal;
@@ -2344,31 +2376,26 @@
             if (!listEl) return;
 
             const monthSet = new Set();
-            const now = new Date();
-            for (let i = 0; i < 12; i++) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const y = d.getFullYear();
-                const m = String(d.getMonth() + 1).padStart(2, '0');
-                monthSet.add(`${y}-${m}`);
-            }
-
+            
             if (currentCustomersList && currentCustomersList.length) {
                 currentCustomersList.forEach(c => {
                     if (c.date) {
-                        let d;
-                        if (!isNaN(c.date) && c.date > 25569 && c.date < 2958465) {
-                            d = new Date((c.date - 25569) * 86400 * 1000);
-                        } else {
-                            const str = String(c.date);
-                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '/'));
-                        }
-                        if (!isNaN(d.getTime())) {
+                        const d = parseFlexibleDate(c.date);
+                        if (d) {
                             const y = d.getFullYear();
                             const m = String(d.getMonth() + 1).padStart(2, '0');
                             monthSet.add(`${y}-${m}`);
                         }
                     }
                 });
+            }
+
+            const now = new Date();
+            for (let i = 0; i < 12; i++) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                monthSet.add(`${y}-${m}`);
             }
 
             const sortedMonths = Array.from(monthSet).sort().reverse();
@@ -3008,34 +3035,11 @@
                     data = data.filter(c => c.customer_type === lead);
                 }
                 
-                const formatDateDisplay = (dateStr) => {
-                    if (!dateStr) return '-';
-                    let date;
-                    if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
-                        date = new Date((dateStr - 25569) * 86400 * 1000);
-                    } else {
-                        const str = String(dateStr);
-                        date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                    }
-                    if (isNaN(date.getTime())) return dateStr; 
-
-                    const day = String(date.getDate()).padStart(2, '0');
-                    const month = date.toLocaleString('default', { month: 'short' });
-                    const year = date.getFullYear().toString().slice(-2);
-                    return `${day}-${month}-${year}`;
-                };
-                
                 data.sort((a, b) => {
                     const getTimestamp = (dStr) => {
                         if (!dStr) return 0;
-                        let d;
-                        if (!isNaN(dStr) && dStr > 25569 && dStr < 2958465) {
-                            d = new Date((dStr - 25569) * 86400 * 1000);
-                        } else {
-                            const str = String(dStr);
-                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                        }
-                        return isNaN(d.getTime()) ? 0 : d.getTime();
+                        const d = parseFlexibleDate(dStr);
+                        return d ? d.getTime() : 0;
                     };
                     return getTimestamp(b.date) - getTimestamp(a.date);
                 });
