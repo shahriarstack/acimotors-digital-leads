@@ -1320,23 +1320,6 @@
             document.getElementById('vh-cust-phone').textContent = c.customer_no || '-';
             document.getElementById('vh-cust-model').textContent = c.model || '-';
             document.getElementById('vh-cust-officer').textContent = c.officer_name || 'Unassigned';
-            
-            const formatDateDisplay = (dateStr) => {
-                if (!dateStr) return '-';
-                let date;
-                if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
-                    date = new Date((dateStr - 25569) * 86400 * 1000);
-                } else {
-                    const str = String(dateStr);
-                    date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                }
-                if (isNaN(date.getTime())) return dateStr; 
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = date.toLocaleString('default', { month: 'short' });
-                const year = date.getFullYear().toString().slice(-2);
-                return `${day}-${month}-${year}`;
-            };
-
             document.getElementById('vh-cust-date').textContent = formatDateDisplay(c.date);
             document.getElementById('vh-cust-visit').innerHTML = getVisitBadge(c.visit_completed);
             document.getElementById('vh-cust-rating').innerHTML = getLeadBadge(c.customer_type);
@@ -2233,22 +2216,6 @@
                 }
 
                 // Render Table
-                const formatDateDisplay = (dateStr) => {
-                    if (!dateStr) return '-';
-                    let date;
-                    if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
-                        date = new Date((dateStr - 25569) * 86400 * 1000);
-                    } else {
-                        const str = String(dateStr);
-                        date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                    }
-                    if (isNaN(date.getTime())) return dateStr;
-                    const day = String(date.getDate()).padStart(2, '0');
-                    const month = date.toLocaleString('default', { month: 'short' });
-                    const year = date.getFullYear().toString().slice(-2);
-                    return `${day}-${month}-${year}`;
-                };
-
                 document.getElementById('visited-report-body').innerHTML = data.length ? data.map(c => {
                     // Date & Aging Calculation Logic
                     let dObj = new Date();
@@ -2336,6 +2303,16 @@
             if (!isNaN(d.getTime())) return d;
 
             return null;
+        }
+
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return '-';
+            const date = parseFlexibleDate(dateStr);
+            if (!date) return String(dateStr); 
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = date.toLocaleString('default', { month: 'short' });
+            const year = date.getFullYear().toString().slice(-2);
+            return `${day}-${month}-${year}`;
         }
 
         // --- MULTI-MONTH DASHBOARD FILTERING LOGIC ---
@@ -2790,22 +2767,6 @@
             iconEl.className = `fas ${meta.icon}`;
             iconBgEl.style.backgroundColor = meta.color;
             
-            const formatDateDisplay = (dateStr) => {
-                if (!dateStr) return '-';
-                let date;
-                if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
-                    date = new Date((dateStr - 25569) * 86400 * 1000);
-                } else {
-                    const str = String(dateStr);
-                    date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                }
-                if (isNaN(date.getTime())) return dateStr;
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = date.toLocaleString('default', { month: 'short' });
-                const year = date.getFullYear().toString().slice(-2);
-                return `${day}-${month}-${year}`;
-            };
-            
             const bodyEl = document.getElementById('dash-detailed-customers-body');
             bodyEl.innerHTML = list.length ? list.map((c, i) => {
                 const ratingBadge = getLeadBadge(c.customer_type);
@@ -3129,33 +3090,11 @@
                     });
                 }
 
-                const formatDateDisplay = (dateStr) => {
-                    if (!dateStr) return '-';
-                    let date;
-                    if (!isNaN(dateStr) && dateStr > 25569 && dateStr < 2958465) {
-                        date = new Date((dateStr - 25569) * 86400 * 1000);
-                    } else {
-                        const str = String(dateStr);
-                        date = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                    }
-                    if (isNaN(date.getTime())) return dateStr;
-                    const day = String(date.getDate()).padStart(2, '0');
-                    const month = date.toLocaleString('default', { month: 'short' });
-                    const year = date.getFullYear().toString().slice(-2);
-                    return `${day}-${month}-${year}`;
-                };
-                
                 myData.sort((a, b) => {
                     const getTimestamp = (dStr) => {
                         if (!dStr) return 0;
-                        let d;
-                        if (!isNaN(dStr) && dStr > 25569 && dStr < 2958465) {
-                            d = new Date((dStr - 25569) * 86400 * 1000);
-                        } else {
-                            const str = String(dStr);
-                            d = new Date(str.includes('T') ? str : str.replace(/-/g, '\/'));
-                        }
-                        return isNaN(d.getTime()) ? 0 : d.getTime();
+                        const d = parseFlexibleDate(dStr);
+                        return d ? d.getTime() : 0;
                     };
                     return getTimestamp(b.date) - getTimestamp(a.date);
                 });
